@@ -6,7 +6,7 @@ const student = require('../Schema/studentSchema')
 //validate email module
 const { isValidEmail } = require('../Utils/validationUtils')
 //helper functions
-const {hashPassword,comparePass} = require('../Utils/helperFunction')
+const { hashPassword, comparePass } = require('../Utils/helperFunction')
 
 
 //@dec create new admin
@@ -71,7 +71,7 @@ const adminLogin = async (req, res) => {
         if (!emailValid) return res.status(400).json({ message: "Invalid Email format" })
 
         //comparing passwords
-        const isPasswordCorrect = await comparePass(password,isAdmin.password)
+        const isPasswordCorrect = await comparePass(password, isAdmin.password)
         if (!isPasswordCorrect) return res.status(400).json({ message: "Wrong password" })
 
         //generate JWT
@@ -102,10 +102,14 @@ const adminDashboard = (req, res) => {
 //API: /api/admin/addstudent
 //Access :Private
 const addStudent = async (req, res) => {
+    //checking if the user is admin or not
+    const userRole = req.user.role;
+    if (userRole != 'admin') return res.status(403).json({ message: "Access Denied: Only admins can add students." });
+    
     const { name, email, password, role, studentId, course } = req.body
     //checking all required fields
     if (!name || !email || !password || !role || !studentId || !course) return res.status(400).json({ message: "All Fields are mandetory" })
-    
+
     //email validate format
     const emailValid = isValidEmail(email);
     if (!emailValid) return res.status(400).json({ message: "Invalid Email format" })
