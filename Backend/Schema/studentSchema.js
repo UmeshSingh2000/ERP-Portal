@@ -24,7 +24,7 @@ const student = new Schema({
         unique :true
     },
     course :{
-        type:String
+        type:String,required:true
     }
 },{
     timestamps: true
