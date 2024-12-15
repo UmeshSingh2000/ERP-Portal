@@ -5,14 +5,16 @@ const student = require('../Schema/studentSchema')
 
 //validate email module
 const { isValidEmail } = require('../Utils/validationUtils')
+
 //helper functions
 const { hashPassword, comparePass } = require('../Utils/helperFunction')
 
 
-//@dec create new admin
-//method POST
-//API: /api/admin
-//Access : Public
+/**
+ * @description Create a new admin account.
+ * @route POST /api/admin
+ * @access Public
+ */
 const createAdmin = async (req, res) => {
     try {
         const { email, password, role } = req.body
@@ -54,10 +56,11 @@ const createAdmin = async (req, res) => {
 }
 
 
-//desc login to admin
-//method POST
-//API: /api/admin
-//Access :Public 
+/**
+ * @description Login an admin account
+ * @route POST /api/admin/login
+ * @access Public
+ */
 const adminLogin = async (req, res) => {
     const { email, password } = req.body
     if (!email || !password) return res.status(400).json({ message: 'Please provide all required fields' })
@@ -88,19 +91,21 @@ const adminLogin = async (req, res) => {
 }
 
 
-//@desc admin dashboard
-//method POST -------------(fix this later)--------------
-//API: /api/admin/dashboard
-//Access :Private
+/**
+ * @description Access the admin dashboard
+ * @route GET /api/admin/dashbaord
+ * @access Private
+ */
 const adminDashboard = (req, res) => {
     res.status(200).json({ message: "Welcome to Admin Dashboard" })
 }
 
 
-//@desc admin dashboard add student
-//method POST
-//API: /api/admin/addstudent
-//Access :Private
+/**
+ * @description Add a new student (Admin only)
+ * @route /api/admin/addStudent
+ * @access Private
+ */
 const addStudent = async (req, res) => {
     //checking if the user is admin or not
     const userRole = req.user.role;
