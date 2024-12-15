@@ -5,8 +5,15 @@ const {
     createAdmin,
     adminLogin,
     adminDashboard,
-    addStudent
 } = require('../Controllers/adminControllers') //Controllers for Admin
+
+const {
+    addStudent
+} = require('../Controllers/studentControllers') //Controllers for Student
+
+const {
+    addTeacher
+} = require('../Controllers/teacherControllers')
 
 /**
  * @route POST /api/admin
@@ -35,5 +42,12 @@ router.get('/admin/dashboard',authenticateToken,adminDashboard)
  * @access Protected (required valid token)
  */
 router.post('/admin/addStudent',authenticateToken,addStudent)
+
+/**
+ * @route POST /api/admin/addTeacher
+ * @description Add a new Teacher (protected route)
+ * @access Protected (required valid token)
+ */
+router.post('/admin/addTeacher',authenticateToken,addTeacher)
 
 module.exports = router
