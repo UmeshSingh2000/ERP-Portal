@@ -9,10 +9,6 @@ const { hashPassword, comparePass } = require('../Utils/helperFunction')
  */
 const addStudent = async (req, res) => {
     try {
-        //checking if the user is admin or not
-        const userRole = req.user.role;
-        if (userRole !== 'admin') return res.status(403).json({ message: "Access Denied: Only admins can add students." });
-
         const { name, email, password, role, studentId, course } = req.body
         //checking all required fields
         if (!name || !email || !password || !role || !studentId || !course) return res.status(400).json({ message: "All Fields are mandetory" })
@@ -51,17 +47,12 @@ const addStudent = async (req, res) => {
  */
 const deleteStudent = async (req, res) => {
     try {
-        //checking if the user admin or not
-        const userRole = req.user.role;
-        if (userRole !== 'admin') {
-            return res.status(403).json({ message: "Access Denied: Only admins can delete students." });
-        }
-        //accuring id from req parameter
+        //acquiring id from req parameter
         const { studentId } = req.params
         if (!studentId) {
             return res.status(400).json({ message: "Student ID is required" })
         }
-        
+
         const deletedStudent = await student.findByIdAndDelete(studentId)
         //checking if the student exist with the same studentId
         if (!deletedStudent) {
@@ -82,21 +73,21 @@ const deleteStudent = async (req, res) => {
  */
 const updateStudent = async (req, res) => {
     try {
-        //checking if the user admin or not
-        const userRole = req.user.role;
-        if (userRole !== 'admin') {
-            return res.status(403).json({ message: "Access Denied: Only admins can update students." });
-        }
-
-        //accuring id from request parameter
+        //acquiring id from request parameter
         const { studentId } = req.params
 
-        //accuring updates from request body
+        //acquiring updates from request body
         const updatedData = req.body
-        
+        if (!updatedData || Object.keys(updatedData).length === 0) {
+            return res.status(400).json({ message: "No fields provided for update" });
+        }
+        const { email } = updatedData;
+        if (email && !isValidEmail(email)) {
+            return res.status(400).json({ message: "Invalid Email Format" });
+        }
         const updatedStudent = await student.findByIdAndUpdate(studentId,
-            {$set:updatedData},
-            {new:true,runValidators:true}
+            { $set: updatedData },
+            { new: true, runValidators: true }
         )
         //checking if the student exist with the same studentId
         if (!updatedStudent) {

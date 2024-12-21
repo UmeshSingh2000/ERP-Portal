@@ -1,5 +1,6 @@
 const express = require('express')
 const { authenticateToken } = require('../Middelwares/jwtMiddleware') //JWT Token Verification for Authentication
+const adminOnly = require('../Middelwares/adminOnlyMiddelware') //middleware for admin check 
 const router = express.Router()
 const {
     createAdmin,
@@ -14,7 +15,9 @@ const {
 } = require('../Controllers/studentControllers') //Controllers for Student
 
 const {
-    addTeacher
+    addTeacher,
+    deleteTeacher,
+    updateTeacher
 } = require('../Controllers/teacherControllers')
 
 
@@ -46,21 +49,21 @@ router.get('/admin/dashboard', authenticateToken, adminDashboard)
  * @route POST /api/admin/addStudent
  * @access Protected (required valid token)
  */
-router.post('/admin/addStudent', authenticateToken, addStudent)
+router.post('/admin/addStudent', authenticateToken,adminOnly, addStudent)
 
 /**
  * @description Delete student
  * @route DELETE /api/admin/deleteStudent/:studentId
  * @access Protected (required valid token)
  */
-router.delete('/admin/deleteStudent/:studentId', authenticateToken, deleteStudent)
+router.delete('/admin/deleteStudent/:studentId', authenticateToken,adminOnly, deleteStudent)
 
 /**
  * @description Update Student
  * @route PUT /api/admin/updateStudent/:studentId
  * @acess Protected (required valid token)
  */
-router.put('/admin/updateStudent/:studentId',authenticateToken,updateStudent)
+router.put('/admin/updateStudent/:studentId',authenticateToken,adminOnly,updateStudent)
 
 
 /**
@@ -68,6 +71,19 @@ router.put('/admin/updateStudent/:studentId',authenticateToken,updateStudent)
  * @route POST /api/admin/addTeacher
  * @access Protected (required valid token)
  */
-router.post('/admin/addTeacher', authenticateToken, addTeacher)
+router.post('/admin/addTeacher', authenticateToken,adminOnly, addTeacher)
 
+/**
+ * @description Delete Teacher (protected route)
+ * @route DELETE /api/admin/deleteTeacher/:teacherId
+ * @access Protected (required valid token)
+ */
+router.delete('/admin/deleteTeacher/:teacherId', authenticateToken,adminOnly, deleteTeacher)
+
+/**
+ * @description Update Teacher(protected Route)
+ * @route PUT /api/admin/updateTeacher/:teacherId
+ * @acess Protected (required valid token)
+ */
+router.put('/admin/updateTeacher/:teacherId',authenticateToken,adminOnly,updateTeacher)
 module.exports = router
