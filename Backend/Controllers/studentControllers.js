@@ -1,5 +1,12 @@
+const mongoose = require('mongoose')
+
+//validate email module
 const { isValidEmail } = require('../Utils/validationUtils')
+
+//student schema
 const student = require('../Schema/studentSchema')
+
+//helper function
 const { hashPassword, comparePass } = require('../Utils/helperFunction')
 
 /**
@@ -53,6 +60,11 @@ const deleteStudent = async (req, res) => {
             return res.status(400).json({ message: "Student ID is required" })
         }
 
+        //checking for valid studentId
+        if (!mongoose.Types.ObjectId.isValid(studentId)) {
+            return res.status(400).json({ message: "Invalid student ID format" });
+        }
+
         const deletedStudent = await student.findByIdAndDelete(studentId)
         //checking if the student exist with the same studentId
         if (!deletedStudent) {
@@ -75,6 +87,14 @@ const updateStudent = async (req, res) => {
     try {
         //acquiring id from request parameter
         const { studentId } = req.params
+        if (!studentId) {
+            return res.status(400).json({ message: "Student ID is required" })
+        }
+
+        //checking for valid studentId
+        if (!mongoose.Types.ObjectId.isValid(studentId)) {
+            return res.status(400).json({ message: "Invalid student ID format" });
+        }
 
         //acquiring updates from request body
         const updatedData = req.body

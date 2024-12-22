@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 //Teacher Schema
 const teacher = require('../Schema/teacherSchema')
 
@@ -52,6 +53,10 @@ const deleteTeacher = async (req, res) => {
         if (!teacherId) {
             return res.status(400).json({ message: "Please provide teacherId" })
         }
+        //checking for valid teacherId
+        if (!mongoose.Types.ObjectId.isValid(teacherId)) {
+            return res.status(400).json({ message: "Invalid teacher ID format" });
+        }
 
         //delete teacher with teacherID
         const deletedTeacher = await teacher.findByIdAndDelete(teacherId)
@@ -90,6 +95,10 @@ const updateTeacher = async (req, res) => {
         const { teacherId } = req.params
         if (!teacherId) {
             return req.status(400).json({ message: "Please Provide teacherId" })
+        }
+        //checking for valid teacherId
+        if (!mongoose.Types.ObjectId.isValid(teacherId)) {
+            return res.status(400).json({ message: "Invalid teacher ID format" });
         }
         //updating teacher
         const updatedTeacher = await teacher.findByIdAndUpdate(teacherId,
