@@ -18,7 +18,7 @@ const {
     addTeacher,
     deleteTeacher,
     updateTeacher
-} = require('../Controllers/teacherControllers')
+} = require('../Controllers/teacherControllers') //Controllers for Teacher
 
 
 //admin related routes
@@ -86,4 +86,6 @@ router.delete('/admin/deleteTeacher/:teacherId', authenticateToken,adminOnly, de
  * @acess Protected (required valid token)
  */
 router.put('/admin/updateTeacher/:teacherId',authenticateToken,adminOnly,updateTeacher)
+
+
 module.exports = router

@@ -27,6 +27,14 @@ const teacher = new Schema({
         type:String,
         required:true,
         enum:['teacher']
+    },
+    course:{ // course to which the teacher is assigned
+        type:String,
+        required:true
+    },
+    subjects:{ // subjects that the teacher can teach
+        type:[String],
+        required:true
     }
 },{
     timestamps:true

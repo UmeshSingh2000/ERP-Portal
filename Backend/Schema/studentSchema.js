@@ -25,6 +25,10 @@ const student = new Schema({
     },
     course :{
         type:String,required:true
+    },
+    subjects : {
+        type:[String],
+        required:true
     }
 },{
     timestamps: true

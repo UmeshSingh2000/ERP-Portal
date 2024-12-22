@@ -16,9 +16,9 @@ const { hashPassword, comparePass } = require('../Utils/helperFunction')
  */
 const addStudent = async (req, res) => {
     try {
-        const { name, email, password, role, studentId, course } = req.body
+        const { name, email, password, role, studentId, course,subjects } = req.body
         //checking all required fields
-        if (!name || !email || !password || !role || !studentId || !course) return res.status(400).json({ message: "All Fields are mandetory" })
+        if (!name || !email || !password || !role || !studentId || !course || !subjects) return res.status(400).json({ message: "All Fields are mandetory" })
 
         //email validate format
         const emailValid = isValidEmail(email);
@@ -35,7 +35,8 @@ const addStudent = async (req, res) => {
             password: await hashPassword(password),
             role,
             studentId,
-            course
+            course,
+            subjects
         })
         //save student to to database
         await newStudent.save();

@@ -16,8 +16,8 @@ const { hashPassword, comparePass } = require('../Utils/helperFunction')
 const addTeacher = async (req, res) => {
     try {
         //checking all required fields
-        const { name, email, teacherId, password, role } = req.body
-        if (!name || !email || !password || !teacherId || !role) {
+        const { name, email, teacherId, password, role,course,subjects } = req.body
+        if (!name || !email || !password || !teacherId || !role || !course || !subjects) {
             return res.status(400).json({ message: "All Fields are mandetory" })
         }
 
@@ -29,7 +29,9 @@ const addTeacher = async (req, res) => {
             email,
             password: await hashPassword(password),
             role,
-            teacherId
+            teacherId,
+            course,
+            subjects
         })
         //save teacher to to database
         await newTeacher.save();
