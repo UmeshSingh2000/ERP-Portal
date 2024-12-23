@@ -70,7 +70,7 @@ const adminLogin = async (req, res) => {
     try {
         const isAdmin = await admin.findOne({ email })
         //checking all fields that are required
-        if (!isAdmin) return res.status(401).json({ message: "Email does not exist" })
+        if (!isAdmin) return res.status(401).json({ message: "Admin with this Email does not exist" })
 
         //email validate format
         const emailValid = isValidEmail(email);

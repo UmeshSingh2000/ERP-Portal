@@ -8,6 +8,9 @@ const { isValidEmail } = require('../Utils/validationUtils')
 //helper functions
 const { hashPassword, comparePass } = require('../Utils/helperFunction')
 
+//jwt token generator
+const { generateToken } = require('../JWT/jwtToken')
+
 /**
  * @description Add a new Teacher (Admin Only)
  * @route POST /api/admin/addTeacher
@@ -16,7 +19,7 @@ const { hashPassword, comparePass } = require('../Utils/helperFunction')
 const addTeacher = async (req, res) => {
     try {
         //checking all required fields
-        const { name, email, teacherId, password, role,course,subjects } = req.body
+        const { name, email, teacherId, password, role, course, subjects } = req.body
         if (!name || !email || !password || !teacherId || !role || !course || !subjects) {
             return res.status(400).json({ message: "All Fields are mandetory" })
         }
@@ -118,8 +121,44 @@ const updateTeacher = async (req, res) => {
     }
 }
 
+/**
+ * @description Teacher Login
+ * @route POST /api/teacher/login
+ * @access Public
+ */
+
+const teacherLogin = async (req, res) => {
+    //acquiring credential from body
+    const { teacherId, password } = req.body
+    if (!teacherId || !password) return res.status(400).json({ message: "Please provide all required fields" })
+
+    try {
+        //finding teacher with teacherId
+        const isTeacher = await teacher.findOne({ teacherId });
+        if (!isTeacher) return res.status(401).json({ message: "Teacher with this ID does not exist" });
+
+        //comparing the stored password and provided password
+        const checkPassword = await comparePass(password, isTeacher.password);
+        if (!checkPassword) return res.status(400).json({ message: "Wrong Password" });
+
+        //genarate JWT token
+        const token = await generateToken(isTeacher._id, isTeacher.role)
+        //sending message and token
+        res.status(200).json({
+            mesage: "Login Success",
+            token
+        })
+    }
+    catch (err) {
+        console.error("Login error:", err);
+        return res.status(500).json({ message: "An error occurred during login" });
+    }
+
+}
+
 module.exports = {
     addTeacher,
     deleteTeacher,
-    updateTeacher
+    updateTeacher,
+    teacherLogin
 }
