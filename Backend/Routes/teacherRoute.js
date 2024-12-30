@@ -8,6 +8,9 @@ const teacherOnly = require('../Middelwares/teacherOnlyMiddleware') //middleware
 //controller for teacher
 const {teacherLogin} = require('../Controllers/teacherControllers')
 
+//controller for attendance
+const {markAttendance} =require('../Controllers/attendanceControllers')
+
 //teacher related Route
 
 /**
@@ -22,9 +25,7 @@ router.post('/login',teacherLogin);
  * @route POST /api/teacher/attendance/mark
  * @access Protected (Required Valid token and allowed User(teacher only))
  */
-router.post('/attendance/mark',authenticateToken,teacherOnly, (req, res) => {
-    res.send('Mark Attendance')
-})
+router.post('/attendance/mark',authenticateToken,teacherOnly,markAttendance)
 
 
 module.exports = router;

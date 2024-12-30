@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
-
+const student = require('../Schema/studentSchema')
+const teacher = require('../Schema/teacherSchema')
 /**
  * @function hashPassword
  * @description Create Hashed password
@@ -21,7 +22,29 @@ const comparePass = async (password, hashedPassword) => {
     return await bcrypt.compare(password, hashedPassword)
 }
 
+
+const checkStudentExist=async(id)=>{
+    try {
+        const isStudent = await student.exists({ _id: id });        
+        return isStudent;
+    } catch (error) {
+        console.error("Error checking student existence:", error);
+        throw new Error("Unable to check student existence");
+    }
+}
+const checkTeacherExist=async(id)=>{
+    try {
+        const isTeacher = await teacher.exists({ _id: id });        
+        return isTeacher;
+    } catch (error) {
+        console.error("Error checking teacher existence:", error);
+        throw new Error("Unable to check teacher existence");
+    }
+}
+
 module.exports = {
     hashPassword,
-    comparePass
+    comparePass,
+    checkStudentExist,
+    checkTeacherExist
 }
