@@ -12,6 +12,9 @@ const adminRoute = require('./Routes/adminRoute')
 //teacher route
 const teacherRoute = require('./Routes/teacherRoute')
 
+//student route
+const studentRoute = require('./Routes/studentRoute')
+
 // Initialize database connection
 const dbConnect = require('./Config/config')
 dbConnect();
@@ -43,6 +46,11 @@ app.use('/api/admin',adminRoute);
  */
 app.use('/api/teacher',teacherRoute);
 
+/**
+ * @route /api/student
+ * @description Student-related routes
+ */
+app.use('/api/student',studentRoute);
 
 // Start the server
 app.listen(port, () => {
