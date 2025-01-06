@@ -7,6 +7,8 @@ import { ToastContainer, toast } from 'react-toastify';
 
 const UserLogin = () => {
   const [activeRole, setActiveRole] = useState(null)
+  const [id,setId] = useState('')
+  const [pass,setPass] = useState('')
   const handleRoleSelect = (role) => {
     setActiveRole((prevRole) => (prevRole === role ? null : role))
     toast.success(`You have ${activeRole==role?'deselected':'selected'} ${role} role`,{
@@ -40,8 +42,8 @@ const UserLogin = () => {
             </div>
           </nav>
           <main className='w-full xl:w-2/3 flex flex-col gap-2'>
-            <InputField type="id" />
-            <InputField type="pass" />
+            <InputField type="id" value = {id} onChange = {setId}/>
+            <InputField type="pass" value = {pass} onChange={setPass}/>
             <Button />
           </main>
           <footer className='w-full flex flex-col items-center cursor-pointer justify-between'>
