@@ -3,33 +3,58 @@ import RolesBtn from '../Componenets/RolesBtn'
 import InputField from '../Componenets/InputField'
 import Button from '../Componenets/Button'
 import { ToastContainer, toast } from 'react-toastify';
-
-
+import toastHelper from '../../Utils/toastHelper';
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
+import Loader from '../Componenets/Loader';
+const apiUrl = import.meta.env.VITE_API_URL;
 const UserLogin = () => {
+  const navigate = useNavigate()
   const [activeRole, setActiveRole] = useState(null)
-  const [id,setId] = useState('')
-  const [pass,setPass] = useState('')
+  const [id, setId] = useState('')
+  const [pass, setPass] = useState('')
+  const [loading,setLoading] = useState(false)
   const handleRoleSelect = (role) => {
     setActiveRole((prevRole) => (prevRole === role ? null : role))
-    toast.success(`You have ${activeRole==role?'deselected':'selected'} ${role} role`,{
-      position: "top-right",
-      autoClose: 1000,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    })
+    toastHelper('success', `You have ${activeRole == role ? 'deselected' : 'selected'} ${role} role`)
+  }
+  const handleLogin = async () => {
+    if(activeRole!=='student' && activeRole!= 'teacher'){
+      return toastHelper('error', 'Please select a role')
+    }
+    if (!id.trim() || !pass.trim()) {
+      return toastHelper('error', 'Please fill all the fields')
+    }
+    setLoading(true)
+    try {
+      const endpoint = `${apiUrl}/${activeRole}/login`
+      const payload = (activeRole==='student')?{studentId:id,password:pass}:{teacherId:id,password:pass}
+      const response = await axios.post(endpoint,payload)
+      toastHelper('success', response.data.message)
+      if(response.data.token){
+        localStorage.setItem('token',response.data.token)
+      }
+      setTimeout(() => {
+        navigate(`/${activeRole}/dashboard`)
+      }, 5000);
+    }
+    catch (err) { 
+      toastHelper('error', err.response.data.message)
+    }
+    finally{
+      setLoading(false)
+    }
   }
   return (
     <>
-      <main className='w-full h-dvh flex justify-center items-center bg-[#f7d2a7]'>
-        <section className='w-3/4 md:w-auto md:p-2 md:h-2/4 xl:w-auto lg:h-auto 2xl:w-2/4 2xl:h-2/4 h-96 flex flex-col justify-center items-center bg-white shadow-lg rounded-lg p-3 gap-2'>
+      <main style={pageStyle} className='w-full h-dvh flex justify-center items-center'>
+        <section className='w-3/4 md:w-auto md:p-2 md:h-auto xl:w-1/3 lg:h-4/6 lg:w-2/5 lg:py-2 2xl:w-2/4 2xl:h-2/4 h-96 flex flex-col justify-center items-center bg-white shadow-lg rounded-3xl p-3 gap-2'>
           <header>
-            <h1 className='text-2xl font-semibold'>Welcome Back</h1>
-            <p className='text-sm'>Enter your credential to access your account </p>
+            <h1 className='text-2xl xl:text-4xl font-semibold'>Welcome Back</h1>
+            <p className='text-sm xl:text-xl'>Enter your credential to access your account </p>
           </header>
           <nav className='w-full'>
-            <div className="xl:w-2/3 roles m-auto flex gap-2 justify-center">
+            <div className="xl:w-9/12 roles m-auto flex gap-2 justify-center">
               <RolesBtn
                 role="student"
                 isActive={activeRole === 'student'}
@@ -41,10 +66,10 @@ const UserLogin = () => {
               />
             </div>
           </nav>
-          <main className='w-full xl:w-2/3 flex flex-col gap-2'>
-            <InputField type="id" value = {id} onChange = {setId}/>
-            <InputField type="pass" value = {pass} onChange={setPass}/>
-            <Button />
+          <main className='w-full xl:w-9/12 flex flex-col items-center gap-2'>
+            <InputField type="id" value={id} onChange={setId} />
+            <InputField type="pass" value={pass} onChange={setPass} />
+            {loading ? <Loader/> : <Button onclick={handleLogin} />}
           </main>
           <footer className='w-full flex flex-col items-center cursor-pointer justify-between'>
             <p>Forget Password?</p>
@@ -55,5 +80,8 @@ const UserLogin = () => {
       <ToastContainer className="w-2/3 h-8" />
     </>
   )
+}
+const pageStyle = {
+  backgroundImage: 'linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%)'
 }
 export default UserLogin

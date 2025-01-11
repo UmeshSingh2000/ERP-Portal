@@ -145,7 +145,7 @@ const teacherLogin = async (req, res) => {
         const token = await generateToken(isTeacher._id, isTeacher.role)
         //sending message and token
         res.status(200).json({
-            mesage: "Login Success",
+            message: "Login Success",
             token
         })
     }

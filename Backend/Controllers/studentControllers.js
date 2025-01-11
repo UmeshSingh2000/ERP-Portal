@@ -129,7 +129,7 @@ const updateStudent = async (req, res) => {
 
 /**
  * @description Login Student
- * @routes PUT /api/student/login
+ * @routes POST /api/student/login
  * @access Public
  */
 const login = async (req, res) => {
