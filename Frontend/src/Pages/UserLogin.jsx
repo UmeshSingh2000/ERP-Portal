@@ -13,35 +13,49 @@ const UserLogin = () => {
   const [activeRole, setActiveRole] = useState(null)
   const [id, setId] = useState('')
   const [pass, setPass] = useState('')
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  //role selection handler
   const handleRoleSelect = (role) => {
     setActiveRole((prevRole) => (prevRole === role ? null : role))
     toastHelper('success', `You have ${activeRole == role ? 'deselected' : 'selected'} ${role} role`)
   }
+
+  //login button handler
   const handleLogin = async () => {
-    if(activeRole!=='student' && activeRole!= 'teacher'){
+    //if user not selected any role return
+    if (activeRole !== 'student' && activeRole != 'teacher') {
       return toastHelper('error', 'Please select a role')
     }
+
+    //if user not filled any field return
     if (!id.trim() || !pass.trim()) {
       return toastHelper('error', 'Please fill all the fields')
     }
+    //loading state set to true
     setLoading(true)
     try {
+      //endpoints to api based on role
       const endpoint = `${apiUrl}/${activeRole}/login`
-      const payload = (activeRole==='student')?{studentId:id,password:pass}:{teacherId:id,password:pass}
-      const response = await axios.post(endpoint,payload)
-      toastHelper('success', response.data.message)
-      if(response.data.token){
-        localStorage.setItem('token',response.data.token)
+
+      //payload to send to api
+      const payload = (activeRole === 'student') ? { studentId: id, password: pass } : { teacherId: id, password: pass }
+
+      //sending request to api
+      const response = await axios.post(endpoint, payload)
+
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token)
+        toastHelper('success', response.data.message)
       }
       setTimeout(() => {
         navigate(`/${activeRole}/dashboard`)
       }, 5000);
     }
-    catch (err) { 
+    catch (err) {
       toastHelper('error', err.response.data.message)
     }
-    finally{
+    finally {
       setLoading(false)
     }
   }
@@ -69,7 +83,7 @@ const UserLogin = () => {
           <main className='w-full xl:w-9/12 flex flex-col items-center gap-2'>
             <InputField type="id" value={id} onChange={setId} />
             <InputField type="pass" value={pass} onChange={setPass} />
-            {loading ? <Loader/> : <Button onclick={handleLogin} />}
+            {loading ? <Loader /> : <Button onclick={handleLogin} />}
           </main>
           <footer className='w-full flex flex-col items-center cursor-pointer justify-between'>
             <p>Forget Password?</p>

@@ -7,7 +7,7 @@ const { isValidEmail } = require('../Utils/validationUtils')
 const student = require('../Schema/studentSchema')
 
 //helper function
-const { hashPassword, comparePass } = require('../Utils/helperFunction')
+const { hashPassword, comparePass,capitalize } = require('../Utils/helperFunction')
 
 //jwt token generator
 const { generateToken } = require('../JWT/jwtToken')
@@ -21,7 +21,7 @@ const { generateToken } = require('../JWT/jwtToken')
  */
 const addStudent = async (req, res) => {
     try {
-        const { name, email, password, role, studentId, course, subjects } = req.body
+        let { name, email, password, role, studentId, course, subjects } = req.body
         //checking all required fields
         if (!name || !email || !password || !role || !studentId || !course || !subjects) return res.status(400).json({ message: "All Fields are mandetory" })
 
@@ -32,6 +32,9 @@ const addStudent = async (req, res) => {
         //checking if the student exist with the same email and studentId
         const existingStudent = await student.findOne({ $or: [{ email }, { studentId }] });
         if (existingStudent) return res.status(400).json({ message: "Student with this email or ID already exists" });
+
+        //capitalize name
+        studentId=capitalize(studentId);
 
         //creating new student 
         const newStudent = new student({

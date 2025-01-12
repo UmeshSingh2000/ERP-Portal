@@ -6,7 +6,7 @@ const teacher = require('../Schema/teacherSchema')
 const { isValidEmail } = require('../Utils/validationUtils')
 
 //helper functions
-const { hashPassword, comparePass } = require('../Utils/helperFunction')
+const { hashPassword, comparePass,capitalize } = require('../Utils/helperFunction')
 
 //jwt token generator
 const { generateToken } = require('../JWT/jwtToken')
@@ -19,14 +19,20 @@ const { generateToken } = require('../JWT/jwtToken')
 const addTeacher = async (req, res) => {
     try {
         //checking all required fields
-        const { name, email, teacherId, password, role, course, subjects } = req.body
+        let { name, email, teacherId, password, role, course, subjects } = req.body
         if (!name || !email || !password || !teacherId || !role || !course || !subjects) {
             return res.status(400).json({ message: "All Fields are mandetory" })
         }
 
         //email validate format
         const emailValid = isValidEmail(email);
+
+        //capitalize name
+        name = capitalize(name)
+
+        //if not found
         if (!emailValid) return res.status(400).json({ message: "Invalid Email format" })
+            
         const newTeacher = new teacher({
             name,
             email,

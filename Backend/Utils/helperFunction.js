@@ -42,9 +42,14 @@ const checkTeacherExist=async(id)=>{
     }
 }
 
+const capitalize = (str)=>{
+    return str.toUpperCase();
+}
+
 module.exports = {
     hashPassword,
     comparePass,
     checkStudentExist,
-    checkTeacherExist
+    checkTeacherExist,
+    capitalize
 }
