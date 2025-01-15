@@ -53,7 +53,7 @@ const AdminDashboard = () => {
             checkAdmin()
         }
         catch (error) {
-            console(error.response);
+            console.log(error.response);
         }
     }, [navigate])
     return (
