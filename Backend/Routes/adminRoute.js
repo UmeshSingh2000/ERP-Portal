@@ -42,7 +42,7 @@ router.post('/login', adminLogin)
  * @route GET /api/admin/dashboard
  * @access Protected (required valid token)
  */
-router.get('/dashboard', authenticateToken, adminDashboard)
+router.post('/dashboard', authenticateToken,adminOnly,adminDashboard)
 
 /**
  * @description Add a new student (protected route)

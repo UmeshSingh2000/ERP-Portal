@@ -4,5 +4,6 @@
 @tailwind utilities;
 html,body{
     font-family: "Parkinsans";
+    overflow-x: hidden;
     background-image:  linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
 }

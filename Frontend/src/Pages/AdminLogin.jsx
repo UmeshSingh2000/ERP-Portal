@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import toastHelper from '../../Utils/toastHelper';
@@ -11,6 +11,7 @@ const AdminLogin = () => {
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [loading, setLoading] = useState(false)
+
   const handleLogin = async () => {
     //if user not filled any field return
     if (!email.trim() || !pass.trim()) {
@@ -27,7 +28,7 @@ const AdminLogin = () => {
 
       //sending request to api
       const response = await axios.post(endpoint, payload)
-      
+
       if (response.data.token) {
         localStorage.setItem('token', response.data.token)
         toastHelper('success', response.data.message)
@@ -36,12 +37,30 @@ const AdminLogin = () => {
     }
     catch (err) {
       console.log(err);
-      
+
       toastHelper('error', err.response.data.message)
     }
     finally {
       setLoading(false)
     }
+  }
+  useEffect(() => {
+    const handleEnter = (e) => {
+      if (e.key === 'Enter') handleLogin()
+    }
+    document.addEventListener('keydown', handleEnter)
+    return () => document.removeEventListener('keydown', handleEnter)
+  }, [handleLogin])
+  useEffect(() => {
+    document.title = 'Admin Login';
+    setLoading(true)
+    const timeout = setTimeout(() => {
+      setLoading(false)
+    }, 500)
+    return () => clearTimeout(timeout)
+  }, [])
+  if (loading) {
+    return <div className='flex items-center justify-center h-screen'><Loader /></div>
   }
   return (
     <>
@@ -52,8 +71,14 @@ const AdminLogin = () => {
             <p className='text-base font-light'>Enter your credential to access your account </p>
           </header>
           <main className='w-full xl:w-9/12 flex flex-col items-center gap-2'>
-            <input className='w-full border-[#8E8A8A] border rounded-md px-2 py-1' type='email' placeholder='Email' onChange={(e) => setEmail(e.target.value)}/>
-            <input className='w-full border-[#8E8A8A] border rounded-md px-2 py-1' type='password' placeholder='Password' onChange={(e)=> setPass(e.target.value)}/>
+            <div className='flex w-full relative'>
+              <i className="fa-solid fa-envelope absolute top-1/2 -translate-y-1/2 left-[2%]"></i>
+              <input className='w-full border-[#8E8A8A] border rounded-md px-7 py-1' type='email' placeholder='Email' onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div className='flex w-full relative'>
+              <i className="fa-solid fa-lock absolute top-1/2 -translate-y-1/2 left-[2%]"></i>
+              <input className='w-full border-[#8E8A8A] border rounded-md px-7 py-1' type='password' placeholder='Password' onChange={(e) => setPass(e.target.value)} />
+            </div>
             {loading ? <Loader /> : <Button onclick={handleLogin} />}
           </main>
           <footer className='w-full flex flex-col items-center cursor-pointer justify-between'>

@@ -12,9 +12,8 @@ const authenticateToken = (req, res, next) => {
         const token = req.headers.authorization?.split(' ')[1];
         //check of token is missing 
         if (!token) return res.status(401).json({ message: "Access denied.No token provided" })
-        
         const secret = process.env.JWT_SECRET
-        if(!secret) {
+        if (!secret) {
             throw new Error("Server configuration error: JWT_SECRET is missing.");
         }
         const decoded = jwt.verify(token, secret)
