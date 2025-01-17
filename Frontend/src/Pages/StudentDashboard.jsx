@@ -1,5 +1,5 @@
 import React from 'react'
-
+// apply autherization logic here
 const StudentDashboard = () => {
   return (
     <div>

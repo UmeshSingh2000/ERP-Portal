@@ -16,13 +16,13 @@ const { hashPassword, comparePass } = require('../Utils/helperFunction')
 /**
  * @description Create a new admin account.
  * @route POST /api/admin
- * @access Public
+ * @access Private
  */
 const createAdmin = async (req, res) => {
     try {
-        const { email, password, role } = req.body
+        const { email, password, role,name } = req.body
         //checking all fields that are required
-        if (!email || !password || !role) return res.status(400).json({ message: 'Please provide all required fields' })
+        if (!email || !password || !role || !name) return res.status(400).json({ message: 'Please provide all required fields' })
 
         //email validate format
         const emailValid = isValidEmail(email);
@@ -40,7 +40,8 @@ const createAdmin = async (req, res) => {
         const newAdmin = new admin({
             email,
             password: hashedPass,
-            role
+            role,
+            fullName:name
         })
 
         //saving the admin data to db 
@@ -48,7 +49,8 @@ const createAdmin = async (req, res) => {
         res.status(201).json({
             message: "admin created", newAdmin: {
                 email,
-                role
+                role,
+                name
             }
         })
     }
@@ -96,11 +98,22 @@ const adminLogin = async (req, res) => {
 
 /**
  * @description Access the admin dashboard
- * @route GET /api/admin/dashbaord
+ * @route POST /api/admin/dashbaord
  * @access Private
  */
-const adminDashboard = (req, res) => {
-    res.status(200).json({ message: "Welcome to Admin Dashboard" })
+const adminDashboard = async(req, res) => {
+    console.log("calling")
+    const {id,role} = req.user
+    if(role!=="admin") return res.status(403).json({message:"Access denied: Admin privileges required."})
+    
+    const findAdmin = await admin.findOne({_id:id})
+    if(!findAdmin) return res.status(401).json({message:"Unauthorized access: Token invalid."})
+    
+    res.status(200).json({message:"Welcome to Dashboard",admin:{
+        email:findAdmin.email,
+        role:findAdmin.role,
+        name:findAdmin.fullName,
+    }})
 }
 
 

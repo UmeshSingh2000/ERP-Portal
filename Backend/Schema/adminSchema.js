@@ -2,7 +2,8 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 const admin = new Schema({
     fullName: {
-        type: String
+        type: String,
+        required: true
     },
     phoneNumber: {
         type: String
