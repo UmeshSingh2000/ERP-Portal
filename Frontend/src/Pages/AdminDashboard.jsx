@@ -5,6 +5,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import toastHelper from '../../Utils/toastHelper';
 import Loader from '../Componenets/Loader';
 import Hamburger from '../Componenets/Hamburger';
+import Students from './Admin Pages/Students';
+import logo from '../assets/Admin/manager.ico'
 const apiUrl = import.meta.env.VITE_API_URL
 const AdminDashboard = () => {
     const navigate = useNavigate()
@@ -15,11 +17,13 @@ const AdminDashboard = () => {
             navigate('/admin/login');
         }, 2000)
     }, [navigate])
+
     const [loading, setLoading] = useState(false)
     const [admin, setAdmin] = useState(() => JSON.parse(localStorage.getItem('admin')) || null)
-    
-    const [menu, setMenu] = useState(false)
 
+    const [activePage, setActivePage] = useState('Dashboard') //track active page
+
+    const [menu, setMenu] = useState(false)
     useEffect(() => {
         if (window.innerWidth > 768) {
             setMenu(true)
@@ -70,37 +74,51 @@ const AdminDashboard = () => {
             console.log(error.response);
         }
     }, [navigate, admin])
+
+
+    const handleActivePage = () => {
+        switch (activePage) {
+            case 'students':
+                return <Students />
+            default:
+                return <div>
+                    welcome to dashboard
+                </div>
+        }
+    }
     return (
         <>
             {loading && <div className='absolute top-1/2 left-1/2'><Loader /></div>}
-            <main className={`${loading ? 'hidden' : 'block'}`}>
-                <nav className=''>
-                    <div className={`flex justify-between items-center bg-gray-800 p-4`}>
-                        <Hamburger onClick={setMenu} state={menu} />
-                        <h1 className="text-white text-xl">Welcome {admin?.name.split(" ")[0]} 👋</h1>
-                        <div className='cursor-pointer'>
-                            {admin?.profile ? <img src={admin.profile} alt="profile" className="w-10 h-10 rounded-full" /> : <img src="https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png" alt="profile" className="w-10 h-10 rounded-full" />}
-                        </div>
-                    </div>
-                </nav>
-                <aside className={`${menu ? 'left-0' : '-left-full'} transition-all duration-300 h-screen w-1/2 relative`}>
-                    <ul className='bg-gray-200 flex flex-col gap-5 h-full pt-4 pl-4'>
+            <main className={`${loading ? 'hidden' : 'flex'} w-screen`}>
+                <aside className={`hamburger_menu ${menu ? 'left-0' : 'hidden'} transition-all duration-300 h-screen w-1/2 md:w-1/4 xl:w-1/5 relative`}>
+                    <ul className='bg-gray-200 flex flex-col gap-5 h-full'>
+                        <li className='h-20 flex items-center justify-center font-medium bg-gray-800 text-white'><img src={logo} alt="" className='w-10' />ERP </li>
                         <li className='cursor-pointer'>🏠 Dashboard</li>
                         <li className='cursor-pointer'>🧑‍🏫 Teachers</li>
-                        <li className='cursor-pointer'>🎓 Students</li>
+                        <li className='cursor-pointer' onClick={() => setActivePage('students')}>🎓 Students</li>
                         <li className='cursor-pointer'>⚙️ Settings</li>
-                        <li className='cursor-pointer'>🔓 <button onClick={() => {
+                        <li className='cursor-pointer' onClick={() => {
                             localStorage.removeItem('token')
                             localStorage.removeItem('admin')
                             navigate('/admin/login')
-                        }} className="bg-red-500 text-white px-2 py-1 rounded">Logout</button></li>
+                        }}>🔓 <button>Logout</button></li>
                     </ul>
-
                 </aside>
+                <section className='w-full'>
+                    <nav>
+                        <div className={`h-20 flex justify-between items-center bg-gray-800 p-4`}>
+                            <Hamburger onClick={setMenu} />
+                            <h1 className="text-white text-xl">Welcome {admin?.name.split(" ")[0]} 👋</h1>
+                            <div className='cursor-pointer'>
+                                {admin?.profile ? <img src={admin.profile} alt="profile" className="w-10 h-10 rounded-full" /> : <img src="https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png" alt="profile" className="w-10 h-10 rounded-full" />}
+                            </div>
+                        </div>
+                    </nav>
+                    {handleActivePage()}
+                </section>
             </main>
             <ToastContainer className="w-2/3 h-8 absolute z-10" />
         </>
     )
 }
-
 export default AdminDashboard

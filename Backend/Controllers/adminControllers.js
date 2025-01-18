@@ -102,7 +102,6 @@ const adminLogin = async (req, res) => {
  * @access Private
  */
 const adminDashboard = async(req, res) => {
-    console.log("calling")
     const {id,role} = req.user
     if(role!=="admin") return res.status(403).json({message:"Access denied: Admin privileges required."})
     

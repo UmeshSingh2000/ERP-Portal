@@ -7,3 +7,9 @@ html,body{
     overflow-x: hidden;
     background-image:  linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
 }
+
+.hamburger_menu ul li{
+    border-bottom: 1px solid black;
+    padding: 15px;
+    
+}

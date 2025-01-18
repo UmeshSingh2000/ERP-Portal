@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-const Hamburger = ({ onClick, state }) => {
+const Hamburger = ({ onClick }) => {
     const [buttonState, setButtonState] = useState(true)
     useEffect(() => {
         if (window.innerWidth > 768) {
@@ -11,7 +11,7 @@ const Hamburger = ({ onClick, state }) => {
 
     }, [])
     return (
-        <div className={`${buttonState ? 'block' : 'hidden'} cursor-pointer`} onClick={() => onClick(!state)}>
+        <div className={`${buttonState ? 'block' : 'hidden'} cursor-pointer`} onClick={() => onClick(prev=>!prev)}>
             <i className="fa-solid fa-bars text-2xl text-white"></i>
         </div>
     )
