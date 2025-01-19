@@ -3,7 +3,7 @@ import React from 'react'
 const Students = () => {
   return (
     <div>
-      welcome to student
+      handle student
     </div>
   )
 }

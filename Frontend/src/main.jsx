@@ -5,10 +5,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import StudentDashboard from './Pages/StudentDashboard'
 import AdminLogin from './Pages/AdminLogin'
 import AdminDashboard from './Pages/AdminDashboard'
+import NotFoundPage from './Pages/NotFoundPage'
 createRoot(document.getElementById('root')).render(
   <>
     <BrowserRouter>
       <Routes>
+        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/" element={<UserLogin />} />
         <Route path="/" element={<UserLogin />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route path="/admin/login" element={<AdminLogin />} />

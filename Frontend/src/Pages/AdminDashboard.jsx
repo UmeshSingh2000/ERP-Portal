@@ -7,6 +7,8 @@ import Loader from '../Componenets/Loader';
 import Hamburger from '../Componenets/Hamburger';
 import Students from './Admin Pages/Students';
 import logo from '../assets/Admin/manager.ico'
+import Teacher from './Admin Pages/Teacher';
+import Home from './Admin Pages/Home';
 const apiUrl = import.meta.env.VITE_API_URL
 const AdminDashboard = () => {
     const navigate = useNavigate()
@@ -75,15 +77,22 @@ const AdminDashboard = () => {
         }
     }, [navigate, admin])
 
+    const PAGES = {
+        DASHBOARD: 'dashboard',
+        STUDENTS: 'students',
+        TEACHERS: 'teachers',
+    }
 
     const handleActivePage = () => {
         switch (activePage) {
-            case 'students':
+            case PAGES.DASHBOARD:
+                return <Home />
+            case PAGES.STUDENTS:
                 return <Students />
+            case PAGES.TEACHERS:
+                return <Teacher />
             default:
-                return <div>
-                    welcome to dashboard
-                </div>
+                return <Home />
         }
     }
     return (
@@ -91,10 +100,10 @@ const AdminDashboard = () => {
             {loading && <div className='absolute top-1/2 left-1/2'><Loader /></div>}
             <main className={`${loading ? 'hidden' : 'flex'} w-screen`}>
                 <aside className={`hamburger_menu ${menu ? 'left-0' : 'hidden'} transition-all duration-300 h-screen w-1/2 md:w-1/4 xl:w-1/5 relative`}>
-                    <ul className='bg-gray-200 flex flex-col gap-5 h-full'>
+                    <ul className='bg-white shadow-lg flex flex-col gap-5 h-full'>
                         <li className='h-20 flex items-center justify-center font-medium bg-gray-800 text-white'><img src={logo} alt="" className='w-10' />ERP </li>
-                        <li className='cursor-pointer'>🏠 Dashboard</li>
-                        <li className='cursor-pointer'>🧑‍🏫 Teachers</li>
+                        <li className='cursor-pointer' onClick={() => setActivePage('dashboard')}>🏠 Dashboard</li>
+                        <li className='cursor-pointer' onClick={() => setActivePage('teachers')}>🧑‍🏫 Teachers</li>
                         <li className='cursor-pointer' onClick={() => setActivePage('students')}>🎓 Students</li>
                         <li className='cursor-pointer'>⚙️ Settings</li>
                         <li className='cursor-pointer' onClick={() => {
@@ -114,7 +123,9 @@ const AdminDashboard = () => {
                             </div>
                         </div>
                     </nav>
-                    {handleActivePage()}
+                    <main className='w-full h-auto p-4'>
+                        {handleActivePage()}
+                    </main>
                 </section>
             </main>
             <ToastContainer className="w-2/3 h-8 absolute z-10" />
