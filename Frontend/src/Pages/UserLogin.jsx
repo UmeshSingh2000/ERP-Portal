@@ -82,7 +82,7 @@ const UserLogin = () => {
   return (
     <>
       <main className='w-full h-dvh flex justify-center items-center'>
-        <section className='w-4/5 p-2 md:w-auto md:p-2 md:h-auto xl:w-1/3 xl:py-6 lg:h-4/6 lg:w-2/5 2xl:w-2/4 2xl:h-2/4 h-[26rem] flex flex-col justify-center items-center bg-white shadow-lg rounded gap-2 '>
+        <section className='w-4/5 p-2 md:w-auto md:p-2 md:h-auto xl:w-1/3 xl:py-6 lg:h-4/6 lg:w-2/5 2xl:w-2/4 2xl:h-2/4 h-[26rem] flex flex-col justify-center items-center bg-white shadow-lg rounded-lg gap-2 '>
           <header>
             <h1 className='text-2xl xl:text-3xl font-semibold'>Welcome Back</h1>
             <p className='text-base font-light'>Enter your credential to access your account </p>
