@@ -56,6 +56,30 @@ const AdminLogin = () => {
     const timeout = setTimeout(() => {
       setLoading(false)
     }, 500)
+    const token = localStorage.getItem('token')
+    const checkTokenValidation = async () => {
+      try {
+        const header = token;
+        const endPoint = `${apiUrl}/verify-token`
+        const response = await axios.post(endPoint, {}, {
+          headers: {
+            authorization: `Bearer ${header}`
+          }
+        })
+        if (response.status === 200) {
+          toastHelper('success', 'Automatic redirecting...')
+          setTimeout(() => {
+            navigate('/admin/dashboard')
+          }, 2000)
+        }
+      }
+      catch (err) {
+        console.log(err)
+      }
+    }
+    if (token) {
+      checkTokenValidation()
+    }
     return () => clearTimeout(timeout)
   }, [])
   if (loading) {

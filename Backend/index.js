@@ -52,6 +52,9 @@ app.use('/api/teacher',teacherRoute);
  */
 app.use('/api/student',studentRoute);
 
+
+app.use('/api',require('./Routes/verifyToken'))
+
 // Start the server
 app.listen(port, () => {
     console.log(`server is running on port ${port}`)
