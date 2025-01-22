@@ -6,7 +6,7 @@ const teacher = require('../Schema/teacherSchema')
 const { isValidEmail } = require('../Utils/validationUtils')
 
 //helper functions
-const { hashPassword, comparePass,capitalize } = require('../Utils/helperFunction')
+const { hashPassword, comparePass,capitalize,seperateString,checkTeacherExist } = require('../Utils/helperFunction')
 
 //jwt token generator
 const { generateToken } = require('../JWT/jwtToken')
@@ -24,9 +24,18 @@ const addTeacher = async (req, res) => {
             return res.status(400).json({ message: "All Fields are mandetory" })
         }
 
+        //spliting subjects by comma 
+        subjects = seperateString(subjects)
+        
         //email validate format
         const emailValid = isValidEmail(email);
 
+        //check if the teacher exist
+        
+        const isTeacher = await teacher.findOne({$or:[{email},{teacherId}]})
+        if(isTeacher) return res.status(400).json({message:"Teacher with this email or ID already exists"})
+
+        
         //capitalize name
         name = capitalize(name)
 

@@ -42,8 +42,27 @@ const checkTeacherExist=async(id)=>{
     }
 }
 
+/**
+ * @function capitalize
+ * @description Capitalize the string
+ * @param {string} - String to be capitalized
+ * @returns {string} - Returns capitalized string
+*/
+
 const capitalize = (str)=>{
     return str.toUpperCase();
+}
+
+/**
+ * @function seperateString
+ * @description Seperate string by comma
+ * @param {string} - String to be seperated
+ * @returns {array} - Reaturns array of strings
+*/
+
+
+const seperateString = (str) => {
+    return str.split(',');
 }
 
 module.exports = {
@@ -51,5 +70,6 @@ module.exports = {
     comparePass,
     checkStudentExist,
     checkTeacherExist,
-    capitalize
+    capitalize,
+    seperateString
 }

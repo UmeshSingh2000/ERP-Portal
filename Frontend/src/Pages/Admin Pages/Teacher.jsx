@@ -21,7 +21,7 @@ const Teacher = () => {
                     </div>
                 </footer>
             </nav>
-            {addTeacherToggle && <div className='absolute w-4/5 h-1/2 overflow-auto md:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
+            {addTeacherToggle && <div className='absolute w-4/5 h-3/5 overflow-auto scrollbar-thin md:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
                 <AddTeacher toggleState = {addTeacherToggle} onClick={setAddTeacherToggle}/>
             </div>}
         </>

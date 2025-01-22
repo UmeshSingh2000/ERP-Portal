@@ -101,7 +101,7 @@ const AdminDashboard = () => {
             <main className={`${loading ? 'hidden' : 'flex'} w-screen`}>
                 <aside className={`hamburger_menu ${menu ? 'left-0' : 'hidden'} transition-all duration-300 h-screen w-1/2 md:w-1/4 xl:w-1/5 relative`}>
                     <ul className='bg-white shadow-lg flex flex-col gap-5 h-full'>
-                        <li className='h-20 flex items-center justify-center font-medium bg-gray-800 text-white'><img src={logo} alt="" className='w-10' />ERP </li>
+                        <li className='h-20 flex items-center justify-center font-medium bg-gray-900 text-white'><img src={logo} alt="" className='w-10' />ERP </li>
                         <li className='cursor-pointer' onClick={() => setActivePage('dashboard')}>🏠 Dashboard</li>
                         <li className='cursor-pointer' onClick={() => setActivePage('teachers')}>🧑‍🏫 Teachers</li>
                         <li className='cursor-pointer' onClick={() => setActivePage('students')}>🎓 Students</li>
@@ -115,7 +115,7 @@ const AdminDashboard = () => {
                 </aside>
                 <section className='w-full'>
                     <nav>
-                        <div className={`h-20 flex justify-between items-center bg-gray-800 p-4`}>
+                        <div className={`h-20 flex justify-between items-center shadow-md bg-gray-900 p-4`}>
                             <Hamburger onClick={setMenu} />
                             <h1 className="text-white text-xl">Welcome {admin?.name.split(" ")[0]} 👋</h1>
                             <div className='cursor-pointer'>

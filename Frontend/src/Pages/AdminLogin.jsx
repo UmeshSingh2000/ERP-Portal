@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import toastHelper from '../../Utils/toastHelper';
 import Button from '../Componenets/Button'
 import Loader from '../Componenets/Loader';
@@ -57,6 +57,7 @@ const AdminLogin = () => {
       setLoading(false)
     }, 500)
     const token = localStorage.getItem('token')
+    const role = localStorage.getItem('admin') ? JSON.parse(localStorage.getItem('admin')).role : null
     const checkTokenValidation = async () => {
       try {
         const header = token;
@@ -77,7 +78,7 @@ const AdminLogin = () => {
         console.log(err)
       }
     }
-    if (token) {
+    if (token && role === 'admin') {
       checkTokenValidation()
     }
     return () => clearTimeout(timeout)
