@@ -9,8 +9,10 @@ import Students from './Admin Pages/Students';
 import logo from '../assets/Admin/manager.ico'
 import Teacher from './Admin Pages/Teacher';
 import Home from './Admin Pages/Home';
+import {  useSelector } from 'react-redux';
 const apiUrl = import.meta.env.VITE_API_URL
 const AdminDashboard = () => {
+    const data = useSelector((state)=>state.toast.value)
     const navigate = useNavigate()
     //helper function to navigate to login page
     const navigationHelper = useCallback(() => {
@@ -95,6 +97,12 @@ const AdminDashboard = () => {
                 return <Home />
         }
     }
+    useEffect(()=>{
+        if(data){
+            toastHelper(data.type, data.message)
+        }
+        return ()=>{}
+    },[data])
     return (
         <>
             {loading && <div className='absolute top-1/2 left-1/2'><Loader /></div>}
