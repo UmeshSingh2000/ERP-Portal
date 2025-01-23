@@ -28,13 +28,13 @@ const AdminDashboard = () => {
     const [activePage, setActivePage] = useState('Dashboard') //track active page
 
     const [menu, setMenu] = useState(false)
-    useEffect(() => {
-        if (window.innerWidth > 768) {
-            setMenu(true)
-        } else {
-            setMenu(false)
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (window.innerWidth > 768) {
+    //         setMenu(true)
+    //     } else {
+    //         setMenu(false)
+    //     }
+    // }, [])
 
     useEffect(() => {
         if (admin) return;

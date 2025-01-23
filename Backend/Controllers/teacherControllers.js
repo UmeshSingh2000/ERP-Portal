@@ -170,9 +170,30 @@ const teacherLogin = async (req, res) => {
     }
 }
 
+/**
+ * @description Fetch all teachers
+ * @route POST /api/admin/getTeacher
+ * @access Private
+ */
+
+
+const getTeacher = async(req,res)=>{
+    try {
+        //fetch teacher exluding those fields
+        const teachers = await teacher.find({},'-password -__v -createdAt -updatedAt -role');
+        res.status(200).json({teachers})
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({message:"Internal Server Error"})
+    }
+}
+
+
+
 module.exports = {
     addTeacher,
     deleteTeacher,
     updateTeacher,
-    teacherLogin
+    teacherLogin,
+    getTeacher
 }
