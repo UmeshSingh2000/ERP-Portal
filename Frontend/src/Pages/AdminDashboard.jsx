@@ -9,10 +9,10 @@ import Students from './Admin Pages/Students';
 import logo from '../assets/Admin/manager.ico'
 import Teacher from './Admin Pages/Teacher';
 import Home from './Admin Pages/Home';
-import {  useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 const apiUrl = import.meta.env.VITE_API_URL
 const AdminDashboard = () => {
-    const data = useSelector((state)=>state.toast.value)
+    const data = useSelector((state) => state.toast.value)
     const navigate = useNavigate()
     //helper function to navigate to login page
     const navigationHelper = useCallback(() => {
@@ -97,16 +97,16 @@ const AdminDashboard = () => {
                 return <Home />
         }
     }
-    useEffect(()=>{
-        if(data){
+    useEffect(() => {
+        if (data) {
             toastHelper(data.type, data.message)
         }
-        return ()=>{}
-    },[data])
+        return () => { }
+    }, [data])
     return (
         <>
             {loading && <div className='absolute top-1/2 left-1/2'><Loader /></div>}
-            <main className={`${loading ? 'hidden' : 'flex'} w-screen`}>
+            <main className={`${loading ? 'hidden' : 'flex'} h-screen w-screen`}>
                 <aside className={`hamburger_menu ${menu ? 'left-0' : 'hidden'} transition-all duration-300 h-screen w-1/2 md:w-1/4 xl:w-1/5 relative`}>
                     <ul className='bg-white shadow-lg flex flex-col gap-5 h-full'>
                         <li className='h-20 flex items-center justify-center font-medium bg-gray-900 text-white'><img src={logo} alt="" className='w-10' />ERP </li>
@@ -121,7 +121,7 @@ const AdminDashboard = () => {
                         }}>🔓 <button>Logout</button></li>
                     </ul>
                 </aside>
-                <section className='w-full'>
+                <section className='w-full flex h-2/3 flex-col'>
                     <nav>
                         <div className={`h-20 flex justify-between items-center shadow-md bg-gray-900 p-4`}>
                             <Hamburger onClick={setMenu} />
@@ -131,7 +131,7 @@ const AdminDashboard = () => {
                             </div>
                         </div>
                     </nav>
-                    <main className='w-full h-auto p-4'>
+                    <main className='w-full h-full p-4'>
                         {handleActivePage()}
                     </main>
                 </section>
