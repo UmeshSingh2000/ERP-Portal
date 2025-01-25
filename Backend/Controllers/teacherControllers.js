@@ -93,6 +93,34 @@ const deleteTeacher = async (req, res) => {
 }
 
 /**
+ * @description Delete multiple Teacher (Admin Only)
+ * @route DELETE /api/admin/delete-multipleTeacher/:teacherId
+ * @access Private
+ */
+//deleting multiple record insure that the teacherIds are in array
+const deleteMultipleTeacher = async (req, res) => {
+    const { teacherIds } = req.params; // this comes as a string format
+    //convert the string to array 
+    const teacherIdsArray = teacherIds.split(',')
+
+    const objectIds = teacherIdsArray.map((id)=>new mongoose.Types.ObjectId(id))
+    try{
+        const deletedTeacher = await teacher.deleteMany({_id:{$in:objectIds}})
+        if(!deletedTeacher){
+            return res.status(404).json({message:"Teacher not found"})
+        }
+        res.status(200).json({message:"Teacher deleted successfully",deletedTeacher})
+    }
+    catch(err){
+        console.error(err)
+        res.status(500).json({ message: "Internal Server error", error: err.message })
+    }
+}
+
+
+
+
+/**
  * @description Update Teacher (Admin Only)
  * @route PUT /api/admin/updateTeacher/:teacherId
  * @access Private
@@ -195,5 +223,6 @@ module.exports = {
     deleteTeacher,
     updateTeacher,
     teacherLogin,
-    getTeacher
+    getTeacher,
+    deleteMultipleTeacher
 }

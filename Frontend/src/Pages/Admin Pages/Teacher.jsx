@@ -3,10 +3,12 @@ import AddTeacher from './AddTeacher'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { setData } from '../../Redux/Features/Teachers/teachersSlice'
+import { setToastWithTimeout } from '../../Redux/Features/Toast/toastSlice'
 import Loader from '../../Componenets/Loader'
 const apiUrl = import.meta.env.VITE_API_URL
 const Teacher = () => {
     const [addTeacherToggle, setAddTeacherToggle] = useState(false)
+    const [selectedTeacher, setSelectedTeacher] = useState([])
     const [search, setSearch] = useState('')
     const teacherData = useSelector((state) => state.teachers.value) // teacher data stores in redux
     const [duplicateTeacherData, setDuplicateTeacherData] = useState(teacherData)
@@ -15,6 +17,7 @@ const Teacher = () => {
 
     //fetch teacher data
     const fetchData = useCallback(async () => {
+        setSelectedTeacher([])
         setLoading(true)
         try {
             const response = await axios.get(`${apiUrl}/admin/getTeachers`,
@@ -48,7 +51,50 @@ const Teacher = () => {
         setDuplicateTeacherData(filteredData)
     }
 
+    //delete teacher
+    const handleDelete = async (teacherId, name) => {
+        const confirm = window.confirm(`Are you sure you want to delete this teacher : ${name}?`)
+        if (!confirm) return
+        try {
+            const response = await axios.delete(`${apiUrl}/admin/deleteTeacher/${teacherId}`, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            if (response.status === 200) {
+                dispatch(setToastWithTimeout({ type: 'success', message: response.data.message }))
+            }
+        }
+        catch (err) {
+            dispatch(setToastWithTimeout({ type: 'error', message: err.response.data.message }))
+        }
+    }
 
+    //handle multiple teacher select to delete
+    const handleSelect = (teacherId) => {
+        if (selectedTeacher.includes(teacherId)) return setSelectedTeacher(selectedTeacher.filter((id) => id !== teacherId))
+        setSelectedTeacher([...selectedTeacher, teacherId])
+    }
+    const isExist = (teacherId) => {
+        return selectedTeacher.includes(teacherId)
+    }
+    //delete multiple teacher
+    const handleDeleteMultiple = async () => {
+        const teacherIds = selectedTeacher.join(',')
+        try {
+            const response = await axios.delete(`${apiUrl}/admin/delete-multipleTeacher/${teacherIds}`, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            if (response.status === 200) {
+                dispatch(setToastWithTimeout({ type: 'success', message: response.data.message }))
+                fetchData()
+            }
+        } catch (err) {
+            dispatch(setToastWithTimeout({ type: 'error', message: err.response.data.message }))
+        }
+    }
 
     useEffect(() => {
         setDuplicateTeacherData(teacherData);
@@ -69,9 +115,10 @@ const Teacher = () => {
                     <div className='relative w-full'>
                         <i className="fa-solid fa-magnifying-glass absolute top-1/2 -translate-y-1/2 left-[2%]"></i>
                         <div className='flex items-center gap-2'>
-                            <input type="text" placeholder='Search Teacher' className='border-[#D4D4D4] border rounded-md w-full p-2 px-7 text-sm' value={search} onChange={handleSearch} />
+                            <input type="text" placeholder='Search Teacher' className='border-[#D4D4D4] border rounded-md w-full p-2 px-9 text-sm' value={search} onChange={handleSearch} />
                             <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm' onClick={handleSearch}>Search</button>
                             <button className='p-2 bg-red-500 rounded text-white' onClick={fetchData}>Refresh</button>
+                            <button className={`${selectedTeacher.length > 1 ? 'block' : 'hidden'} p-2 bg-red-500 rounded text-white`} onClick={handleDeleteMultiple}>Delete</button>
                         </div>
                     </div>
                 </footer>
@@ -83,18 +130,20 @@ const Teacher = () => {
                 <table className='w-full'>
                     <thead className='bg-[#EFEFEF] h-10 border-[#D4D4D4] border'>
                         <tr className='text-left'>
+                            <th>Sno:</th>
                             <th>Teacher Id</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Subjects</th>
                             <th>Course</th>
-                            <th>Action</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
-                    {loading ? <Loader /> :
+                    {loading ? <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"><Loader /></div> :
                         <tbody>
                             {duplicateTeacherData.length > 0 ? duplicateTeacherData.map((teacher, index) => {
-                                return <tr key={index} className='border-[#D4D4D4] border h-10'>
+                                return <tr key={index} className={`${isExist(teacher._id) ? 'bg-[#EFEFEF] shadow-md' : 'bg-transparent'} border-[#D4D4D4] border h-10 transition-all duration-200`}>
+                                    <td><input type="checkbox" className='mr-2 ml-1' onClick={() => handleSelect(teacher._id)} />{index + 1}</td>
                                     <td>{teacher.teacherId}</td>
                                     <td>{teacher.name}</td>
                                     <td>{teacher.email}</td>
@@ -105,10 +154,10 @@ const Teacher = () => {
                                             })}
                                         </select></td>
                                     <td>{teacher.course}</td>
-                                    <td><i className="fa-solid fa-trash cursor-pointer text-red-600"></i></td>
+                                    <td><i className="fa-solid fa-trash  ml-3 mr-3 cursor-pointer text-red-600" onClick={() => handleDelete(teacher._id, teacher.name)}></i><i className="fa-regular fa-pen-to-square"></i></td>
                                 </tr>
                             }) : <tr className='border-[#D4D4D4] border h-10'>
-                                <td className='text-center' colSpan='6'>No Data Found</td>
+                                <td className='text-center' colSpan='8'>No Data Found</td>
                             </tr>}
                         </tbody>
                     }

@@ -18,7 +18,8 @@ const {
     addTeacher,
     deleteTeacher,
     updateTeacher,
-    getTeacher
+    getTeacher,
+    deleteMultipleTeacher
 } = require('../Controllers/teacherControllers') //Controllers for Teacher
 
 
@@ -80,6 +81,8 @@ router.post('/addTeacher', authenticateToken,adminOnly, addTeacher)
  * @access Protected (required valid token)
  */
 router.delete('/deleteTeacher/:teacherId', authenticateToken,adminOnly, deleteTeacher)
+router.delete('/delete-multipleTeacher/:teacherIds', authenticateToken,adminOnly, deleteMultipleTeacher)
+
 
 /**
  * @description Update Teacher(protected Route)
