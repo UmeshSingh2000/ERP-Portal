@@ -7,15 +7,19 @@ import { setToastWithTimeout } from '../../Redux/Features/Toast/toastSlice'
 import Loader from '../../Componenets/Loader'
 const apiUrl = import.meta.env.VITE_API_URL
 const Teacher = () => {
-    const [addTeacherToggle, setAddTeacherToggle] = useState(false)
-    const [selectedTeacher, setSelectedTeacher] = useState([])
-    const [search, setSearch] = useState('')
+    const [addTeacherToggle, setAddTeacherToggle] = useState(false) // add teacher button toggle state
+    const [selectedTeacher, setSelectedTeacher] = useState([]) // selected teacher for multiple deletion
+    const [search, setSearch] = useState('') // search value
     const teacherData = useSelector((state) => state.teachers.value) // teacher data stores in redux
-    const [duplicateTeacherData, setDuplicateTeacherData] = useState(teacherData)
-    const [loading, setLoading] = useState(false)
-    const dispatch = useDispatch()
+    const [duplicateTeacherData, setDuplicateTeacherData] = useState(teacherData) // duplicate teacher data for search 
+    const [loading, setLoading] = useState(false) // loading state
+    const dispatch = useDispatch() // dispatch function for dispatching action to redux
 
-    //fetch teacher data
+    /**
+     * @function fetchData
+     * @returns fetch teacher data from db
+     * @description This function fetch teacher data from db and set data to redux
+     */
     const fetchData = useCallback(async () => {
         setSelectedTeacher([])
         setLoading(true)
@@ -37,7 +41,12 @@ const Teacher = () => {
         }
     })
 
-    //search teacher
+    /**
+     * @function handleSearch
+     * @param {object} e 
+     * @returns set search value and filter teacher data default det to teacherData(full data) from db
+     * @description This function search teacher by name and filter teacher data
+     */
     const handleSearch = (e) => {
         const value = e.target.value
         setSearch(value)
@@ -51,7 +60,14 @@ const Teacher = () => {
         setDuplicateTeacherData(filteredData)
     }
 
-    //delete teacher
+
+    /**
+     * @function handleDelete
+     * @param {string} teacherId 
+     * @param {*string} name 
+     * @description This function delete teacher by teacherId 
+     */
+
     const handleDelete = async (teacherId, name) => {
         const confirm = window.confirm(`Are you sure you want to delete this teacher : ${name}?`)
         if (!confirm) return
@@ -70,16 +86,33 @@ const Teacher = () => {
         }
     }
 
-    //handle multiple teacher select to delete
+    /**
+     * @function handleSelect
+     * @param {string} teacherId 
+     * @description This function select teacher for multiple deletion and add the selected teacher to selectedTeacher array
+     */
     const handleSelect = (teacherId) => {
         if (selectedTeacher.includes(teacherId)) return setSelectedTeacher(selectedTeacher.filter((id) => id !== teacherId))
         setSelectedTeacher([...selectedTeacher, teacherId])
     }
+
+    /**
+     * @function isExist
+     * @param {string} teacherId 
+     * @returns boolean
+     * @description This function check the teacher is exist in selectedTeacher array
+     */
     const isExist = (teacherId) => {
         return selectedTeacher.includes(teacherId)
     }
-    //delete multiple teacher
+
+    /**
+     * @function handleDeleteMultiple
+     * @description This function delete multiple teacher by teacherId require the id to be send as string seperated by comma which will be converted to array in the backend as db only accept array for multiple deletion
+     */
     const handleDeleteMultiple = async () => {
+        const confirm = window.confirm(`Are you sure you want to delete teachers?`)
+        if (!confirm) return
         const teacherIds = selectedTeacher.join(',')
         try {
             const response = await axios.delete(`${apiUrl}/admin/delete-multipleTeacher/${teacherIds}`, {
@@ -96,10 +129,16 @@ const Teacher = () => {
         }
     }
 
+    /**
+     * @description when teacherData changes set duplicateTeacherData to teacherData
+     */
     useEffect(() => {
         setDuplicateTeacherData(teacherData);
     }, [teacherData]);
 
+    /**
+     * @description when teacherData length is greater than 0 then fetchData from db
+     */
     useEffect(() => {
         if (teacherData.length > 0) return
         fetchData()
@@ -154,7 +193,7 @@ const Teacher = () => {
                                             })}
                                         </select></td>
                                     <td>{teacher.course}</td>
-                                    <td><i className="fa-solid fa-trash  ml-3 mr-3 cursor-pointer text-red-600" onClick={() => handleDelete(teacher._id, teacher.name)}></i><i className="fa-regular fa-pen-to-square"></i></td>
+                                    <td><i className="fa-solid fa-trash  ml-3 mr-3 cursor-pointer text-red-600" onClick={() => handleDelete(teacher._id, teacher.name)}></i><i className="fa-regular fa-pen-to-square cursor-pointer"></i></td>
                                 </tr>
                             }) : <tr className='border-[#D4D4D4] border h-10'>
                                 <td className='text-center' colSpan='8'>No Data Found</td>
