@@ -47,7 +47,7 @@ const AddTeacher = ({ toggleState, onClick }) => {
     }
     return (
         <>
-            <section className='w-full flex flex-col gap-2 bg-white p-5 rounded-lg'>
+            <section className='w-full flex flex-col rounded-lg gap-2 bg-white p-5'>
                 <nav className='flex justify-between items-center'>
                     <h1 className='text-xl font-medium'>Add New Teacher</h1>
                     <i className="fa-solid fa-x cursor-pointer" onClick={() => onClick(!toggleState)}></i>

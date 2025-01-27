@@ -148,6 +148,16 @@ const updateTeacher = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(teacherId)) {
             return res.status(400).json({ message: "Invalid teacher ID format" });
         }
+
+        //spliting subjects by comma
+        if(updatedData.subjects){
+            updatedData.subjects = seperateString(updatedData.subjects)
+        }
+
+        if(updatedData.teacherId){
+            updatedData.teacherId = capitalize(updatedData.teacherId)
+        }
+
         //updating teacher
         const updatedTeacher = await teacher.findByIdAndUpdate(teacherId,
             { $set: updatedData },

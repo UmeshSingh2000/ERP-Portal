@@ -5,8 +5,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setData } from '../../Redux/Features/Teachers/teachersSlice'
 import { setToastWithTimeout } from '../../Redux/Features/Toast/toastSlice'
 import Loader from '../../Componenets/Loader'
+import Edit from './Edit'
 const apiUrl = import.meta.env.VITE_API_URL
 const Teacher = () => {
+    const [editTeacherToggle, setEditTeacherToggle] = useState(false) // edit teacher button toggle state
+    const [editTeacher, setEditTeacher] = useState({}) // edit teacher data
     const [addTeacherToggle, setAddTeacherToggle] = useState(false) // add teacher button toggle state
     const [selectedTeacher, setSelectedTeacher] = useState([]) // selected teacher for multiple deletion
     const [search, setSearch] = useState('') // search value
@@ -148,23 +151,27 @@ const Teacher = () => {
             <nav>
                 <header className='flex justify-between items-center p-2'>
                     <h1 className='font-bold'>Teachers</h1>
-                    <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm' onClick={() => setAddTeacherToggle(!addTeacherToggle)}>Add Teacher</button>
+                    <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm' onClick={() => {
+                        setEditTeacherToggle(false)
+                        setAddTeacherToggle(!addTeacherToggle)
+                    }}>Add Teacher</button>
                 </header>
                 <footer className='w-full md:w-1/2'>
                     <div className='relative w-full'>
                         <i className="fa-solid fa-magnifying-glass absolute top-1/2 -translate-y-1/2 left-[2%]"></i>
                         <div className='flex items-center gap-2'>
                             <input type="text" placeholder='Search Teacher' className='border-[#D4D4D4] border rounded-md w-full p-2 px-9 text-sm' value={search} onChange={handleSearch} />
-                            <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm' onClick={handleSearch}>Search</button>
-                            <button className='p-2 bg-red-500 rounded text-white' onClick={fetchData}>Refresh</button>
+                            <button className='p-2 bg-[#3E3CCC] rounded text-white' onClick={fetchData}>Refresh</button>
                             <button className={`${selectedTeacher.length > 1 ? 'block' : 'hidden'} p-2 bg-red-500 rounded text-white`} onClick={handleDeleteMultiple}>Delete</button>
                         </div>
                     </div>
                 </footer>
             </nav>
-            {addTeacherToggle && <div className='absolute w-4/5 h-3/5 overflow-auto scrollbar-thin md:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
+            {addTeacherToggle && <div className='absolute w-4/5 h-3/4 overflow-auto shadow-xl scrollbar-thin md:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
                 <AddTeacher toggleState={addTeacherToggle} onClick={setAddTeacherToggle} />
             </div>}
+            {/**edit teacher panel */}
+            {editTeacherToggle && <div className='absolute w-4/5 h-3/4 overflow-auto shadow-xl scrollbar-thin md:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'><Edit toggleState={editTeacherToggle} onClick={setEditTeacherToggle} teacherData={editTeacher} /></div>}
             <main className='pt-3 h-full overflow-auto scrollbar-thin'>
                 <table className='w-full'>
                     <thead className='bg-[#EFEFEF] h-10 border-[#D4D4D4] border'>
@@ -193,7 +200,11 @@ const Teacher = () => {
                                             })}
                                         </select></td>
                                     <td>{teacher.course}</td>
-                                    <td><i className="fa-solid fa-trash  ml-3 mr-3 cursor-pointer text-red-600" onClick={() => handleDelete(teacher._id, teacher.name)}></i><i className="fa-regular fa-pen-to-square cursor-pointer"></i></td>
+                                    <td><i className="fa-solid fa-trash  ml-3 mr-3 cursor-pointer text-red-600" onClick={() => handleDelete(teacher._id, teacher.name)}></i><i className="fa-regular fa-pen-to-square cursor-pointer" onClick={() => {
+                                        setAddTeacherToggle(false)
+                                        setEditTeacherToggle(!editTeacherToggle)
+                                        setEditTeacher(teacher)
+                                    }}></i></td>
                                 </tr>
                             }) : <tr className='border-[#D4D4D4] border h-10'>
                                 <td className='text-center' colSpan='8'>No Data Found</td>

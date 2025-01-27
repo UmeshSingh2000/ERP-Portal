@@ -25,7 +25,7 @@ const AdminDashboard = () => {
     const [loading, setLoading] = useState(false)
     const [admin, setAdmin] = useState(() => JSON.parse(localStorage.getItem('admin')) || null)
 
-    const [activePage, setActivePage] = useState('Dashboard') //track active page
+    const [activePage, setActivePage] = useState('dashboard') //track active page
 
     const [menu, setMenu] = useState(false)
     // useEffect(() => {
@@ -79,6 +79,7 @@ const AdminDashboard = () => {
         }
     }, [navigate, admin])
 
+    
     const PAGES = {
         DASHBOARD: 'dashboard',
         STUDENTS: 'students',
@@ -107,13 +108,13 @@ const AdminDashboard = () => {
         <>
             {loading && <div className='absolute top-1/2 left-1/2'><Loader /></div>}
             <main className={`${loading ? 'hidden' : 'flex'} h-screen w-screen`}>
-                <aside className={`hamburger_menu ${menu ? 'left-0' : 'hidden'} transition-all duration-300 h-screen w-1/2 md:w-1/4 xl:w-1/5 relative`}>
-                    <ul className='bg-white shadow-lg flex flex-col gap-5 h-full'>
-                        <li className='h-20 flex items-center justify-center font-medium bg-gray-900 text-white'><img src={logo} alt="" className='w-10' />ERP </li>
-                        <li className='cursor-pointer' onClick={() => setActivePage('dashboard')}>🏠 Dashboard</li>
-                        <li className='cursor-pointer' onClick={() => setActivePage('teachers')}>🧑‍🏫 Teachers</li>
-                        <li className='cursor-pointer' onClick={() => setActivePage('students')}>🎓 Students</li>
-                        <li className='cursor-pointer'>⚙️ Settings</li>
+                <aside className={`hamburger_menu ${menu ? 'left-0' : 'hidden'}  transition-all duration-300 h-screen w-1/2 md:w-1/4 xl:w-1/5 relative`}>
+                    <ul className=' shadow-lg flex flex-col gap h-full'>
+                        <li className='h-20 flex items-center justify-center font-medium bg-black text-white'><img src={logo} alt="" className='w-10' />ERP </li>
+                        <li className={`cursor-pointer ${activePage === 'dashboard' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('dashboard')}>🏠 Dashboard</li>
+                        <li className={`cursor-pointer ${activePage === 'teachers' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('teachers')}>🧑‍🏫 Teachers</li>
+                        <li className={`cursor-pointer ${activePage === 'students' ? 'bg-[#0C0E12] text-white' : ''}`}  onClick={() => setActivePage('students')}>🎓 Students</li>
+                        <li className={`cursor-pointer ${activePage === 'settings' ? 'bg-[#0C0E12] text-white' : ''}`} >⚙️ Settings</li>
                         <li className='cursor-pointer' onClick={() => {
                             localStorage.removeItem('token')
                             localStorage.removeItem('admin')
@@ -123,7 +124,7 @@ const AdminDashboard = () => {
                 </aside>
                 <section className='w-full flex h-2/3 flex-col'>
                     <nav>
-                        <div className={`h-20 flex justify-between items-center shadow-md bg-gray-900 p-4`}>
+                        <div style={navBarStyle} className={`h-20 flex justify-between items-center shadow-md  p-4`}>
                             <Hamburger onClick={setMenu} />
                             <h1 className="text-white text-xl">Welcome {admin?.name.split(" ")[0]} 👋</h1>
                             <div className='cursor-pointer'>
@@ -132,7 +133,7 @@ const AdminDashboard = () => {
                         </div>
                     </nav>
                     <main className='w-full h-full p-4'>
-                        {handleActivePage()}
+                        {loading ? <Loader /> : handleActivePage()}
                     </main>
                 </section>
             </main>
@@ -140,4 +141,8 @@ const AdminDashboard = () => {
         </>
     )
 }
+const navBarStyle = {
+    background: 'linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(22, 26, 33, 1) 20%, rgba(31, 41, 56, 1) 40%, rgba(36, 51, 74, 1) 60%, rgba(41, 61, 91, 1) 80%, rgba(32, 57, 93, 1) 100%)'
+}
+
 export default AdminDashboard
