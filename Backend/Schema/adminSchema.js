@@ -17,6 +17,9 @@ const admin = new Schema({
     photo:{
         type:Buffer
     },
+    photoType:{
+        type:String
+    },
     role:{
         type:String,required:true,
         enum: ['admin']

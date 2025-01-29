@@ -154,6 +154,7 @@ const updateTeacher = async (req, res) => {
             updatedData.subjects = seperateString(updatedData.subjects)
         }
 
+        //capitalize name
         if(updatedData.teacherId){
             updatedData.teacherId = capitalize(updatedData.teacherId)
         }
@@ -210,7 +211,7 @@ const teacherLogin = async (req, res) => {
 
 /**
  * @description Fetch all teachers
- * @route POST /api/admin/getTeacher
+ * @route GET /api/admin/getTeacher
  * @access Private
  */
 

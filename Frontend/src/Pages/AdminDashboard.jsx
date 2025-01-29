@@ -10,6 +10,7 @@ import logo from '../assets/Admin/manager.ico'
 import Teacher from './Admin Pages/Teacher';
 import Home from './Admin Pages/Home';
 import { useSelector } from 'react-redux';
+import Settings from './Admin Pages/Settings';
 const apiUrl = import.meta.env.VITE_API_URL
 const AdminDashboard = () => {
     const data = useSelector((state) => state.toast.value)
@@ -79,11 +80,12 @@ const AdminDashboard = () => {
         }
     }, [navigate, admin])
 
-    
+
     const PAGES = {
         DASHBOARD: 'dashboard',
         STUDENTS: 'students',
         TEACHERS: 'teachers',
+        SETTINGS: 'settings'
     }
 
     const handleActivePage = () => {
@@ -94,6 +96,8 @@ const AdminDashboard = () => {
                 return <Students />
             case PAGES.TEACHERS:
                 return <Teacher />
+            case PAGES.SETTINGS:
+                return <Settings/>
             default:
                 return <Home />
         }
@@ -113,8 +117,8 @@ const AdminDashboard = () => {
                         <li className='h-20 flex items-center justify-center font-medium bg-black text-white'><img src={logo} alt="" className='w-10' />ERP </li>
                         <li className={`cursor-pointer ${activePage === 'dashboard' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('dashboard')}>🏠 Dashboard</li>
                         <li className={`cursor-pointer ${activePage === 'teachers' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('teachers')}>🧑‍🏫 Teachers</li>
-                        <li className={`cursor-pointer ${activePage === 'students' ? 'bg-[#0C0E12] text-white' : ''}`}  onClick={() => setActivePage('students')}>🎓 Students</li>
-                        <li className={`cursor-pointer ${activePage === 'settings' ? 'bg-[#0C0E12] text-white' : ''}`} >⚙️ Settings</li>
+                        <li className={`cursor-pointer ${activePage === 'students' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('students')}>🎓 Students</li>
+                        <li className={`cursor-pointer ${activePage === 'settings' ? 'bg-[#0C0E12] text-white' : ''}`}  onClick={()=>setActivePage('settings')}>⚙️ Settings</li>
                         <li className='cursor-pointer' onClick={() => {
                             localStorage.removeItem('token')
                             localStorage.removeItem('admin')
@@ -128,7 +132,7 @@ const AdminDashboard = () => {
                             <Hamburger onClick={setMenu} />
                             <h1 className="text-white text-xl">Welcome {admin?.name.split(" ")[0]} 👋</h1>
                             <div className='cursor-pointer'>
-                                {admin?.profile ? <img src={admin.profile} alt="profile" className="w-10 h-10 rounded-full" /> : <img src="https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png" alt="profile" className="w-10 h-10 rounded-full" />}
+                                {admin?.profile ? <img src={`${apiUrl}${admin.profile}`} alt="profile" className="w-10 h-10 rounded-full object-cover" /> : <img src="https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png" alt="profile" className="w-10 h-10 rounded-full" />}
                             </div>
                         </div>
                     </nav>

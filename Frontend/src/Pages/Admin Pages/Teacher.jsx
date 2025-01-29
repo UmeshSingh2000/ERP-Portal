@@ -150,7 +150,7 @@ const Teacher = () => {
         <>
             <nav>
                 <header className='flex justify-between items-center p-2'>
-                    <h1 className='font-bold'>Teachers</h1>
+                    <h1 className='font-bold text-3xl'>Teachers</h1>
                     <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm' onClick={() => {
                         setEditTeacherToggle(false)
                         setAddTeacherToggle(!addTeacherToggle)
