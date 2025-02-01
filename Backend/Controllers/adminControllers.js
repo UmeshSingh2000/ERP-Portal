@@ -126,6 +126,12 @@ const adminDashboard = async (req, res) => {
 }
 
 
+
+/**
+ * @description Access the admin profile
+ * @route POST /api/admin/getProfile/:id
+ * @access Public
+ */
 const getAdminProfile = async (req, res) => {
     try {
         const { id } = req.params
@@ -145,14 +151,7 @@ const getAdminProfile = async (req, res) => {
 
 
 /**
- * Updates the profile picture of an admin user.
- *
- * @param {Object} req - The request object.
- * @param {Object} req.user - The user object containing id and role.
- * @param {string} req.user.id - The ID of the user.
- * @param {string} req.user.role - The role of the user.
- * @param {Object} req.file - The file object containing the new profile picture.
- * @param {Object} res - The response object.
+ * @description Update the admin profile picture
  * @returns {Promise<void>} - A promise that resolves when the profile picture is updated.
  *
  * @throws {Error} - If there is an internal server error.
