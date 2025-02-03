@@ -1,14 +1,29 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { setToastWithTimeout } from '../../Redux/Features/Toast/toastSlice'
 import Loader from '../../Componenets/Loader'
 const apiUrl = import.meta.env.VITE_API_URL
 const Settings = () => {
+    const admin = JSON.parse(localStorage.getItem('admin'))
+    const [userDetails, setUserDetails] = useState({
+        name: admin?.name,
+        email: admin?.email,
+        password: "",
+        newPassword: "",
+        confirmPassword: ""
+    })
+    const inputFields = useCallback((placeholder, type = "text", label, name) => {
+        return (
+            <div>
+                <label className=''>{label}</label>
+                <input type={type} name={name} placeholder={placeholder} className='border-[#D4D4D4] border rounded-md w-full p-2 text-sm focus:outline-none focus:border-blue-500' value={userDetails[name] || ""} onChange={(e) => setUserDetails({ ...userDetails, [name]: e.target.value })} />
+            </div>)
+    }, [userDetails])
     const dispatch = useDispatch()
     const fileInputRef = useRef()
     const [loading, setLoading] = useState(false)
-    const admin = JSON.parse(localStorage.getItem('admin'))
+
     const handleUpdateProfile = async () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
@@ -49,7 +64,7 @@ const Settings = () => {
     }
     return (
         <>
-            <section>
+            <section className='w-full h-auto p-5'>
                 <header>
                     <h1 className='font-medium text-3xl'>Settings</h1>
                 </header>
@@ -61,8 +76,18 @@ const Settings = () => {
                             <input ref={fileInputRef} onChange={handleFileChange} type="file" className='hidden' accept='image/*' />
                         </div>
                     </aside>
-                    <main>
-                        <h1>My Profile</h1>
+                    <main className='w-2/3 flex flex-col gap-2'>
+                        <header>
+                            <h1 className='text-2xl font-bold underline'>My Profile</h1>
+                        </header>
+                        {inputFields("Ex. John Doe", "", "Full Name", "name")}
+                        {inputFields("Ex. xyz@gmail.com", "email", "Email", 'email')}
+                        <div className='flex gap-5'>
+                            {inputFields("Password...", "password", "Current Password", "password")}
+                            {inputFields("Password...", "password", "New Password", "newPassword")}
+                            {inputFields("Password...", "password", "Confirm New Password", "confirmPassword")}
+                        </div>
+                        <button className='bg-[#3E3CCC] text-white p-2 w-40 rounded text-sm' >Save</button>
                     </main>
                 </main>
             </section>
