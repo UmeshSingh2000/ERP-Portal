@@ -108,6 +108,9 @@ const AdminDashboard = () => {
         }
         return () => { }
     }, [data])
+    useEffect(()=>{
+        document.title = `Admin/${activePage.slice(0,1).toUpperCase() + activePage.slice(1)}`
+    },[activePage])
     return (
         <>
             {loading && <div className='absolute top-1/2 left-1/2'><Loader /></div>}
@@ -131,7 +134,7 @@ const AdminDashboard = () => {
                         <div style={navBarStyle} className={`h-20 flex justify-between items-center shadow-md  p-4`}>
                             <Hamburger onClick={setMenu} />
                             <h1 className="text-white text-xl">Welcome {admin?.name.split(" ")[0]} 👋</h1>
-                            <div className='cursor-pointer'>
+                            <div className='cursor-pointer' onClick={()=>setActivePage('settings')}>
                                 {admin?.profile ? <img src={`${apiUrl}${admin.profile}`} alt="profile" className="w-10 h-10 rounded-full object-cover" /> : <img src="https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png" alt="profile" className="w-10 h-10 rounded-full" />}
                             </div>
                         </div>

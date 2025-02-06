@@ -128,8 +128,8 @@ const adminDashboard = async (req, res) => {
 
 
 /**
- * @description Access the admin profile
- * @route POST /api/admin/getProfile/:id
+ * @description Access the admin profile picture
+ * @route GET /api/admin/getProfile/:id
  * @access Public
  */
 const getAdminProfile = async (req, res) => {
@@ -142,7 +142,7 @@ const getAdminProfile = async (req, res) => {
         res.set('Content-Type', findAdmin.photoType)
         res.send(findAdmin.photo);
     }
-    catch(error) {
+    catch (error) {
         console.log(error)
         res.status(500).json({ message: "Internal Server Error" })
     }
@@ -179,6 +179,54 @@ const setAdminPicture = async (req, res) => {
 }
 
 
+const updateAdmin = async (req, res) => {
+    try {
+        const { id } = req.user
+        if (!id) return res.status(400).json({ message: "Please provide an ID" })
+
+        let updateData = req.body
+        if (!updateData) return res.status(400).json({ message: "Please provide data to update" })
+
+        const restrictedUpdates = ['_id', 'id', "createdAt", "updatedAt"]
+        updateData = Object.keys(updateData).filter(key => !restrictedUpdates.includes(key)).reduce((obj, keys) => {
+            obj[keys] = updateData[keys]
+            return obj
+        }, {})
+        if (Object.keys(updateData).length === 0) return res.status(400).json({ message: "Please provide data to update" })
+
+        //email validate format
+        if (updateData.email) {
+            const emailValid = isValidEmail(updateData.email);
+            if (!emailValid) return res.status(400).json({ message: "Invalid Email format" })
+        }
+
+
+
+
+        //hashing password to stored in db using bcrypt
+        if (updateData.password) {
+            //comparing the password
+            const checkPass = await admin.findOne({ _id: id });
+            const isPasswordCorrect = await comparePass(updateData.password, checkPass.password)
+            if (!isPasswordCorrect) return res.status(400).json({ message: "Current Password is InCorrect" })
+            const hashedPass = await hashPassword(updateData.password)
+            updateData.password = hashedPass
+        }
+
+        const findAdmin = await admin.findByIdAndUpdate(id,
+            { $set: updateData },
+            { new: true, runValidators: true }
+        )
+        if (!findAdmin) return res.status(401).json({ message: "Unauthorized access: Token invalid." })
+        res.status(200).json({ message: "Admin updated successfully", findAdmin });
+
+    }
+    catch (e) {
+        console.log(e)
+        res.status(500).json({ message: 'Error updating admin', error: e.message });
+    }
+}
+
 
 
 module.exports = {
@@ -186,5 +234,6 @@ module.exports = {
     adminLogin,
     adminDashboard,
     setAdminPicture,
-    getAdminProfile
+    getAdminProfile,
+    updateAdmin
 }

@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { setToastWithTimeout } from '../../Redux/Features/Toast/toastSlice'
 import Loader from '../../Componenets/Loader'
 const apiUrl = import.meta.env.VITE_API_URL
 const Settings = () => {
-    const admin = JSON.parse(localStorage.getItem('admin'))
+    let admin = JSON.parse(localStorage.getItem('admin'))
     const [userDetails, setUserDetails] = useState({
-        name: admin?.name,
+        fullName: admin?.name,
         email: admin?.email,
         password: "",
         newPassword: "",
@@ -62,6 +62,49 @@ const Settings = () => {
             setLoading(false)
         }
     }
+    const handleAdminUpdate = async () => {
+        if (!userDetails.password && userDetails.newPassword) {
+            return dispatch(setToastWithTimeout({ type: 'error', message: "Please provide current password" }));
+        }
+        if (userDetails.password && !userDetails.newPassword) {
+            return dispatch(setToastWithTimeout({ type: 'error', message: "Please provide new password" }));
+        }
+        if (userDetails.newPassword !== userDetails.confirmPassword) {
+            return dispatch(setToastWithTimeout({ type: 'error', message: "Password does not match" }));
+        }
+        let payload = Object.entries(userDetails).filter(([key, value]) => value != null && value !== '')
+            .filter(([key, value]) => value !== admin[key])
+        payload = Object.fromEntries(payload)
+        if (Object.keys(payload).length === 0) {
+            return dispatch(setToastWithTimeout({ type: 'info', message: "No changes detected" }));
+        }
+        try {
+            const response = await axios.put(`${apiUrl}/admin/updateAdmin`,payload,{
+                headers:{
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            // complete this!!!!!!!!!!!!
+            const updateLocal = ()=>{
+                if(payload.fullName){
+                    payload = {...payload,name : payload.fullName}
+                    delete payload.fullName
+                }
+                if(payload.password){
+                    delete payload.password
+                    delete payload.newPassword
+                }
+                admin = {...admin,...payload}
+                localStorage.setItem('admin',JSON.stringify(admin))
+            }
+            updateLocal();
+            dispatch(setToastWithTimeout({ type: 'success', message: "Admin Updated" }));
+        }
+        catch (err) {
+            console.error(err)
+            dispatch(setToastWithTimeout({ type: 'error', message: err.response.data.message }));
+        }
+    }
     return (
         <>
             <section className='w-full h-auto p-5'>
@@ -80,14 +123,15 @@ const Settings = () => {
                         <header>
                             <h1 className='text-2xl font-bold underline'>My Profile</h1>
                         </header>
-                        {inputFields("Ex. John Doe", "", "Full Name", "name")}
+                        {inputFields("Ex. John Doe", "", "Full Name", "fullName")}
                         {inputFields("Ex. xyz@gmail.com", "email", "Email", 'email')}
+                        {inputFields("Ex. 9876543210", "text", "Phone Number", 'phoneNumber')}
                         <div className='flex gap-5'>
                             {inputFields("Password...", "password", "Current Password", "password")}
                             {inputFields("Password...", "password", "New Password", "newPassword")}
                             {inputFields("Password...", "password", "Confirm New Password", "confirmPassword")}
                         </div>
-                        <button className='bg-[#3E3CCC] text-white p-2 w-40 rounded text-sm' >Save</button>
+                        <button className='bg-[#3E3CCC] text-white p-2 w-40 rounded text-sm' onClick={handleAdminUpdate}>Save</button>
                     </main>
                 </main>
             </section>

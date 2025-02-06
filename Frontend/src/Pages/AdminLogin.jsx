@@ -37,7 +37,7 @@ const AdminLogin = () => {
     }
     catch (err) {
       console.log(err);
-      toastHelper('error', err.message)
+      toastHelper('error', err.response.data.message)
     }
     finally {
       setLoading(false)
