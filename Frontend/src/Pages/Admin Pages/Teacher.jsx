@@ -51,14 +51,14 @@ const Teacher = () => {
      * @description This function search teacher by name and filter teacher data
      */
     const handleSearch = (e) => {
-        const value = e.target.value
+        const value = e.target.value.trim().toLowerCase()
         setSearch(value)
-        if (value.trim().toLowerCase() === '') {
+        if (value === '') {
             setDuplicateTeacherData(teacherData);
             return;
         }
-        const filteredData = teacherData.filter((teacher) => {
-            return teacher.name.toLowerCase().includes(value.trim().toLowerCase())
+        const filteredData = teacherData.filter(({name,email,teacherId}) => {
+            return name.includes(value) || email.includes(value) || teacherId.toLowerCase().includes(value)
         })
         setDuplicateTeacherData(filteredData)
     }
