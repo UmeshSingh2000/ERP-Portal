@@ -7,7 +7,8 @@ const apiUrl = import.meta.env.VITE_API_URL
 const Settings = () => {
     let admin = JSON.parse(localStorage.getItem('admin'))
     const [userDetails, setUserDetails] = useState({
-        fullName: admin?.name,
+        fullName: admin?.fullName,
+        phoneNumber: admin?.phoneNumber,
         email: admin?.email,
         password: "",
         newPassword: "",
@@ -63,39 +64,38 @@ const Settings = () => {
         }
     }
     const handleAdminUpdate = async () => {
-        if (!userDetails.password && userDetails.newPassword) {
-            return dispatch(setToastWithTimeout({ type: 'error', message: "Please provide current password" }));
-        }
-        if (userDetails.password && !userDetails.newPassword) {
-            return dispatch(setToastWithTimeout({ type: 'error', message: "Please provide new password" }));
-        }
-        if (userDetails.newPassword !== userDetails.confirmPassword) {
-            return dispatch(setToastWithTimeout({ type: 'error', message: "Password does not match" }));
-        }
-        let payload = Object.entries(userDetails).filter(([key, value]) => value != null && value !== '')
-            .filter(([key, value]) => value !== admin[key])
-        payload = Object.fromEntries(payload)
-        if (Object.keys(payload).length === 0) {
-            return dispatch(setToastWithTimeout({ type: 'info', message: "No changes detected" }));
-        }
         try {
-            const response = await axios.put(`${apiUrl}/admin/updateAdmin`,payload,{
-                headers:{
+            setLoading(true)
+            if (!userDetails.password && userDetails.newPassword) {
+                return dispatch(setToastWithTimeout({ type: 'error', message: "Please provide current password" }));
+            }
+            if (userDetails.password && !userDetails.newPassword) {
+                return dispatch(setToastWithTimeout({ type: 'error', message: "Please provide new password" }));
+            }
+            if (userDetails.newPassword !== userDetails.confirmPassword) {
+                return dispatch(setToastWithTimeout({ type: 'error', message: "Password does not match" }));
+            }
+            let payload = Object.entries(userDetails).filter(([key, value]) => value != null && value !== '')
+                .filter(([key, value]) => value !== admin[key])
+            payload = Object.fromEntries(payload)
+            if (Object.keys(payload).length === 0) {
+                return dispatch(setToastWithTimeout({ type: 'info', message: "No changes detected" }));
+            }
+            console.log(payload)
+            await axios.put(`${apiUrl}/admin/updateAdmin`, payload, {
+                headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             })
             // complete this!!!!!!!!!!!!
-            const updateLocal = ()=>{
-                if(payload.fullName){
-                    payload = {...payload,name : payload.fullName}
-                    delete payload.fullName
-                }
-                if(payload.password){
+            const updateLocal = () => {
+                if (payload.password) {
                     delete payload.password
                     delete payload.newPassword
                 }
-                admin = {...admin,...payload}
-                localStorage.setItem('admin',JSON.stringify(admin))
+                admin = { ...admin, ...payload }
+                
+                localStorage.setItem('admin', JSON.stringify(admin))
             }
             updateLocal();
             dispatch(setToastWithTimeout({ type: 'success', message: "Admin Updated" }));
@@ -104,17 +104,22 @@ const Settings = () => {
             console.error(err)
             dispatch(setToastWithTimeout({ type: 'error', message: err.response.data.message }));
         }
+        finally {
+            setLoading(false)
+        }
     }
     return (
         <>
-            <section className='w-full h-auto p-5'>
+            {loading ? <div className='absolute top-1/2 left-1/2 '>
+                <Loader />
+            </div> : <section className='w-full h-auto p-5'>
                 <header>
                     <h1 className='font-medium text-3xl'>Settings</h1>
                 </header>
                 <main className='flex gap-5'>
                     <aside>
                         <div className='w-full'>
-                            {loading ? <Loader /> : admin?.profile ? <img src={`${apiUrl}${admin.profile}`} alt="profile" className="w-72 h-72 object-cover rounded-full" /> : <img src="https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png" alt="profile" className="w-72 rounded-full" />}
+                            {admin?.profile ? <img src={`${apiUrl}${admin.profile}`} alt="profile" className="w-72 h-72 object-cover rounded-full" /> : <img src="https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png" alt="profile" className="w-72 rounded-full" />}
                             <p className='text-center font-thin hover:bg-[#3E3CCC] hover:text-white transition-all duration-500 mt-2 rounded cursor-pointer text-xl' onClick={handleUpdateProfile}><i className="fa-solid fa-pencil mr-1"></i>Edit</p>
                             <input ref={fileInputRef} onChange={handleFileChange} type="file" className='hidden' accept='image/*' />
                         </div>
@@ -134,7 +139,7 @@ const Settings = () => {
                         <button className='bg-[#3E3CCC] text-white p-2 w-40 rounded text-sm' onClick={handleAdminUpdate}>Save</button>
                     </main>
                 </main>
-            </section>
+            </section>}
         </>
     )
 }

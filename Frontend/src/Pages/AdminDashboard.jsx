@@ -133,7 +133,7 @@ const AdminDashboard = () => {
                     <nav>
                         <div style={navBarStyle} className={`h-20 flex justify-between items-center shadow-md  p-4`}>
                             <Hamburger onClick={setMenu} />
-                            <h1 className="text-white text-xl">Welcome {admin?.name.split(" ")[0]} 👋</h1>
+                            <h1 className="text-white text-xl">Welcome {admin?.fullName.split(" ")[0]} 👋</h1>
                             <div className='cursor-pointer' onClick={()=>setActivePage('settings')}>
                                 {admin?.profile ? <img src={`${apiUrl}${admin.profile}`} alt="profile" className="w-10 h-10 rounded-full object-cover" /> : <img src="https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png" alt="profile" className="w-10 h-10 rounded-full" />}
                             </div>

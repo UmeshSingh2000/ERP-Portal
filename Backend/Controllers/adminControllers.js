@@ -20,9 +20,9 @@ const { hashPassword, comparePass } = require('../Utils/helperFunction')
  */
 const createAdmin = async (req, res) => {
     try {
-        const { email, password, role, name } = req.body
+        const { email, password, role, name, phoneNumber } = req.body
         //checking all fields that are required
-        if (!email || !password || !role || !name) return res.status(400).json({ message: 'Please provide all required fields' })
+        if (!email || !password || !role || !name || !phoneNumber) return res.status(400).json({ message: 'Please provide all required fields' })
 
         //email validate format
         const emailValid = isValidEmail(email);
@@ -41,7 +41,8 @@ const createAdmin = async (req, res) => {
             email,
             password: hashedPass,
             role,
-            fullName: name
+            fullName: name,
+            phoneNumber
         })
 
         //saving the admin data to db 
@@ -114,8 +115,9 @@ const adminDashboard = async (req, res) => {
             message: "Welcome to Dashboard", admin: {
                 email: findAdmin.email,
                 role: findAdmin.role,
-                name: findAdmin.fullName,
-                profile: findAdmin.photo ? `/admin/getProfile/${id}` : null
+                fullName: findAdmin.fullName,
+                profile: findAdmin.photo ? `/admin/getProfile/${id}` : null,
+                phoneNumber : findAdmin.phoneNumber
             }
         })
     }
@@ -209,7 +211,7 @@ const updateAdmin = async (req, res) => {
             const checkPass = await admin.findOne({ _id: id });
             const isPasswordCorrect = await comparePass(updateData.password, checkPass.password)
             if (!isPasswordCorrect) return res.status(400).json({ message: "Current Password is InCorrect" })
-            const hashedPass = await hashPassword(updateData.password)
+            const hashedPass = await hashPassword(updateData.newPassword)
             updateData.password = hashedPass
         }
 
