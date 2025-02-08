@@ -29,13 +29,7 @@ const AdminDashboard = () => {
     const [activePage, setActivePage] = useState('dashboard') //track active page
 
     const [menu, setMenu] = useState(false)
-    // useEffect(() => {
-    //     if (window.innerWidth > 768) {
-    //         setMenu(true)
-    //     } else {
-    //         setMenu(false)
-    //     }
-    // }, [])
+
 
     useEffect(() => {
         if (admin) return;
@@ -53,8 +47,9 @@ const AdminDashboard = () => {
                             authorization: `Bearer ${token}`
                         }
                     })
-                    setAdmin(response.data.admin);
-                    localStorage.setItem('admin', JSON.stringify(response.data.admin));
+                    const localData = response.data.admin;
+                    localStorage.setItem('admin', JSON.stringify(localData));
+                    setAdmin(localData);
                     toastHelper('success', "Welcome to Dashboard")
                     setLoading(false)
                 }
@@ -97,7 +92,7 @@ const AdminDashboard = () => {
             case PAGES.TEACHERS:
                 return <Teacher />
             case PAGES.SETTINGS:
-                return <Settings/>
+                return <Settings />
             default:
                 return <Home />
         }
@@ -108,9 +103,9 @@ const AdminDashboard = () => {
         }
         return () => { }
     }, [data])
-    useEffect(()=>{
-        document.title = `Admin/${activePage.slice(0,1).toUpperCase() + activePage.slice(1)}`
-    },[activePage])
+    useEffect(() => {
+        document.title = `Admin/${activePage.slice(0, 1).toUpperCase() + activePage.slice(1)}`
+    }, [activePage])
     return (
         <>
             {loading && <div className='absolute top-1/2 left-1/2'><Loader /></div>}
@@ -121,7 +116,7 @@ const AdminDashboard = () => {
                         <li className={`cursor-pointer ${activePage === 'dashboard' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('dashboard')}>🏠 Dashboard</li>
                         <li className={`cursor-pointer ${activePage === 'teachers' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('teachers')}>🧑‍🏫 Teachers</li>
                         <li className={`cursor-pointer ${activePage === 'students' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('students')}>🎓 Students</li>
-                        <li className={`cursor-pointer ${activePage === 'settings' ? 'bg-[#0C0E12] text-white' : ''}`}  onClick={()=>setActivePage('settings')}>⚙️ Settings</li>
+                        <li className={`cursor-pointer ${activePage === 'settings' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('settings')}>⚙️ Settings</li>
                         <li className='cursor-pointer' onClick={() => {
                             localStorage.removeItem('token')
                             localStorage.removeItem('admin')
@@ -134,7 +129,7 @@ const AdminDashboard = () => {
                         <div style={navBarStyle} className={`h-20 flex justify-between items-center shadow-md  p-4`}>
                             <Hamburger onClick={setMenu} />
                             <h1 className="text-white text-xl">Welcome {admin?.fullName.split(" ")[0]} 👋</h1>
-                            <div className='cursor-pointer' onClick={()=>setActivePage('settings')}>
+                            <div className='cursor-pointer' onClick={() => setActivePage('settings')}>
                                 {admin?.profile ? <img src={`${apiUrl}${admin.profile}`} alt="profile" className="w-10 h-10 rounded-full object-cover" /> : <img src="https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png" alt="profile" className="w-10 h-10 rounded-full" />}
                             </div>
                         </div>

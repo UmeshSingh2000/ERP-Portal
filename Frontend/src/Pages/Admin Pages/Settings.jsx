@@ -14,11 +14,11 @@ const Settings = () => {
         newPassword: "",
         confirmPassword: ""
     })
-    const inputFields = useCallback((placeholder, type = "text", label, name) => {
+    const inputFields = useCallback((placeholder, type = "text", label, name, disable = false) => {
         return (
             <div>
                 <label className=''>{label}</label>
-                <input type={type} name={name} placeholder={placeholder} className='border-[#D4D4D4] border rounded-md w-full p-2 text-sm focus:outline-none focus:border-blue-500' value={userDetails[name] || ""} onChange={(e) => setUserDetails({ ...userDetails, [name]: e.target.value })} />
+                <input disabled={disable} type={type} name={name} placeholder={placeholder} className='border-[#D4D4D4] border rounded-md w-full p-2 text-sm focus:outline-none focus:border-blue-500' value={userDetails[name] || ""} onChange={(e) => setUserDetails({ ...userDetails, [name]: e.target.value })} />
             </div>)
     }, [userDetails])
     const dispatch = useDispatch()
@@ -94,7 +94,7 @@ const Settings = () => {
                     delete payload.newPassword
                 }
                 admin = { ...admin, ...payload }
-                
+
                 localStorage.setItem('admin', JSON.stringify(admin))
             }
             updateLocal();
@@ -114,7 +114,7 @@ const Settings = () => {
                 <Loader />
             </div> : <section className='w-full h-auto p-5'>
                 <header>
-                    <h1 className='font-medium text-3xl'>Settings</h1>
+                    <h1 className='font-bold text-3xl'>Settings</h1>
                 </header>
                 <main className='flex gap-5'>
                     <aside>
@@ -129,8 +129,11 @@ const Settings = () => {
                             <h1 className='text-2xl font-bold underline'>My Profile</h1>
                         </header>
                         {inputFields("Ex. John Doe", "", "Full Name", "fullName")}
-                        {inputFields("Ex. xyz@gmail.com", "email", "Email", 'email')}
-                        {inputFields("Ex. 9876543210", "text", "Phone Number", 'phoneNumber')}
+                        <div className='relative'>
+                            {inputFields("Ex. xyz@gmail.com", "email", "Email", 'email', true)}
+                            <p className='absolute right-2 top-1/2 cursor-pointer'>Send OTP</p>
+                        </div>
+                        {inputFields("Ex. 9876543210", "text", "Phone Number", 'phoneNumber', true)}
                         <div className='flex gap-5'>
                             {inputFields("Password...", "password", "Current Password", "password")}
                             {inputFields("Password...", "password", "New Password", "newPassword")}
