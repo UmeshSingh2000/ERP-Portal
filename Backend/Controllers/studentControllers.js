@@ -7,7 +7,7 @@ const { isValidEmail } = require('../Utils/validationUtils')
 const student = require('../Schema/studentSchema')
 
 //helper function
-const { hashPassword, comparePass,capitalize } = require('../Utils/helperFunction')
+const { hashPassword, comparePass, capitalize, seperateString } = require('../Utils/helperFunction')
 
 //jwt token generator
 const { generateToken } = require('../JWT/jwtToken')
@@ -34,7 +34,10 @@ const addStudent = async (req, res) => {
         if (existingStudent) return res.status(400).json({ message: "Student with this email or ID already exists" });
 
         //capitalize name
-        studentId=capitalize(studentId);
+        studentId = capitalize(studentId);
+
+        //spliting subjects by comma 
+        subjects = seperateString(subjects)
 
         //creating new student 
         const newStudent = new student({
@@ -147,13 +150,24 @@ const login = async (req, res) => {
         //comparing password
         const validPass = await comparePass(password, isStudent.password);
         if (!validPass) return res.status(401).json({ message: "Invalid Password" });
-        
+
         //generate token
-        const token = await generateToken(isStudent._id,isStudent.role);
-        return res.status(200).json({ message: "Login Successful",token })
+        const token = await generateToken(isStudent._id, isStudent.role);
+        return res.status(200).json({ message: "Login Successful", token })
     }
     catch (err) {
         return res.status(500).json({ message: 'An error occurred', error: err.message });
+    }
+}
+
+const getStudent = async (req, res) => {
+    try {
+        //fetch teacher exluding those fields
+        const students = await student.find({}, '-password -__v -createdAt -updatedAt -role');
+        res.status(200).json({ students })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ message: "Internal Server Error" })
     }
 }
 
@@ -162,5 +176,6 @@ module.exports = {
     addStudent,
     deleteStudent,
     updateStudent,
-    login
+    login,
+    getStudent
 }

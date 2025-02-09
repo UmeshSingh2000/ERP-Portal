@@ -1,40 +1,29 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import AddTeacher from './AddTeacher'
 import axios from 'axios'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setData } from '../../Redux/Features/Teachers/teachersSlice'
-import { setToastWithTimeout } from '../../Redux/Features/Toast/toastSlice'
+import { setData } from '../../Redux/Features/Students/studentsSlice'
 import Loader from '../../Componenets/Loader'
-import Edit from './Edit'
+import AddTeacher from './AddTeacher'
+import { setToastWithTimeout } from '../../Redux/Features/Toast/toastSlice'
 const apiUrl = import.meta.env.VITE_API_URL
 const Students = () => {
-    const [editTeacherToggle, setEditTeacherToggle] = useState(false) // edit teacher button toggle state
-    const [editTeacher, setEditTeacher] = useState({}) // edit teacher data
-    const [addTeacherToggle, setAddTeacherToggle] = useState(false) // add teacher button toggle state
-    const [selectedTeacher, setSelectedTeacher] = useState([]) // selected teacher for multiple deletion
-    const [search, setSearch] = useState('') // search value
-    const teacherData = useSelector((state) => state.teachers.value) // teacher data stores in redux
-    const [duplicateTeacherData, setDuplicateTeacherData] = useState(teacherData) // duplicate teacher data for search 
-    const [loading, setLoading] = useState(false) // loading state
-    const dispatch = useDispatch() // dispatch function for dispatching action to redux
-
-    /**
-     * @function fetchData
-     * @returns fetch teacher data from db
-     * @description This function fetch teacher data from db and set data to redux
-     */
+    const dispatch = useDispatch();
+    const [loading, setLoading] = useState(false)
+    const studentData = useSelector((state) => state.students.value || null)
+    const [duplicateStudentData, setDuplicateStudentData] = useState(studentData)
+    const [addStudentToggle, setStudentToggle] = useState(false)
+    const [search, setSearch] = useState('')
     const fetchData = useCallback(async () => {
-        setSelectedTeacher([])
         setLoading(true)
         try {
-            const response = await axios.get(`${apiUrl}/admin/getTeachers`,
+            const response = await axios.get(`${apiUrl}/admin/getStudents`,
                 {
                     headers: {
                         authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 }
             )
-            dispatch(setData(response.data.teachers))
+            dispatch(setData(response.data.students))
         }
         catch (err) {
             console.error(err)
@@ -47,36 +36,39 @@ const Students = () => {
     /**
      * @function handleSearch
      * @param {object} e 
-     * @returns set search value and filter teacher data default det to teacherData(full data) from db
-     * @description This function search teacher by name and filter teacher data
+     * @returns set search value and filter student data default set to studentData(full data) from db
+     * @description This function search student by name and filter student data
      */
     const handleSearch = (e) => {
         const value = e.target.value.trim().toLowerCase()
         setSearch(value)
         if (value === '') {
-            setDuplicateTeacherData(teacherData);
+            setDuplicateStudentData(studentData);
             return;
         }
-        const filteredData = teacherData.filter(({name,email,teacherId,course}) => {
-            return name.includes(value) || email.includes(value) || teacherId.toLowerCase().includes(value)
-            || course.toLowerCase().includes(value)
+        const filteredData = studentData.filter(({ name, email, studentId, course }) => {
+            return (name.toLowerCase().includes(value) ||
+                email.toLowerCase().includes(value) ||
+                studentId.toLowerCase().includes(value) ||
+                course.toLowerCase().includes(value)
+            )
         })
-        setDuplicateTeacherData(filteredData)
+        setDuplicateStudentData(filteredData)
     }
 
 
     /**
      * @function handleDelete
-     * @param {string} teacherId 
+     * @param {string} studentId 
      * @param {*string} name 
-     * @description This function delete teacher by teacherId 
+     * @description This function delete student by studentId 
      */
 
-    const handleDelete = async (teacherId, name) => {
-        const confirm = window.confirm(`Are you sure you want to delete this teacher : ${name}?`)
+    const handleDelete = async (studentId, name) => {
+        const confirm = window.confirm(`Are you sure you want to delete this student : ${name}?`)
         if (!confirm) return
         try {
-            const response = await axios.delete(`${apiUrl}/admin/deleteTeacher/${teacherId}`, {
+            const response = await axios.delete(`${apiUrl}/admin/deleteStudent/${studentId}`, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`
                 }
@@ -90,72 +82,37 @@ const Students = () => {
         }
     }
 
-    /**
-     * @function handleSelect
-     * @param {string} teacherId 
-     * @description This function select teacher for multiple deletion and add the selected teacher to selectedTeacher array
-     */
-    const handleSelect = (teacherId) => {
-        if (selectedTeacher.includes(teacherId)) return setSelectedTeacher(selectedTeacher.filter((id) => id !== teacherId))
-        setSelectedTeacher([...selectedTeacher, teacherId])
-    }
+
+
+
+
+
 
     /**
-     * @function isExist
-     * @param {string} teacherId 
-     * @returns boolean
-     * @description This function check the teacher is exist in selectedTeacher array
-     */
-    const isExist = (teacherId) => {
-        return selectedTeacher.includes(teacherId)
-    }
-
-    /**
-     * @function handleDeleteMultiple
-     * @description This function delete multiple teacher by teacherId require the id to be send as string seperated by comma which will be converted to array in the backend as db only accept array for multiple deletion
-     */
-    const handleDeleteMultiple = async () => {
-        const confirm = window.confirm(`Are you sure you want to delete teachers?`)
-        if (!confirm) return
-        const teacherIds = selectedTeacher.join(',')
-        try {
-            const response = await axios.delete(`${apiUrl}/admin/delete-multipleTeacher/${teacherIds}`, {
-                headers: {
-                    authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-            if (response.status === 200) {
-                dispatch(setToastWithTimeout({ type: 'success', message: response.data.message }))
-                fetchData()
-            }
-        } catch (err) {
-            dispatch(setToastWithTimeout({ type: 'error', message: err.response.data.message }))
-        }
-    }
-
-    /**
-     * @description when teacherData changes set duplicateTeacherData to teacherData
+     * @description when studentData changes set duplicateStudentData to studentData
      */
     useEffect(() => {
-        setDuplicateTeacherData(teacherData);
-    }, [teacherData]);
+        setDuplicateStudentData(studentData)
+    }, [studentData])
 
     /**
-     * @description when teacherData length is greater than 0 then fetchData from db
-     */
+    * @description when studentData length is greater than 0 then fetchData from db
+    */
     useEffect(() => {
-        if (teacherData.length > 0) return
+        setDuplicateStudentData(studentData)
+    }, [studentData])
+
+
+    useEffect(() => {
+        if (studentData.length > 0) return
         fetchData()
-    }, [dispatch, teacherData.length])
+    }, [dispatch, studentData.length])
     return (
         <>
             <nav>
                 <header className='flex justify-between items-center p-2'>
                     <h1 className='font-bold text-3xl'>Students</h1>
-                    <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm' onClick={() => {
-                        setEditTeacherToggle(false)
-                        setAddTeacherToggle(!addTeacherToggle)
-                    }}>Add Student</button>
+                    <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm' onClick={() => setStudentToggle(!addStudentToggle)}>Add Student</button>
                 </header>
                 <footer className='w-full md:w-1/2'>
                     <div className='relative w-full'>
@@ -163,16 +120,16 @@ const Students = () => {
                         <div className='flex items-center gap-2'>
                             <input type="text" placeholder='Search Students' className='border-[#D4D4D4] border rounded-md w-full p-2 px-9 text-sm' value={search} onChange={handleSearch} />
                             <button className='p-2 bg-[#3E3CCC] rounded text-white' onClick={fetchData}>Refresh</button>
-                            <button className={`${selectedTeacher.length > 1 ? 'block' : 'hidden'} p-2 bg-red-500 rounded text-white`} onClick={handleDeleteMultiple}>Delete</button>
+                            <button className={`p-2 bg-red-500 rounded text-white`} >Delete</button>
                         </div>
                     </div>
                 </footer>
             </nav>
-            {addTeacherToggle && <div className='absolute w-4/5 h-3/4 overflow-auto shadow-xl scrollbar-thin md:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
-                <AddTeacher toggleState={addTeacherToggle} onClick={setAddTeacherToggle} />
+            {addStudentToggle && <div className='absolute w-4/5 h-3/4 overflow-auto shadow-xl scrollbar-thin md:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
+                <AddTeacher toggleState={addStudentToggle} title="Student" onClick={setStudentToggle} />
             </div>}
             {/**edit teacher panel */}
-            {editTeacherToggle && <div className='absolute w-4/5 h-3/4 overflow-auto shadow-xl scrollbar-thin md:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'><Edit toggleState={editTeacherToggle} onClick={setEditTeacherToggle} teacherData={editTeacher} /></div>}
+            {/* {editTeacherToggle && <div className='absolute w-4/5 h-3/4 overflow-auto shadow-xl scrollbar-thin md:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'><Edit toggleState={editTeacherToggle} onClick={setEditTeacherToggle} teacherData={editTeacher} /></div>} */}
             <main className='pt-3 h-full overflow-auto scrollbar-thin'>
                 <table className='w-full'>
                     <thead className='bg-[#EFEFEF] h-10 border-[#D4D4D4] border'>
@@ -188,24 +145,20 @@ const Students = () => {
                     </thead>
                     {loading ? <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"><Loader /></div> :
                         <tbody>
-                            {duplicateTeacherData.length > 0 ? duplicateTeacherData.map((teacher, index) => {
-                                return <tr key={index} className={`${isExist(teacher._id) ? 'bg-[#EFEFEF] shadow-md' : 'bg-transparent'} border-[#D4D4D4] border h-10 transition-all duration-200`}>
-                                    <td><input type="checkbox" className='mr-2 ml-1' onClick={() => handleSelect(teacher._id)} />{index + 1}</td>
-                                    <td>{teacher.teacherId}</td>
-                                    <td>{teacher.name}</td>
-                                    <td>{teacher.email}</td>
+                            {duplicateStudentData.length > 0 ? duplicateStudentData.map((student, index) => {
+                                return <tr key={index} className={`border-[#D4D4D4] border h-10 transition-all duration-200`}>
+                                    <td><input type="checkbox" className='mr-2 ml-1' />{index + 1}</td>
+                                    <td>{student.studentId}</td>
+                                    <td>{student.name}</td>
+                                    <td>{student.email}</td>
                                     <td>
                                         <select className='w-1/2 text-sm'>
-                                            {teacher.subjects.map((subject, index) => {
+                                            {student.subjects.map((subject, index) => {
                                                 return <option className='' key={index} value={subject}>{subject}</option>
                                             })}
                                         </select></td>
-                                    <td>{teacher.course}</td>
-                                    <td><i className="fa-solid fa-trash  ml-3 mr-3 cursor-pointer text-red-600" onClick={() => handleDelete(teacher._id, teacher.name)}></i><i className="fa-regular fa-pen-to-square cursor-pointer" onClick={() => {
-                                        setAddTeacherToggle(false)
-                                        setEditTeacherToggle(!editTeacherToggle)
-                                        setEditTeacher(teacher)
-                                    }}></i></td>
+                                    <td>{student.course}</td>
+                                    <td><i className="fa-solid fa-trash  ml-3 mr-3 cursor-pointer text-red-600" onClick={() => handleDelete(student._id, student.name)}></i><i className="fa-regular fa-pen-to-square cursor-pointer" ></i></td>
                                 </tr>
                             }) : <tr className='border-[#D4D4D4] border h-10'>
                                 <td className='text-center' colSpan='8'>No Data Found</td>

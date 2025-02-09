@@ -4,7 +4,7 @@ import Loader from '../../Componenets/Loader'
 import { useDispatch } from 'react-redux';
 import { setToastWithTimeout } from '../../Redux/Features/Toast/toastSlice';
 const apiUrl = import.meta.env.VITE_API_URL
-const AddTeacher = ({ toggleState, onClick }) => {
+const AddTeacher = ({ toggleState, onClick, title = "Teacher" }) => {
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const inputField = (label, type, placeholder, name) => {
@@ -22,14 +22,14 @@ const AddTeacher = ({ toggleState, onClick }) => {
             name: formData.get('name'),
             email: formData.get('email'),
             subjects: formData.get('subject'),
-            teacherId: formData.get('teacherId').toUpperCase(),
+            [`${title.toLowerCase()}Id`]: formData.get(`${title.toLocaleLowerCase()}Id`).toUpperCase(),
             password: formData.get('password'),
             course: formData.get('course'),
-            role: 'teacher'
+            role: `${title.toLocaleLowerCase()}`
         };
         setLoading(true)
         try {
-            const response = await axios.post(`${apiUrl}/admin/addTeacher`, teacherData,
+            const response = await axios.post(`${apiUrl}/admin/add${title}`, teacherData,
                 {
                     headers: {
                         authorization: `Bearer ${localStorage.getItem('token')}`
@@ -49,7 +49,7 @@ const AddTeacher = ({ toggleState, onClick }) => {
         <>
             <section className='w-full flex flex-col rounded-lg gap-2 bg-white p-5'>
                 <nav className='flex justify-between items-center'>
-                    <h1 className='text-xl font-medium'>Add New Teacher</h1>
+                    <h1 className='text-xl font-medium'>Add New {title}</h1>
                     <i className="fa-solid fa-x cursor-pointer" onClick={() => onClick(!toggleState)}></i>
                 </nav>
                 <main>
@@ -57,12 +57,12 @@ const AddTeacher = ({ toggleState, onClick }) => {
                         {inputField('Name', 'text', 'Enter Name', 'name')}
                         {inputField('Email', 'email', 'Enter Email', 'email')}
                         {inputField('Subject', 'text', 'Enter Subject(comma Seperated)', 'subject')}
-                        {inputField('Teacher Id', 'text', 'Enter Teacher Id', 'teacherId')}
+                        {inputField(`${title} Id`, 'text', `Enter ${title} Id`, `${title.toLocaleLowerCase()}Id`)}
                         {inputField('Password', 'password', 'Enter Password', 'password')}
                         {inputField('Course', 'text', 'Enter Course', 'course')}
                         {loading ? <div className='flex justify-center items-center'>
                             <Loader />
-                        </div> : <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm'>Add Teacher</button>}
+                        </div> : <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm'>Add {title}</button>}
                     </form>
                 </main>
             </section>

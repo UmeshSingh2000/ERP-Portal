@@ -6,7 +6,7 @@ const router = express.Router()
 //multer configuration
 const multer = require('multer')
 const storage = multer.memoryStorage()
-const upload  = multer({storage:storage})
+const upload = multer({ storage: storage })
 
 
 
@@ -22,7 +22,8 @@ const {
 const {
     addStudent,
     deleteStudent,
-    updateStudent
+    updateStudent,
+    getStudent
 } = require('../Controllers/studentControllers') //Controllers for Student
 
 const {
@@ -64,9 +65,9 @@ router.post('/dashboard', authenticateToken, adminOnly, adminDashboard)
  * @access Protected (required valid token)
  */
 
-router.put('/updateProfile', authenticateToken, adminOnly,upload.single('image'), setAdminPicture)
+router.put('/updateProfile', authenticateToken, adminOnly, upload.single('image'), setAdminPicture)
 router.get('/getProfile/:id', getAdminProfile)
-router.put('/updateAdmin', authenticateToken, adminOnly,updateAdmin)
+router.put('/updateAdmin', authenticateToken, adminOnly, updateAdmin)
 
 
 /**
@@ -122,6 +123,10 @@ router.put('/updateTeacher/:teacherId', authenticateToken, adminOnly, updateTeac
  * @acess Protected (required valid token)
  */
 router.get('/getTeachers', authenticateToken, adminOnly, getTeacher)
+
+
+
+router.get('/getStudents', authenticateToken, adminOnly,getStudent)
 
 
 module.exports = router

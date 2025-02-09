@@ -57,9 +57,12 @@ const Teacher = () => {
             setDuplicateTeacherData(teacherData);
             return;
         }
-        const filteredData = teacherData.filter(({name,email,teacherId,course}) => {
-            return name.includes(value) || email.includes(value) || teacherId.toLowerCase().includes(value)
-            || course.toLowerCase().includes(value)
+        const filteredData = teacherData.filter(({ name="", email="", teacherId="", course="" }) => {
+            return (name.toLowerCase().includes(value) ||
+                email.toLowerCase().includes(value) ||
+                teacherId.toLowerCase().includes(value) ||
+                course.toLowerCase().includes(value)
+            )
         })
         setDuplicateTeacherData(filteredData)
     }
