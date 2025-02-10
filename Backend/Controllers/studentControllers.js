@@ -59,6 +59,55 @@ const addStudent = async (req, res) => {
     }
 }
 
+
+const multipleAddStudent = async (req, res) => {
+    try {
+        const { students } = req.body;
+
+        if (!students || !Array.isArray(students) || students.length === 0) {
+            return res.status(400).json({ message: "Invalid student data provided." });
+        }
+
+        // Format and validate each student
+        const formattedStudents = await Promise.all(
+            students.map(async (student) => {
+                const hashedPassword = await hashPassword(student.password.toString());
+                return {
+                    ...student,
+                    subjects: typeof student.subjects === 'string'
+                        ? student.subjects.split(',').map(subject => subject.trim())
+                        : student.subjects,
+                    password: hashedPassword
+                };
+            })
+        );
+
+        // Insert students, skipping duplicates
+        const result = await student.insertMany(formattedStudents, { ordered: false });
+
+        res.status(201).json({
+            message: `Successfully added ${result.length} students.`,
+            insertedCount: result.length
+        });
+    } catch (err) {
+        console.error("Error occurred:", err);
+
+        if (err.code === 11000) {
+            // Handle duplicate key error (studentId or email conflicts)
+            return res.status(409).json({ message: "Duplicate student detected.", error: err.keyValue });
+        }
+
+        res.status(500).json({ message: "Server error occurred.", error: err.message });
+    }
+};
+
+
+
+
+
+
+
+
 /**
  * @description Delete Student (Admin Only)
  * @route DELETE /api/admin/deleteStudent/:studentId
@@ -89,6 +138,41 @@ const deleteStudent = async (req, res) => {
         return res.status(500).json({ message: 'An error occurred', error: err.message });
     }
 }
+
+
+/**
+ * @description Delete multiple Student (Admin Only)
+ * @route DELETE /api/admin/delete-multipleStudent/:studentId
+ * @access Private
+ */
+//deleting multiple record insure that the studentIds are in array
+const deleteMultipleStudent = async (req, res) => {
+    const { studentsIds } = req.params; // this comes as a string format
+    //convert the string to array 
+    const studentIdsArray = studentsIds.split(',')
+
+    const objectIds = studentIdsArray.map((id) => new mongoose.Types.ObjectId(id))
+    try {
+        const deletedStudent = await student.deleteMany({ _id: { $in: objectIds } })
+        if (!deletedStudent) {
+            return res.status(404).json({ message: "Teacher not found" })
+        }
+        res.status(200).json({ message: "Student deleted successfully", deletedStudent })
+    }
+    catch (err) {
+        console.error(err)
+        res.status(500).json({ message: "Internal Server error", error: err.message })
+    }
+}
+
+
+
+
+
+
+
+
+
 
 /**
  * @description Update Student record (Admin Only)
@@ -177,5 +261,7 @@ module.exports = {
     deleteStudent,
     updateStudent,
     login,
-    getStudent
+    getStudent,
+    deleteMultipleStudent,
+    multipleAddStudent
 }

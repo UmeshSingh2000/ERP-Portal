@@ -10,10 +10,11 @@ const Hamburger = ({ onClick }) => {
     //     }
     // }, [])
     return (
-        <div className={`block cursor-pointer`} onClick={() => onClick(prev=>!prev)}>
+        <div className={`block cursor-pointer z-10`} onClick={() => onClick(prev=>!prev)}>
             <i className="fa-solid fa-bars text-2xl text-white"></i>
         </div>
     )
 }
+
 
 export default Hamburger

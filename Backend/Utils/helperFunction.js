@@ -8,6 +8,7 @@ const teacher = require('../Schema/teacherSchema')
  * @returns {string} - Returns hashed password
 */
 const hashPassword = async (password) => {
+    password = password.toString()
     return await bcrypt.hash(password, 10);
 }
 

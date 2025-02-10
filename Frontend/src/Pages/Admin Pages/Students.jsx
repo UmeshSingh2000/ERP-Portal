@@ -5,6 +5,7 @@ import { setData } from '../../Redux/Features/Students/studentsSlice'
 import Loader from '../../Componenets/Loader'
 import AddTeacher from './AddTeacher'
 import { setToastWithTimeout } from '../../Redux/Features/Toast/toastSlice'
+import MultipleAddFromExcel from './MultipleAddFromExcel'
 const apiUrl = import.meta.env.VITE_API_URL
 const Students = () => {
     const dispatch = useDispatch();
@@ -13,6 +14,7 @@ const Students = () => {
     const [duplicateStudentData, setDuplicateStudentData] = useState(studentData)
     const [addStudentToggle, setStudentToggle] = useState(false)
     const [search, setSearch] = useState('')
+    const [selectedStudent, setSelectedStudent] = useState([])
     const fetchData = useCallback(async () => {
         setLoading(true)
         try {
@@ -83,9 +85,58 @@ const Students = () => {
     }
 
 
+    /**
+     * @function handleDeleteMultiple
+     * @description This function delete multiple student by studentId require the id to be send as string seperated by comma which will be converted to array in the backend as db only accept array for multiple deletion
+     */
+
+    const handleDeleteMultiple = async () => {
+        const confirm = window.confirm(`Are you sure you want to delete teachers?`)
+        if (!confirm) return;
+        const studentIds = selectedStudent.join(',')
+        try {
+            const response = await axios.delete(`${apiUrl}/admin/delete-multipleStudent/${studentIds}`, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            if (response.status === 200) {
+                dispatch(setToastWithTimeout({ type: 'success', message: response.data.message }))
+                fetchData()
+            }
+        } catch (err) {
+            dispatch(setToastWithTimeout({ type: 'error', message: err.response.data.message }))
+        }
+    }
 
 
 
+
+
+
+
+
+    /**
+     * @function handleSelect
+     * @param {string} studentId 
+     * @description This function select student for multiple deletion and add the selected student to selectedstudent array
+     */
+
+    const handleSelect = (studentId) => {
+        if (selectedStudent.includes(studentId)) return setSelectedStudent(selectedStudent.filter((id) => id !== studentId))
+        setSelectedStudent([...selectedStudent, studentId])
+    }
+
+
+    /**
+     * @function isExist
+     * @param {string} studentId 
+     * @returns boolean
+     * @description This function check the student is exist in selectedStudent array
+     */
+    const isExist = (studentId) => {
+        return selectedStudent.includes(studentId)
+    }
 
 
     /**
@@ -112,7 +163,10 @@ const Students = () => {
             <nav>
                 <header className='flex justify-between items-center p-2'>
                     <h1 className='font-bold text-3xl'>Students</h1>
-                    <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm' onClick={() => setStudentToggle(!addStudentToggle)}>Add Student</button>
+                    <div className='flex gap-2'>
+                        <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm' onClick={() => setStudentToggle(!addStudentToggle)}>Add Student</button>
+                        <MultipleAddFromExcel />
+                    </div>
                 </header>
                 <footer className='w-full md:w-1/2'>
                     <div className='relative w-full'>
@@ -120,7 +174,7 @@ const Students = () => {
                         <div className='flex items-center gap-2'>
                             <input type="text" placeholder='Search Students' className='border-[#D4D4D4] border rounded-md w-full p-2 px-9 text-sm' value={search} onChange={handleSearch} />
                             <button className='p-2 bg-[#3E3CCC] rounded text-white' onClick={fetchData}>Refresh</button>
-                            <button className={`p-2 bg-red-500 rounded text-white`} >Delete</button>
+                            <button className={`${selectedStudent.length > 1 ? 'block' : 'hidden'} p-2 bg-red-500 rounded text-white`} onClick={handleDeleteMultiple}>Delete</button>
                         </div>
                     </div>
                 </footer>
@@ -146,8 +200,8 @@ const Students = () => {
                     {loading ? <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"><Loader /></div> :
                         <tbody>
                             {duplicateStudentData.length > 0 ? duplicateStudentData.map((student, index) => {
-                                return <tr key={index} className={`border-[#D4D4D4] border h-10 transition-all duration-200`}>
-                                    <td><input type="checkbox" className='mr-2 ml-1' />{index + 1}</td>
+                                return <tr key={index} className={`${isExist(student._id) ? 'bg-[#EFEFEF] shadow-md' : 'bg-transparent'} border-[#D4D4D4] border h-10 transition-all duration-200`}>
+                                    <td><input type="checkbox" className='mr-2 ml-1' onClick={() => handleSelect(student._id)} />{index + 1}</td>
                                     <td>{student.studentId}</td>
                                     <td>{student.name}</td>
                                     <td>{student.email}</td>

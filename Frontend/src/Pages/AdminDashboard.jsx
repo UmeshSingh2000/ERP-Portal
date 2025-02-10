@@ -1,16 +1,16 @@
 import axios from 'axios'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast, ToastContainer } from 'react-toastify';
 import toastHelper from '../../Utils/toastHelper';
 import Loader from '../Componenets/Loader';
 import Hamburger from '../Componenets/Hamburger';
-import Students from './Admin Pages/Students';
+const Students = lazy(() => import('./Admin Pages/Students'))
 import logo from '../assets/Admin/manager.ico'
-import Teacher from './Admin Pages/Teacher';
-import Home from './Admin Pages/Home';
+const Teacher = lazy(() => import('./Admin Pages/Teacher'))
+const Home = lazy(() => import('./Admin Pages/Home'))
 import { useSelector } from 'react-redux';
-import Settings from './Admin Pages/Settings';
+const Settings = lazy(() => import('./Admin Pages/Settings'))
 const apiUrl = import.meta.env.VITE_API_URL
 const AdminDashboard = () => {
     const data = useSelector((state) => state.toast.value)
@@ -110,13 +110,25 @@ const AdminDashboard = () => {
         <>
             {loading && <div className='absolute top-1/2 left-1/2'><Loader /></div>}
             <main className={`${loading ? 'hidden' : 'flex'} h-screen w-screen`}>
-                <aside className={`hamburger_menu ${menu ? 'left-0' : 'hidden'}  transition-all duration-300 h-screen w-1/2 md:w-1/4 xl:w-1/5 relative`}>
+                <aside className={`hamburger_menu ${menu ? 'left-0' : '-left-full'} bg-[#F2F2F3] absolute z-10 transition-all duration-300 h-screen w-1/2 md:w-1/4 xl:w-1/5`}>
                     <ul className=' shadow-lg flex flex-col gap h-full'>
-                        <li className='h-20 flex items-center justify-center font-medium bg-black text-white'><img src={logo} alt="" className='w-10' />ERP </li>
-                        <li className={`cursor-pointer ${activePage === 'dashboard' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('dashboard')}>🏠 Dashboard</li>
-                        <li className={`cursor-pointer ${activePage === 'teachers' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('teachers')}>🧑‍🏫 Teachers</li>
-                        <li className={`cursor-pointer ${activePage === 'students' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('students')}>🎓 Students</li>
-                        <li className={`cursor-pointer ${activePage === 'settings' ? 'bg-[#0C0E12] text-white' : ''}`} onClick={() => setActivePage('settings')}>⚙️ Settings</li>
+                        <li className='h-20 flex items-center justify-center font-medium bg-[#030405] text-white'><img src={logo} alt="" className='w-10' />ERP </li>
+                        <li className={`cursor-pointer ${activePage === 'dashboard' ? 'bg-[#030405] text-white' : ''}`} onClick={() => {
+                            setActivePage('dashboard')
+                            setMenu(false)
+                        }}>🏠 Dashboard</li>
+                        <li className={`cursor-pointer ${activePage === 'teachers' ? 'bg-[#030405] text-white' : ''}`} onClick={() => {
+                            setActivePage('teachers')
+                            setMenu(false)
+                        }}>🧑‍🏫 Teachers</li>
+                        <li className={`cursor-pointer ${activePage === 'students' ? 'bg-[#030405] text-white' : ''}`} onClick={() => {
+                            setActivePage('students')
+                            setMenu(false)
+                        }}>🎓 Students</li>
+                        <li className={`cursor-pointer ${activePage === 'settings' ? 'bg-[#030405] text-white' : ''}`} onClick={() => {
+                            setActivePage('settings')
+                            setMenu(false)
+                        }}>⚙️ Settings</li>
                         <li className='cursor-pointer' onClick={() => {
                             localStorage.removeItem('token')
                             localStorage.removeItem('admin')
@@ -135,7 +147,7 @@ const AdminDashboard = () => {
                         </div>
                     </nav>
                     <main className='w-full h-full p-4'>
-                        {loading ? <Loader /> : handleActivePage()}
+                        {loading ? <Loader /> : <Suspense fallback={<div className='flex justify-center items-center h-full'><Loader /></div>}>{handleActivePage()}</Suspense>}
                     </main>
                 </section>
             </main>
@@ -146,5 +158,8 @@ const AdminDashboard = () => {
 const navBarStyle = {
     background: 'linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(22, 26, 33, 1) 20%, rgba(31, 41, 56, 1) 40%, rgba(36, 51, 74, 1) 60%, rgba(41, 61, 91, 1) 80%, rgba(32, 57, 93, 1) 100%)'
 }
+const navBarStyle2 = {
+    background: 'linear-gradient(90deg, rgba(32, 57, 93, 1) 0%, rgba(41, 61, 91, 1) 20%, rgba(36, 51, 74, 1) 40%, rgba(31, 41, 56, 1) 60%, rgba(22, 26, 33, 1) 80%, rgba(0, 0, 0, 1) 100%)'
+};
 
 export default AdminDashboard

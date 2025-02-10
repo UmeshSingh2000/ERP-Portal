@@ -23,7 +23,9 @@ const {
     addStudent,
     deleteStudent,
     updateStudent,
-    getStudent
+    getStudent,
+    deleteMultipleStudent,
+    multipleAddStudent
 } = require('../Controllers/studentControllers') //Controllers for Student
 
 const {
@@ -76,6 +78,8 @@ router.put('/updateAdmin', authenticateToken, adminOnly, updateAdmin)
  * @access Protected (required valid token)
  */
 router.post('/addStudent', authenticateToken, adminOnly, addStudent)
+router.post('/addMultipleStudents', authenticateToken, adminOnly, multipleAddStudent)
+
 
 /**
  * @description Delete student
@@ -83,6 +87,7 @@ router.post('/addStudent', authenticateToken, adminOnly, addStudent)
  * @access Protected (required valid token)
  */
 router.delete('/deleteStudent/:studentId', authenticateToken, adminOnly, deleteStudent)
+router.delete('/delete-multipleStudent/:studentsIds', authenticateToken, adminOnly, deleteMultipleStudent)
 
 /**
  * @description Update Student
@@ -126,7 +131,7 @@ router.get('/getTeachers', authenticateToken, adminOnly, getTeacher)
 
 
 
-router.get('/getStudents', authenticateToken, adminOnly,getStudent)
+router.get('/getStudents', authenticateToken, adminOnly, getStudent)
 
 
 module.exports = router
