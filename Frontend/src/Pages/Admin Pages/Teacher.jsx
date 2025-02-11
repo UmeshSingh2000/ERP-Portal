@@ -155,7 +155,7 @@ const Teacher = () => {
             <nav>
                 <header className='flex justify-between items-center p-2'>
                     <h1 className='font-bold text-3xl'>Teachers</h1>
-                    <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm' onClick={() => {
+                    <button className='bg-[#212121] text-white p-2 rounded text-sm' onClick={() => {
                         setEditTeacherToggle(false)
                         setAddTeacherToggle(!addTeacherToggle)
                     }}>Add Teacher</button>
@@ -165,7 +165,7 @@ const Teacher = () => {
                         <i className="fa-solid fa-magnifying-glass absolute top-1/2 -translate-y-1/2 left-[2%]"></i>
                         <div className='flex items-center gap-2'>
                             <input type="text" placeholder='Search Teacher' className='border-[#D4D4D4] border rounded-md w-full p-2 px-9 text-sm' value={search} onChange={handleSearch} />
-                            <button className='p-2 bg-[#3E3CCC] rounded text-white' onClick={fetchData}>Refresh</button>
+                            <button className='p-2 bg-[#212121] rounded text-white' onClick={fetchData}>Refresh</button>
                             <button className={`${selectedTeacher.length > 1 ? 'block' : 'hidden'} p-2 bg-red-500 rounded text-white`} onClick={handleDeleteMultiple}>Delete</button>
                         </div>
                     </div>

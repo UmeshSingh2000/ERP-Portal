@@ -2,16 +2,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-html,body{
+
+html,
+body {
     font-family: "Parkinsans";
     overflow-x: hidden;
     height: 100%;
     width: 100%;
-    background-image:  linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-    user-select: none;
+    /* background-image:  linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%); */
+    /* user-select: none; */
 }
 
-.hamburger_menu ul li{
-    border-bottom: 1px solid black;
+.hamburger_menu ul li {
+    /* position: relative; */
     padding: 15px;
+    color: white;
+    &:last-child{
+        width: 100%;
+        background-color: #030405;
+        color: white;
+    }
 }

@@ -6,10 +6,13 @@ import Loader from '../../Componenets/Loader'
 import AddTeacher from './AddTeacher'
 import { setToastWithTimeout } from '../../Redux/Features/Toast/toastSlice'
 import MultipleAddFromExcel from './MultipleAddFromExcel'
+import Edit from './Edit'
 const apiUrl = import.meta.env.VITE_API_URL
 const Students = () => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
+    const [editStudentToogle,setEditStudentToogle]=useState(false)
+    const [editStudent,setEditStudent] = useState({})
     const studentData = useSelector((state) => state.students.value || null)
     const [duplicateStudentData, setDuplicateStudentData] = useState(studentData)
     const [addStudentToggle, setStudentToggle] = useState(false)
@@ -164,7 +167,7 @@ const Students = () => {
                 <header className='flex justify-between items-center p-2'>
                     <h1 className='font-bold text-3xl'>Students</h1>
                     <div className='flex gap-2'>
-                        <button className='bg-[#3E3CCC] text-white p-2 rounded text-sm' onClick={() => setStudentToggle(!addStudentToggle)}>Add Student</button>
+                        <button className='bg-[#212121] text-white p-2 rounded text-sm' onClick={() => setStudentToggle(!addStudentToggle)}>Add Student</button>
                         <MultipleAddFromExcel />
                     </div>
                 </header>
@@ -173,7 +176,7 @@ const Students = () => {
                         <i className="fa-solid fa-magnifying-glass absolute top-1/2 -translate-y-1/2 left-[2%]"></i>
                         <div className='flex items-center gap-2'>
                             <input type="text" placeholder='Search Students' className='border-[#D4D4D4] border rounded-md w-full p-2 px-9 text-sm' value={search} onChange={handleSearch} />
-                            <button className='p-2 bg-[#3E3CCC] rounded text-white' onClick={fetchData}>Refresh</button>
+                            <button className='p-2 bg-[#212121] rounded text-white' onClick={fetchData}>Refresh</button>
                             <button className={`${selectedStudent.length > 1 ? 'block' : 'hidden'} p-2 bg-red-500 rounded text-white`} onClick={handleDeleteMultiple}>Delete</button>
                         </div>
                     </div>
@@ -182,8 +185,8 @@ const Students = () => {
             {addStudentToggle && <div className='absolute w-4/5 h-3/4 overflow-auto shadow-xl scrollbar-thin md:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
                 <AddTeacher toggleState={addStudentToggle} title="Student" onClick={setStudentToggle} />
             </div>}
-            {/**edit teacher panel */}
-            {/* {editTeacherToggle && <div className='absolute w-4/5 h-3/4 overflow-auto shadow-xl scrollbar-thin md:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'><Edit toggleState={editTeacherToggle} onClick={setEditTeacherToggle} teacherData={editTeacher} /></div>} */}
+            {/**edit student panel */}
+            {editStudentToogle && <div className='absolute w-4/5 h-3/4 overflow-auto shadow-xl scrollbar-thin md:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'><Edit title="Student" toggleState={editStudentToogle} onClick={setEditStudentToogle} teacherData={editStudent} /></div>}
             <main className='pt-3 h-full overflow-auto scrollbar-thin'>
                 <table className='w-full'>
                     <thead className='bg-[#EFEFEF] h-10 border-[#D4D4D4] border'>
@@ -212,7 +215,11 @@ const Students = () => {
                                             })}
                                         </select></td>
                                     <td>{student.course}</td>
-                                    <td><i className="fa-solid fa-trash  ml-3 mr-3 cursor-pointer text-red-600" onClick={() => handleDelete(student._id, student.name)}></i><i className="fa-regular fa-pen-to-square cursor-pointer" ></i></td>
+                                    <td><i className="fa-solid fa-trash  ml-3 mr-3 cursor-pointer text-red-600" onClick={() => handleDelete(student._id, student.name)}></i><i className="fa-regular fa-pen-to-square cursor-pointer" onClick={()=>{
+                                        setStudentToggle(false)
+                                        setEditStudentToogle(!editStudentToogle)
+                                        setEditStudent(student)
+                                    }}></i></td>
                                 </tr>
                             }) : <tr className='border-[#D4D4D4] border h-10'>
                                 <td className='text-center' colSpan='8'>No Data Found</td>

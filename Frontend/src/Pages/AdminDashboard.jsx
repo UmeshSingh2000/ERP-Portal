@@ -110,26 +110,26 @@ const AdminDashboard = () => {
         <>
             {loading && <div className='absolute top-1/2 left-1/2'><Loader /></div>}
             <main className={`${loading ? 'hidden' : 'flex'} h-screen w-screen`}>
-                <aside className={`hamburger_menu ${menu ? 'left-0' : '-left-full'} bg-[#F2F2F3] absolute z-10 transition-all duration-300 h-screen w-1/2 md:w-1/4 xl:w-1/5`}>
-                    <ul className=' shadow-lg flex flex-col gap h-full'>
-                        <li className='h-20 flex items-center justify-center font-medium bg-[#030405] text-white'><img src={logo} alt="" className='w-10' />ERP </li>
-                        <li className={`cursor-pointer ${activePage === 'dashboard' ? 'bg-[#030405] text-white' : ''}`} onClick={() => {
+                <aside className={`hamburger_menu ${menu ? 'left-0' : '-left-full'} bg-[#171717] absolute z-10 transition-all duration-300 h-screen w-1/2 md:w-1/4 xl:w-1/5`}>
+                    <ul className='shadow-lg relative flex flex-col gap h-full'>
+                        <li className='shadow-md h-20 flex items-center justify-center font-medium bg-[#03040] text-white'><img src={logo} alt="" className='w-10' />ERP</li>
+                        <li className={`cursor-pointer ${activePage === 'dashboard' ? 'bg-[#2F2F2F]' : ''} rounded-2xl mr-2 ml-2 mt-2`} onClick={() => {
                             setActivePage('dashboard')
                             setMenu(false)
                         }}>🏠 Dashboard</li>
-                        <li className={`cursor-pointer ${activePage === 'teachers' ? 'bg-[#030405] text-white' : ''}`} onClick={() => {
+                        <li className={`cursor-pointer ${activePage === 'teachers' ? 'bg-[#2F2F2F] ' : ''} rounded-2xl mr-2 ml-2`} onClick={() => {
                             setActivePage('teachers')
                             setMenu(false)
                         }}>🧑‍🏫 Teachers</li>
-                        <li className={`cursor-pointer ${activePage === 'students' ? 'bg-[#030405] text-white' : ''}`} onClick={() => {
+                        <li className={`cursor-pointer ${activePage === 'students' ? 'bg-[#2F2F2F]' : ''} rounded-2xl mr-2 ml-2`} onClick={() => {
                             setActivePage('students')
                             setMenu(false)
                         }}>🎓 Students</li>
-                        <li className={`cursor-pointer ${activePage === 'settings' ? 'bg-[#030405] text-white' : ''}`} onClick={() => {
+                        <li className={`cursor-pointer ${activePage === 'settings' ? 'bg-[#2F2F2F] ' : ''} rounded-2xl mr-2 ml-2`} onClick={() => {
                             setActivePage('settings')
                             setMenu(false)
                         }}>⚙️ Settings</li>
-                        <li className='cursor-pointer' onClick={() => {
+                        <li className='cursor-pointer absolute bottom-0' onClick={() => {
                             localStorage.removeItem('token')
                             localStorage.removeItem('admin')
                             navigate('/admin/login')
@@ -156,10 +156,8 @@ const AdminDashboard = () => {
     )
 }
 const navBarStyle = {
-    background: 'linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(22, 26, 33, 1) 20%, rgba(31, 41, 56, 1) 40%, rgba(36, 51, 74, 1) 60%, rgba(41, 61, 91, 1) 80%, rgba(32, 57, 93, 1) 100%)'
+    // background: 'linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(22, 26, 33, 1) 20%, rgba(31, 41, 56, 1) 40%, rgba(36, 51, 74, 1) 60%, rgba(41, 61, 91, 1) 80%, rgba(32, 57, 93, 1) 100%)'
+    background: '#212121'
 }
-const navBarStyle2 = {
-    background: 'linear-gradient(90deg, rgba(32, 57, 93, 1) 0%, rgba(41, 61, 91, 1) 20%, rgba(36, 51, 74, 1) 40%, rgba(31, 41, 56, 1) 60%, rgba(22, 26, 33, 1) 80%, rgba(0, 0, 0, 1) 100%)'
-};
 
 export default AdminDashboard

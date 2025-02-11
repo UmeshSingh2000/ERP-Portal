@@ -120,7 +120,7 @@ const Settings = () => {
                     <aside>
                         <div className='w-full'>
                             {admin?.profile ? <img src={`${apiUrl}${admin.profile}`} alt="profile" className="w-72 h-72 object-cover rounded-full" /> : <img src="https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png" alt="profile" className="w-72 rounded-full" />}
-                            <p className='text-center font-thin hover:bg-[#3E3CCC] hover:text-white transition-all duration-500 mt-2 rounded cursor-pointer text-xl' onClick={handleUpdateProfile}><i className="fa-solid fa-pencil mr-1"></i>Edit</p>
+                            <p className='text-center font-thin hover:bg-[#212121] hover:text-white transition-all duration-500 mt-2 rounded cursor-pointer text-xl' onClick={handleUpdateProfile}><i className="fa-solid fa-pencil mr-1"></i>Edit</p>
                             <input ref={fileInputRef} onChange={handleFileChange} type="file" className='hidden' accept='image/*' />
                         </div>
                     </aside>
@@ -139,7 +139,7 @@ const Settings = () => {
                             {inputFields("Password...", "password", "New Password", "newPassword")}
                             {inputFields("Password...", "password", "Confirm New Password", "confirmPassword")}
                         </div>
-                        <button className='bg-[#3E3CCC] text-white p-2 w-40 rounded text-sm' onClick={handleAdminUpdate}>Save</button>
+                        <button className='bg-[#212121] text-white p-2 w-40 rounded text-sm' onClick={handleAdminUpdate}>Save</button>
                     </main>
                 </main>
             </section>}
