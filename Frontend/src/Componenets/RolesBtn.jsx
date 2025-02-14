@@ -6,7 +6,7 @@ const RolesBtn = ({ role,isActive,onSelect }) => {
         <>
             <button className={`${isActive ? 'bg-[#BEF3FF]':'bg-transparent'} p-3 w-full flex flex-col justify-center items-center rounded-md border-[#8E8A8A] border`} onClick={onSelect}>
                 <img loading="lazy" className='w-1/3 object-cover' src={role==='student'?stud:teach} />
-                {role === 'student' ? <p className='text-center text-lg font-semibold'>Student</p> : <p className='text-center text-lg font-semibold'>Teacher</p>}
+                {role === 'student' ? <p className='text-center text-lg 2xl:text-2xl font-semibold'>Student</p> : <p className='text-center text-lg font-semibold 2xl:text-2xl'>Teacher</p>}
             </button>
             
         </>

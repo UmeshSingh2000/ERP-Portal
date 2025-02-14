@@ -82,10 +82,10 @@ const UserLogin = () => {
   return (
     <>
       <main className='w-full h-dvh flex justify-center items-center'>
-        <section className='w-4/5 p-2 md:w-auto md:p-2 md:h-auto xl:w-1/3 xl:py-6 lg:h-4/6 lg:w-2/5 2xl:w-2/4 2xl:h-2/4 h-[26rem] flex flex-col justify-center items-center bg-white shadow-lg rounded-lg gap-2 '>
+        <section className='p-3 w-4/5 h-2/3 flex items-center flex-col justify-center gap-3 md:w-1/3 xl:h-auto 2xl:w-3/5 2xl:gap-5'>
           <header>
-            <h1 className='text-2xl xl:text-3xl font-semibold'>Welcome Back</h1>
-            <p className='text-base font-light'>Enter your credential to access your account </p>
+            <h1 className='text-4xl font-bold 2xl:text-5xl xl:text-center'>Welcome Back</h1>
+            <p className='text-sm font-normal 2xl:text-2xl xl:text-center'>Enter your credential to access your account </p>
           </header>
           <nav className='w-full'>
             <div className="xl:w-9/12 roles m-auto flex gap-2 justify-center">
@@ -106,8 +106,8 @@ const UserLogin = () => {
             {loading ? <Loader /> : <Button onclick={handleLogin} />}
           </main>
           <footer className='w-full flex flex-col items-center cursor-pointer justify-between'>
-            <p>Forget Password?</p>
-            <Link to='/admin/login'><p>Are you Admin?</p></Link>
+            <p className='xl:text-base 2xl:text-2xl'>Forget Password?</p>
+            <Link to='/admin/login'><p className='xl:text-base 2xl:text-2xl'>Are you Admin?</p></Link>
           </footer>
         </section>
       </main>
