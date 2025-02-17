@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { lazy, Suspense, useCallback, useEffect } from 'react'
 import { useState } from "react";
 import axios from 'axios';
 import { Menu, X, LayoutDashboard, GraduationCap, Settings, Users, LogOut } from "lucide-react";
@@ -9,8 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import Loader from '@/components/Loader/Loader';
 import toastHelper from '@/Helpers/toastHelper';
 import { useToast } from "@/hooks/use-toast"
-import Teacher from './Teacher';
-import Home from './Home';
+// import Teacher from './Teacher';
+const Teacher = lazy(() => import('./Teacher'));
+// import Home from './Home';
+const Home = lazy(() => import('./Home'));
 import Students from './Students';
 import AdminSettings from './AdminSettings';
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -195,7 +197,7 @@ const AdminDashboard = () => {
                                     <li><a href="#" className={customClass('students')} onClick={() => {
                                         setActivePage('students')
                                     }}><Users className="w-5 h-5" />Students</a></li>
-                                    <li><a href="#" className={customClass('settings')} onClick={()=>{
+                                    <li><a href="#" className={customClass('settings')} onClick={() => {
                                         setActivePage('settings')
                                     }}><Settings className="w-5 h-5" />Settings</a></li>
                                     <li className='pl-5 pt-1 font-semibold mb-2 absolute bottom-0 left-0 w-full'>
@@ -221,7 +223,7 @@ const AdminDashboard = () => {
 
                 {/* Page Content */}
                 <div className="">
-                    {handleActivePage()}
+                    {loading ? <Loader /> : <Suspense fallback={<div className='flex justify-center items-center h-screen'><Loader /></div>}>{handleActivePage()}</Suspense>}
                 </div>
             </div>
         </div >
