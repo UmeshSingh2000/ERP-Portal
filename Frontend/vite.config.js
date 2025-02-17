@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5173, // Replace with your desired port number
+    port: 5172, // Replace with your desired port number
     host: true, // Set to true to expose the server on your local network
     hmr: {
       // Configure HMR settings if needed

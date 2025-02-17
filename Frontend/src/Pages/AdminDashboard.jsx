@@ -6,7 +6,7 @@ import toastHelper from '../../Utils/toastHelper';
 import Loader from '../Componenets/Loader';
 import Hamburger from '../Componenets/Hamburger';
 const Students = lazy(() => import('./Admin Pages/Students'))
-import logo from '../assets/Admin/manager.ico'
+import logo from '../assets/Admin/logo.ico'
 const Teacher = lazy(() => import('./Admin Pages/Teacher'))
 const Home = lazy(() => import('./Admin Pages/Home'))
 import { useSelector } from 'react-redux';

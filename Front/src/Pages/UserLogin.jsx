@@ -19,13 +19,6 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 
 
-
-
-
-
-
-
-
 const UserLogin = () => {
     const { toast } = useToast()
     const [activeRole, setActiveRole] = useState("student")
@@ -67,7 +60,8 @@ const UserLogin = () => {
         catch (err) {
             return toast({
                 variant: "destructive",
-                title: err.response.data?.message
+                title : "Error",
+                description: err.response.data?.message
             })
         }
         finally {
@@ -81,76 +75,84 @@ const UserLogin = () => {
         return <div className='flex items-center justify-center h-screen'><Loader /></div>
     }
     return (
-        <main className='w-full h-dvh flex items-center justify-center flex-col'>
-            <header>
-            </header>
-            <Tabs defaultValue="student" className="w-[300px] sm:w-[500px]">
-                <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="student" onClick={() => {
-                        setId('')
-                        setPass('')
-                        setActiveRole('student')
-                        toast({
-                            title: 'Student Selected'
-                        })
-                    }}>Student</TabsTrigger>
-                    <TabsTrigger value="teacher" onClick={() => {
-                        setId('')
-                        setPass('')
-                        setActiveRole('teacher')
-                        toast({
-                            title: 'Teacher Selected',
-                        })
-                    }}>Teacher</TabsTrigger>
-                </TabsList>
-                <TabsContent value="student">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Student Login</CardTitle>
-                            <CardDescription>
-                                Enter your student credentials to proceed.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                            <div className="space-y-1">
-                                <Label htmlFor="studentId" className="">Student ID:</Label>
-                                <Input id="studentId" placeholder="Enter your Student ID" value={id} onChange={(e) => setId(e.target.value)} />
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor="studentPassword" className="">Password:</Label>
-                                <Input id="studentPassword" type="password" placeholder="Enter your password" value={pass} onChange={(e) => setPass(e.target.value)} />
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={handleLogin}>Login</Button>
-                        </CardFooter>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="teacher">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Teacher Login</CardTitle>
-                            <CardDescription>
-                                Enter your teacher credentials to proceed.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                            <div className="space-y-1">
-                                <Label htmlFor="teacherId" className="">Teacher ID:</Label>
-                                <Input id="teacherId" placeholder="Enter your Teacher ID" value={id} onChange={(e) => setId(e.target.value)} />
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor="teacherPassword">Password:</Label>
-                                <Input id="teacherPassword" type="password" placeholder="Enter your password" value={pass} onChange={(e) => setPass(e.target.value)} />
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={handleLogin}>Login</Button>
-                        </CardFooter>
-                    </Card>
-                </TabsContent>
-            </Tabs>
-        </main>
+        <div className="grid min-h-svh lg:grid-cols-2">
+            <div className="relative hidden bg-muted lg:block">
+                <img
+                    lazy
+                    src="https://picsum.photos/1280/720?random"
+                    alt="Image"
+                    className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                />
+            </div>
+            <main className='w-full h-dvh flex items-center justify-center flex-col'>
+                <Tabs defaultValue="student" className="w-[300px] sm:w-[500px]">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="student" onClick={() => {
+                            setId('')
+                            setPass('')
+                            setActiveRole('student')
+                            toast({
+                                title: 'Student Selected'
+                            })
+                        }}>Student</TabsTrigger>
+                        <TabsTrigger value="teacher" onClick={() => {
+                            setId('')
+                            setPass('')
+                            setActiveRole('teacher')
+                            toast({
+                                title: 'Teacher Selected',
+                            })
+                        }}>Teacher</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="student">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Student Login</CardTitle>
+                                <CardDescription>
+                                    Enter your student credentials to proceed.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-2">
+                                <div className="space-y-1">
+                                    <Label htmlFor="studentId" className="">Student ID:</Label>
+                                    <Input id="studentId" placeholder="Enter your Student ID" value={id} onChange={(e) => setId(e.target.value.toUpperCase())} />
+                                </div>
+                                <div className="space-y-1">
+                                    <Label htmlFor="studentPassword" className="">Password:</Label>
+                                    <Input id="studentPassword" type="password" placeholder="Enter your password" value={pass} onChange={(e) => setPass(e.target.value)} />
+                                </div>
+                            </CardContent>
+                            <CardFooter>
+                                <Button onClick={handleLogin}>Login</Button>
+                            </CardFooter>
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="teacher">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Teacher Login</CardTitle>
+                                <CardDescription>
+                                    Enter your teacher credentials to proceed.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-2">
+                                <div className="space-y-1">
+                                    <Label htmlFor="teacherId" className="">Teacher ID:</Label>
+                                    <Input id="teacherId" placeholder="Enter your Teacher ID" value={id} onChange={(e) => setId(e.target.value)} />
+                                </div>
+                                <div className="space-y-1">
+                                    <Label htmlFor="teacherPassword">Password:</Label>
+                                    <Input id="teacherPassword" type="password" placeholder="Enter your password" value={pass} onChange={(e) => setPass(e.target.value)} />
+                                </div>
+                            </CardContent>
+                            <CardFooter>
+                                <Button onClick={handleLogin}>Login</Button>
+                            </CardFooter>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
+            </main>
+        </div>
     )
 }
 export default UserLogin;
