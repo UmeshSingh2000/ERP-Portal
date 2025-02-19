@@ -24,27 +24,229 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination"
+import {
+    Sheet,
+    SheetClose,
+    SheetContent,
+    SheetDescription,
+    SheetFooter,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet"
+
 
 
 import { Button } from './ui/button'
 import Loader from './Loader/Loader'
+import { Label } from './ui/label'
+import { Input } from './ui/input'
+import { Checkbox } from './ui/checkbox'
+import axios from 'axios'
+import { useToast } from '@/hooks/use-toast'
+import toastHelper from '@/Helpers/toastHelper'
+const apiUrl = import.meta.env.VITE_API_URL;
+
 
 const PAGE_SIZE = 10
 
-const CustomTable = React.memo(({ data = [] }) => {
+const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, deleteTeacher, selectedTeacher, setSelectedTeacher }) => {
+    const {toast} = useToast()
     const [loading, setLoading] = useState(false)
-    const [currentPage, setCurrentPage] = useState(1);
+    const [editTeacherData, setEditTeacherData] = useState({})
     const totalPages = Math.ceil(data.length / PAGE_SIZE);
     const [paginatedData, setPaginatedData] = useState([])
+
+
+    const [fieldController, setFieldController] = useState({
+        name: editTeacherData?.name,
+        email: editTeacherData?.email,
+        teacherId: editTeacherData?.teacherId,
+        course: editTeacherData?.course,
+        subjects: editTeacherData?.subjects
+    })
+
+    const handleSelect = (e, teacherId) => {
+        e.stopPropagation()
+        if (selectedTeacher.includes(teacherId)) return setSelectedTeacher(selectedTeacher.filter((id) => id !== teacherId))
+        setSelectedTeacher([...selectedTeacher, teacherId])
+    }
+    const isExist = (teacherId) => {
+        return selectedTeacher.includes(teacherId)
+    }
+    const updateTeacher = async (e, teacherId) => {
+        e.preventDefault()
+        setLoading(true)
+        try {
+            const response = await axios.put(`${apiUrl}/admin/updateTeacher/${teacherId}`, fieldController, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            console.log(response)
+            toastHelper(toast, response.data.message,'Success')
+        }
+        catch (err) {
+            toastHelper(toast, err.response.data.message,'Error')
+            console.log(err)
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+
+
+    useEffect(() => {
+        setFieldController({
+            ...editTeacherData
+        })
+    }, [editTeacherData])
+
+
     useEffect(() => {
         setPaginatedData(data.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE));
     }, [currentPage, data]);
 
-    if (!data || data.length === 0) return <div className='h-screen w-full flex justify-center items-center'><Loader /></div>
+
+
+
+    const InputFields = (label, type, name) => {
+        return (
+            <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor={name} className="text-right">
+                        {label}
+                    </Label>
+                    <Input id={name} type={type} value={fieldController[name]} className="col-span-3" onChange={(e) => setFieldController({
+                        ...fieldController, [name]: e.target.value
+                    })} />
+                </div>
+            </div>
+        )
+    }
+
+
+
+    // if (!data || data.length === 0) return <div className='h-screen w-full flex justify-center items-center'><Loader /></div>
     return (
         <>
-            <div className="">
-                <Pagination className='flex justify-end sticky bg-white z-10 top-0'>
+            <div className="overflow-x-auto">
+                
+
+                {loading ? <div className='absolute top-1/2 left-1/2'><Loader /></div> :
+                    <div className="w-full">
+                        {/* Table for Larger Screens */}
+                        <Table className="hidden sm:table">
+                            <TableCaption>A list of your Enrolled Teachers</TableCaption>
+                            <TableHeader className="bg-gray-100">
+                                <TableRow>
+                                    <TableHead className="w-[50px]">Sno:</TableHead>
+                                    <TableHead className="w-[100px]">Teacher ID</TableHead>
+                                    <TableHead>Name</TableHead>
+                                    <TableHead>Email</TableHead>
+                                    <TableHead className="text-left">Subjects</TableHead>
+                                    <TableHead className="text-left">Course</TableHead>
+                                    <TableHead className="text-left">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {paginatedData.map((teacher, index) => (
+                                    <Sheet key={teacher._id}>
+                                        <SheetTrigger onClick={() => setEditTeacherData(teacher)} asChild>
+                                            <TableRow className={`${isExist(teacher._id) ? 'bg-[#EFEFEF] shadow-md' : 'bg-transparent'} cursor-cell`}>
+                                                <TableCell className="font-medium flex gap-0.5">
+                                                    <Checkbox className="cursor-pointer h-4" onClick={(e) => handleSelect(e, teacher._id)} />
+                                                    <p className='h-full'>{((currentPage - 1) * PAGE_SIZE) + index + 1}</p></TableCell>
+                                                <TableCell className="font-medium">{teacher.teacherId}</TableCell>
+                                                <TableCell className="font-medium">{teacher.name}</TableCell>
+                                                <TableCell className="font-medium">{teacher.email}</TableCell>
+                                                <TableCell className="font-medium">
+                                                    <Select>
+                                                        <SelectTrigger className="w-[180px]">
+                                                            <SelectValue placeholder="Subjects" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {teacher.subjects.map((subject, idx) => (
+                                                                <SelectItem value={subject} key={idx}>{subject}</SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </TableCell>
+                                                <TableCell className="font-medium">{teacher.course}</TableCell>
+                                                <TableCell className="font-medium">
+                                                    <Button size="sm" className="cursor-pointer" onClick={(e) => { deleteTeacher(teacher._id, teacher.name); e.stopPropagation(); }}>
+                                                        Delete
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        </SheetTrigger>
+                                        <SheetContent className="w-[400px] sm:w-[540px]">
+                                            <SheetHeader>
+                                                <SheetTitle>Edit Teacher</SheetTitle>
+                                                <SheetDescription>Modify details for {teacher.name}</SheetDescription>
+                                                <div className="grid py-4">
+                                                    {InputFields('Name', 'text', 'name')}
+                                                    {InputFields('Email', 'email', 'email')}
+                                                    {InputFields('Teacher ID', 'text', 'teacherId')}
+                                                    {InputFields('Course', 'text', 'course')}
+                                                    {InputFields('Subjects', 'text', 'subjects')}
+                                                </div>
+                                                <SheetFooter>
+                                                    <SheetClose asChild>
+                                                        <Button type="submit" className="cursor-pointer" onClick={(e) => {
+                                                            updateTeacher(e, teacher._id)
+                                                        }}>Save changes</Button>
+                                                    </SheetClose>
+                                                </SheetFooter>
+                                            </SheetHeader>
+                                        </SheetContent>
+                                    </Sheet>
+                                ))}
+                            </TableBody>
+                        </Table>
+
+                        {/* Mobile View - Stacked Cards */}
+                        <div className="sm:hidden flex flex-col gap-4">
+                            {paginatedData.map((teacher, index) => (
+                                <Sheet key={teacher._id}>
+                                    <SheetTrigger onClick={() => setEditTeacherData(teacher)} asChild>
+                                        <div className="border rounded-lg p-4 shadow-md bg-white cursor-pointer">
+                                            <div className="flex justify-between items-center">
+                                                <h3 className="font-semibold text-lg">#{((currentPage - 1) * PAGE_SIZE) + index + 1}</h3>
+                                                <Button size="sm" onClick={(e) => { deleteTeacher(teacher._id, teacher.name); e.stopPropagation(); }}>Delete</Button>
+                                            </div>
+                                            <p className="mt-2"><strong>Teacher ID:</strong> {teacher.teacherId}</p>
+                                            <p><strong>Name:</strong> {teacher.name}</p>
+                                            <p><strong>Email:</strong> {teacher.email}</p>
+                                            <p><strong>Course:</strong> {teacher.course}</p>
+                                            <p><strong>Subjects:</strong> {teacher.subjects.join(', ')}</p>
+                                        </div>
+                                    </SheetTrigger>
+                                    <SheetContent className="w-[400px] sm:w-[540px]">
+                                        <SheetHeader>
+                                            <SheetTitle>Edit Teacher</SheetTitle>
+                                            <SheetDescription>Modify details for {teacher.name}</SheetDescription>
+                                            <div className="grid py-4">
+                                                {InputFields('Name', 'text', 'name')}
+                                                {InputFields('Email', 'email', 'email')}
+                                                {InputFields('Teacher ID', 'text', 'teacherId')}
+                                                {InputFields('Course', 'text', 'course')}
+                                                {InputFields('Subjects', 'text', 'subjects')}
+                                            </div>
+                                            <SheetFooter>
+                                                <SheetClose asChild>
+                                                    <Button type="submit" className="cursor-pointer">Save changes</Button>
+                                                </SheetClose>
+                                            </SheetFooter>
+                                        </SheetHeader>
+                                    </SheetContent>
+                                </Sheet>
+                            ))}
+                        </div>
+                    </div>
+                }
+                <Pagination className='flex justify-end w-auto bg-white z-10'>
                     <PaginationContent>
                         <PaginationItem>
                             <PaginationPrevious className={`${currentPage === 1 ? 'cursor-not-allowed' : 'cursor-pointer'} `} onClick={() => {
@@ -73,47 +275,6 @@ const CustomTable = React.memo(({ data = [] }) => {
                         </PaginationItem>
                     </PaginationContent>
                 </Pagination>
-                {loading ? <div className='absolute top-1/2 left-1/2'><Loader /></div> : <Table className="w-full min-w-[600px]">
-                    <TableCaption>A list of your Enrolled Teachers</TableCaption>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[100px]">Sno:</TableHead>
-                            <TableHead className="w-[100px]">Teacher ID</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead className="text-left">Subjects</TableHead>
-                            <TableHead className="text-left">Course</TableHead>
-                            <TableHead className="text-left">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {paginatedData.length > 0 && paginatedData.map((teacher, index) => {
-                            return <TableRow key={teacher._id}>
-                                <TableCell className="font-medium"><input type="checkbox" className='mr-2 ml-1' />{((currentPage-1)*PAGE_SIZE)+index + 1}</TableCell>
-                                <TableCell className="font-medium">{teacher.teacherId}</TableCell>
-                                <TableCell className="font-medium">{teacher.name}</TableCell>
-                                <TableCell className="font-medium">{teacher.email}</TableCell>
-                                <TableCell className="font-medium">
-                                    <Select>
-                                        <SelectTrigger className="w-[180px]">
-                                            <SelectValue placeholder="Subjects" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {teacher.subjects.map((subject, index) => {
-                                                return <SelectItem value={subject} key={index}>{subject}</SelectItem>
-                                            })}
-                                        </SelectContent>
-                                    </Select>
-                                </TableCell>
-                                <TableCell className="font-medium">{teacher.course}</TableCell>
-                                <TableCell className="font-medium"><Button className="cursor-pointer">Delete</Button></TableCell>
-                            </TableRow>
-                        })}
-
-                    </TableBody>
-                </Table>
-                }
-
             </div>
         </>
     )

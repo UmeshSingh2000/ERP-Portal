@@ -30,6 +30,8 @@ const addTeacher = async (req, res) => {
         //email validate format
         const emailValid = isValidEmail(email);
 
+        //capitalize TeacherId
+        teacherId = capitalize(teacherId)
         //check if the teacher exist
         
         const isTeacher = await teacher.findOne({$or:[{email},{teacherId}]})
@@ -38,6 +40,9 @@ const addTeacher = async (req, res) => {
         
         //capitalize name
         name = capitalize(name)
+
+        //capitalize course
+        course = capitalize(course)
 
         //if not found
         if (!emailValid) return res.status(400).json({ message: "Invalid Email format" })
@@ -148,9 +153,8 @@ const updateTeacher = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(teacherId)) {
             return res.status(400).json({ message: "Invalid teacher ID format" });
         }
-
         //spliting subjects by comma
-        if(updatedData.subjects){
+        if(updatedData.subjects && typeof updatedData.subjects === 'string'){
             updatedData.subjects = seperateString(updatedData.subjects)
         }
 
