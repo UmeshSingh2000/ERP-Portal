@@ -20,7 +20,7 @@ import { useSelector } from 'react-redux';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const AdminDashboard = () => {
-    const theme = useSelector((state)=>state.theme.value)
+    const theme = useSelector((state) => state.theme.value)
     const { toast } = useToast()
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
@@ -79,7 +79,7 @@ const AdminDashboard = () => {
 
     //custom class for sidebar item
     const customClass = (type) => {
-        return `${activePage === `${type}` ? 'bg-[#2F2F2F] text-white' : ''} text-gray-700 block sidebar-item`
+        return `${activePage === `${type}` ? 'bg-[#2F2F2F] text-white' : ''} block sidebar-item`
     }
 
 
@@ -143,7 +143,7 @@ const AdminDashboard = () => {
                         </li> */}
                         <li className='pl-5 pt-1 font-semibold mb-2 gap-2.5 absolute bottom-0 left-0 w-full flex items-center'>
                             <Avatar>
-                                <AvatarImage src="https://github.com/shadcn.png" />
+                                <AvatarImage className="object-cover" src={admin.profile ? `${apiUrl}${admin.profile}` : "https://github.com/shadcn.png"} />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div>
@@ -180,7 +180,7 @@ const AdminDashboard = () => {
                             <>
                                 {/* Backdrop */}
                                 <motion.div
-                                    className={`fixed inset-0 ${theme==='dark' ? 'bg-black' : 'bg-white'}    z-20`}
+                                    className={`fixed inset-0 ${theme === 'dark' ? 'bg-black' : 'bg-white'}    z-20`}
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
@@ -193,7 +193,7 @@ const AdminDashboard = () => {
                                     animate={{ x: 0 }}
                                     exit={{ x: "-100%" }}
                                     transition={{ duration: 0.3 }}
-                                    className={`fixed top-0 left-0 h-full w-64 ${theme==='dark' ? 'bg-black' : 'bg-white'} shadow-md z-20 p-5`}
+                                    className={`fixed top-0 left-0 h-full w-64 ${theme === 'dark' ? 'bg-black' : 'bg-white'} shadow-md z-20 p-5`}
                                 >
                                     <button onClick={() => setIsOpen(false)} className="absolute top-4 right-4">
                                         <X className="w-6 h-6 cursor-pointer" />
@@ -217,7 +217,7 @@ const AdminDashboard = () => {
                                         }}><Settings className="w-5 h-5" />Settings</a></li>
                                         <li className='pl-5 pt-1 font-semibold mb-2 absolute bottom-0 left-0 w-full'>
                                             <Avatar>
-                                                <AvatarImage src="https://github.com/shadcn.png" />
+                                                <AvatarImage className="object-cover" src={admin.profile ? `${apiUrl}${admin.profile}` : "https://github.com/shadcn.png"} />
                                                 <AvatarFallback>CN</AvatarFallback>
                                             </Avatar>
                                             <div>
