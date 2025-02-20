@@ -6,7 +6,7 @@ const teacher = require('../Schema/teacherSchema')
 const { isValidEmail } = require('../Utils/validationUtils')
 
 //helper functions
-const { hashPassword, comparePass,capitalize,seperateString,checkTeacherExist } = require('../Utils/helperFunction')
+const { hashPassword, comparePass, capitalize, seperateString, checkTeacherExist } = require('../Utils/helperFunction')
 
 //jwt token generator
 const { generateToken } = require('../JWT/jwtToken')
@@ -26,18 +26,18 @@ const addTeacher = async (req, res) => {
 
         //spliting subjects by comma 
         subjects = seperateString(subjects)
-        
+
         //email validate format
         const emailValid = isValidEmail(email);
 
         //capitalize TeacherId
         teacherId = capitalize(teacherId)
         //check if the teacher exist
-        
-        const isTeacher = await teacher.findOne({$or:[{email},{teacherId}]})
-        if(isTeacher) return res.status(400).json({message:"Teacher with this email or ID already exists"})
 
-        
+        const isTeacher = await teacher.findOne({ $or: [{ email }, { teacherId }] })
+        if (isTeacher) return res.status(400).json({ message: "Teacher with this email or ID already exists" })
+
+
         //capitalize name
         name = capitalize(name)
 
@@ -46,7 +46,7 @@ const addTeacher = async (req, res) => {
 
         //if not found
         if (!emailValid) return res.status(400).json({ message: "Invalid Email format" })
-            
+
         const newTeacher = new teacher({
             name,
             email,
@@ -65,6 +65,60 @@ const addTeacher = async (req, res) => {
         res.status(500).json({ message: "Internal Server error", error: err.message })
     }
 }
+
+/**
+ * @description Add multiple teachers (Admin Only)
+ * @route POST /api/admin/add-multipleTeachers
+ * @access Private
+ */
+const multipleAddTeacher = async (req, res) => {
+    try {
+        const { teachers } = req.body;
+
+        if (!teachers || !Array.isArray(teachers) || teachers.length === 0) {
+            return res.status(400).json({ message: "Invalid teacher data provided." });
+        }
+
+        // Extract emails and teacherIds
+        const teacherEmails = teachers.map(t => t.email);
+        const teacherIds = teachers.map(t => t.teacherId);
+
+        // Check for existing teachers
+        const existingTeachers = await teacher.find({ $or: [{ email: { $in: teacherEmails } }, { teacherId: { $in: teacherIds } }] });
+
+        // Filter out existing teachers
+        const newTeachers = teachers.filter(t => !existingTeachers.some(et => et.email === t.email || et.teacherId === t.teacherId));
+
+        if (newTeachers.length === 0) {
+            return res.status(409).json({ message: "All provided teachers already exist." });
+        }
+
+        // Hash passwords and format data
+        const formattedTeachers = await Promise.all(
+            newTeachers.map(async (teacher) => {
+                const hashedPassword = await hashPassword(teacher.password.toString());
+                return {
+                    ...teacher,
+                    subjects: typeof teacher.subjects === 'string'
+                        ? teacher.subjects.split(',').map(subject => subject.trim())
+                        : teacher.subjects,
+                    password: hashedPassword
+                };
+            })
+        );
+
+        // Insert new teachers
+        const result = await teacher.insertMany(formattedTeachers);
+
+        res.status(201).json({
+            message: `Successfully added ${result.length} teachers.`,
+            insertedCount: result.length
+        });
+    } catch (err) {
+        console.error("Error occurred:", err);
+        res.status(500).json({ message: "Server error occurred.", error: err.message });
+    }
+};
 
 /**
  * @description Delete Teacher (Admin Only)
@@ -108,15 +162,15 @@ const deleteMultipleTeacher = async (req, res) => {
     //convert the string to array 
     const teacherIdsArray = teacherIds.split(',')
 
-    const objectIds = teacherIdsArray.map((id)=>new mongoose.Types.ObjectId(id))
-    try{
-        const deletedTeacher = await teacher.deleteMany({_id:{$in:objectIds}})
-        if(!deletedTeacher){
-            return res.status(404).json({message:"Teacher not found"})
+    const objectIds = teacherIdsArray.map((id) => new mongoose.Types.ObjectId(id))
+    try {
+        const deletedTeacher = await teacher.deleteMany({ _id: { $in: objectIds } })
+        if (!deletedTeacher) {
+            return res.status(404).json({ message: "Teacher not found" })
         }
-        res.status(200).json({message:"Teacher deleted successfully",deletedTeacher})
+        res.status(200).json({ message: "Teacher deleted successfully", deletedTeacher })
     }
-    catch(err){
+    catch (err) {
         console.error(err)
         res.status(500).json({ message: "Internal Server error", error: err.message })
     }
@@ -154,12 +208,12 @@ const updateTeacher = async (req, res) => {
             return res.status(400).json({ message: "Invalid teacher ID format" });
         }
         //spliting subjects by comma
-        if(updatedData.subjects && typeof updatedData.subjects === 'string'){
+        if (updatedData.subjects && typeof updatedData.subjects === 'string') {
             updatedData.subjects = seperateString(updatedData.subjects)
         }
 
         //capitalize name
-        if(updatedData.teacherId){
+        if (updatedData.teacherId) {
             updatedData.teacherId = capitalize(updatedData.teacherId)
         }
 
@@ -220,14 +274,14 @@ const teacherLogin = async (req, res) => {
  */
 
 
-const getTeacher = async(req,res)=>{
+const getTeacher = async (req, res) => {
     try {
         //fetch teacher exluding those fields
-        const teachers = await teacher.find({},'-password -__v -createdAt -updatedAt -role');
-        res.status(200).json({teachers})
+        const teachers = await teacher.find({}, '-password -__v -createdAt -updatedAt -role');
+        res.status(200).json({ teachers })
     } catch (error) {
         console.error(error)
-        res.status(500).json({message:"Internal Server Error"})
+        res.status(500).json({ message: "Internal Server Error" })
     }
 }
 
@@ -239,5 +293,6 @@ module.exports = {
     updateTeacher,
     teacherLogin,
     getTeacher,
-    deleteMultipleTeacher
+    deleteMultipleTeacher,
+    multipleAddTeacher
 }

@@ -20,6 +20,7 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer"
 import { Label } from '@/components/ui/label';
+import MultipleAddFromExcel from '@/components/MultipleAddFromExcel';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -80,7 +81,6 @@ const Teacher = () => {
             );
             setDuplicateTeacherData(filteredData);
         }
-
         setCurrentPage(1);
     };
 
@@ -154,7 +154,7 @@ const Teacher = () => {
     const handlFormSubmit = async (e) => {
         e.preventDefault()
         try {
-            const response = await axios.post(`${apiUrl}/admin/addTeacher`, {...addTeacherData,role:'teacher'},
+            const response = await axios.post(`${apiUrl}/admin/addTeacher`, { ...addTeacherData, role: 'teacher' },
                 {
                     headers: {
                         authorization: `Bearer ${localStorage.getItem('token')}`
@@ -163,7 +163,14 @@ const Teacher = () => {
             )
             toastHelper(toast, response.data.message, 'Success')
             setIsDrawerOpen(false)
-            
+            setAddTeacherData({
+                name: "",
+                teacherId: "",
+                email: "",
+                password: "",
+                course: "",
+                subjects: ""
+            })
         }
         catch (err) {
             toastHelper(toast, err.response.data.message, 'Error', 1000, "destructive")
@@ -214,7 +221,7 @@ const Teacher = () => {
                     <div className="flex w-full md:w-auto items-center gap-2 justify-center md:justify-end flex-wrap">
                         <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                             <DrawerTrigger asChild>
-                                <Button className="cursor-pointer">Add Teacher</Button>
+                                <p className="bg-primary font-medium text-sm px-3 text-primary-foreground shadow hover:bg-primary/90 p-2 rounded-md cursor-pointer">Add Teacher</p>
                             </DrawerTrigger>
                             <DrawerContent>
                                 <DrawerHeader>
@@ -239,7 +246,8 @@ const Teacher = () => {
                                 </DrawerFooter>
                             </DrawerContent>
                         </Drawer>
-                        <Button className="cursor-pointer bg-green-500">Add Multiple Teachers</Button>
+                        <MultipleAddFromExcel />
+                        {/* <Button className="cursor-pointer bg-green-500">Add Multiple Teachers</Button> */}
                     </div>
                 </div>
             </header>

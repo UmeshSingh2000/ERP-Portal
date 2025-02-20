@@ -139,7 +139,7 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                         {/* Table for Larger Screens */}
                         <Table className="hidden sm:table">
                             <TableCaption>A list of your Enrolled Teachers</TableCaption>
-                            <TableHeader className="bg-gray-100">
+                            <TableHeader className="">
                                 <TableRow>
                                     <TableHead className="w-[50px]">Sno:</TableHead>
                                     <TableHead className="w-[100px]">Teacher ID</TableHead>
@@ -211,7 +211,7 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                             {paginatedData.map((teacher, index) => (
                                 <Sheet key={teacher._id}>
                                     <SheetTrigger onClick={() => setEditTeacherData(teacher)} asChild>
-                                        <div className="border rounded-lg p-4 shadow-md bg-white cursor-pointer">
+                                        <div className="border rounded-lg p-4 shadow-md  cursor-pointer">
                                             <div className="flex justify-between items-center">
                                                 <h3 className="font-semibold text-lg">#{((currentPage - 1) * PAGE_SIZE) + index + 1}</h3>
                                                 <Button size="sm" onClick={(e) => { deleteTeacher(teacher._id, teacher.name); e.stopPropagation(); }}>Delete</Button>
@@ -246,7 +246,7 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                         </div>
                     </div>
                 }
-                <Pagination className='flex justify-end w-auto bg-white z-10'>
+                <Pagination className='flex justify-end w-auto z-10'>
                     <PaginationContent>
                         <PaginationItem>
                             <PaginationPrevious className={`${currentPage === 1 ? 'cursor-not-allowed' : 'cursor-pointer'} `} onClick={() => {

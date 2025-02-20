@@ -16,7 +16,9 @@ const {
     adminDashboard,
     setAdminPicture,
     getAdminProfile,
-    updateAdmin
+    updateAdmin,
+    getStudentTeacherCount,
+    studentPerCourse
 } = require('../Controllers/adminControllers') //Controllers for Admin
 
 const {
@@ -25,7 +27,8 @@ const {
     updateStudent,
     getStudent,
     deleteMultipleStudent,
-    multipleAddStudent
+    multipleAddStudent,
+    
 } = require('../Controllers/studentControllers') //Controllers for Student
 
 const {
@@ -33,7 +36,8 @@ const {
     deleteTeacher,
     updateTeacher,
     getTeacher,
-    deleteMultipleTeacher
+    deleteMultipleTeacher,
+    multipleAddTeacher
 } = require('../Controllers/teacherControllers') //Controllers for Teacher
 
 
@@ -103,6 +107,8 @@ router.put('/updateStudent/:studentId', authenticateToken, adminOnly, updateStud
  * @access Protected (required valid token)
  */
 router.post('/addTeacher', authenticateToken, adminOnly, addTeacher)
+router.post('/addMultipleTeachers', authenticateToken, adminOnly, multipleAddTeacher)
+
 
 /**
  * @description Delete Teacher (protected route)
@@ -129,9 +135,9 @@ router.put('/updateTeacher/:teacherId', authenticateToken, adminOnly, updateTeac
  */
 router.get('/getTeachers', authenticateToken, adminOnly, getTeacher)
 
-
-
 router.get('/getStudents', authenticateToken, adminOnly, getStudent)
+router.get('/count', authenticateToken, adminOnly, getStudentTeacherCount)
+router.get('/student-per-course', authenticateToken, adminOnly, studentPerCourse)
 
 
 module.exports = router

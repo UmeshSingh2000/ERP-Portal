@@ -3,7 +3,8 @@ const { generateToken } = require('../JWT/jwtToken')
 //Admin Schema
 const admin = require('../Schema/adminSchema')
 
-
+const teacher = require('../Schema/teacherSchema')
+const student = require('../Schema/studentSchema')
 
 
 //validate email module
@@ -117,7 +118,7 @@ const adminDashboard = async (req, res) => {
                 role: findAdmin.role,
                 fullName: findAdmin.fullName,
                 profile: findAdmin.photo ? `/admin/getProfile/${id}` : null,
-                phoneNumber : findAdmin.phoneNumber
+                phoneNumber: findAdmin.phoneNumber
             }
         })
     }
@@ -229,6 +230,54 @@ const updateAdmin = async (req, res) => {
     }
 }
 
+/**
+ * @description Get the count of all students and teachers
+ * @route GET /api/admin/count
+ * @returns {Promise<void>} - A promise that resolves when the profile picture is updated.
+ * @throws {Error} - If there is an internal server error.
+ */
+
+const getStudentTeacherCount = async (req, res) => {
+    try {
+        const studentCountPromise = student.countDocuments();
+        const teacherCountPromise = teacher.countDocuments();
+
+        // Execute both queries in parallel
+        const [studentCount, teacherCount] = await Promise.all([studentCountPromise, teacherCountPromise]);
+
+        res.status(200).json({ studentCount, teacherCount });
+    }
+    catch (e) {
+        console.log(e)
+        res.status(500).json({ message: 'Error getting student and teacher count', error: e.message });
+    }
+}
+
+const studentPerCourse = async (req, res) => {
+    try {
+        const students = await student.aggregate([
+            {
+                $group: {
+                    _id: "$course",
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+        students.map((student) => {
+            student.course = student._id;
+            student.count = student.count;
+            delete student._id;
+        });
+        res.status(200).json(students);
+    } catch (e) {
+        console.error("Error fetching students per course:", e);
+        res.status(500).json({ message: "Error fetching student data", error: e.message });
+    }
+};
+
+
+
+
 
 
 module.exports = {
@@ -237,5 +286,7 @@ module.exports = {
     adminDashboard,
     setAdminPicture,
     getAdminProfile,
-    updateAdmin
+    updateAdmin,
+    getStudentTeacherCount,
+    studentPerCourse
 }

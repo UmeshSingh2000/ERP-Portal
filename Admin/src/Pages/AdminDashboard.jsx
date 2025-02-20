@@ -15,8 +15,12 @@ const Teacher = lazy(() => import('./Teacher'));
 const Home = lazy(() => import('./Home'));
 import Students from './Students';
 import AdminSettings from './AdminSettings';
+import ThemeToggle from '@/components/ThemeToggle';
+import { useSelector } from 'react-redux';
+
 const apiUrl = import.meta.env.VITE_API_URL;
 const AdminDashboard = () => {
+    const theme = useSelector((state)=>state.theme.value)
     const { toast } = useToast()
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
@@ -105,128 +109,140 @@ const AdminDashboard = () => {
 
     if (loading) return <div className='absolute top-1/2 left-1/2'><Loader /></div>
     return (
-        <div className="flex">
-            {/* Sidebar (Always Visible on Large Screens) */}
-            <div className="hidden md:flex md:flex-col w-64 h-screen bg-white shadow-md p-5 fixed left-0 top-0">
-                <div className='flex items-center justify-center mb-6'>
-                    <img src={logo} alt="logo" className='w-8' />
-                    <h1 className="text-xl font-bold">Admin Dashboard</h1>
-                </div>
-                <ul className="space-y-4">
-                    <li><a href="#" className={customClass('dashboard')} onClick={() => {
-                        setActivePage('dashboard')
-                    }}> <LayoutDashboard className="w-5 h-5" />Dashboard</a></li>
-                    <li><a href="#" className={customClass('teachers')} onClick={() => {
-                        setActivePage('teachers')
-                    }}><GraduationCap className="w-5 h-5" />Teacher</a></li>
-                    <li><a href="#" className={customClass('students')} onClick={() => {
-                        setActivePage('students')
-                    }}><Users className="w-5 h-5" />Students</a></li>
-                    <li><a href="#" className={customClass('settings')} onClick={() => {
-                        setActivePage('settings')
-                    }}><Settings className="w-5 h-5" />Settings</a></li>
-
-                    <li className='pl-5 pt-1 font-semibold mb-2 gap-2.5 absolute bottom-0 left-0 w-full flex items-center'>
-                        <Avatar>
-                            <AvatarImage src="https://github.com/shadcn.png" />
-                            <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p>{admin ? admin.fullName : ''}</p>
-                            <p className='text-sm'>{admin ? admin.email.slice(0, 5).concat('....').concat(admin.email.slice(-9)) : ""}</p>
-                        </div>
-                        <LogOut className='cursor-pointer' onClick={() => {
-                            localStorage.removeItem('token')
-                            localStorage.removeItem('admin')
-                            navigate('/')
-                        }} />
-                    </li>
-                </ul>
-
+        <>
+            <div className="fixed top-2 right-2 z-30 rounded-lg">
+                <ThemeToggle />
             </div>
-
-            {/* Content Wrapper (Shifts Content Right on Large Screens) */}
-            <div className="flex-1 md:ml-64">
-                <nav className="bg-white border-b shadow-md md:hidden">
-                    <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-                        {/* Left Side: Mobile Menu Button */}
-                        <button onClick={() => setIsOpen(true)} className="md:hidden">
-                            <Menu className="w-6 h-6 cursor-pointer" />
-                        </button>
-
-                        {/* Center: Logo */}
-                        <a href="#" className="text-xl font-bold mx-auto">Admin Dashboard</a>
+            <div className="flex">
+                {/* Sidebar (Always Visible on Large Screens) */}
+                <div className="hidden md:flex md:flex-col w-64 h-screen shadow-md border p-5 fixed left-0 top-0">
+                    <div className='flex items-center justify-center mb-6'>
+                        <img src={logo} alt="logo" className='w-8' />
+                        <h1 className="text-xl font-bold">Admin Dashboard</h1>
                     </div>
-                </nav>
+                    <ul className="space-y-4">
+                        <li><a href="#" className={customClass('dashboard')} onClick={() => {
+                            setActivePage('dashboard')
+                        }}> <LayoutDashboard className="w-5 h-5" />Dashboard</a></li>
+                        <li><a href="#" className={customClass('teachers')} onClick={() => {
+                            setActivePage('teachers')
+                        }}><GraduationCap className="w-5 h-5" />Teacher</a></li>
+                        <li><a href="#" className={customClass('students')} onClick={() => {
+                            setActivePage('students')
+                        }}><Users className="w-5 h-5" />Students</a></li>
+                        <li><a href="#" className={customClass('settings')} onClick={() => {
+                            setActivePage('settings')
+                        }}><Settings className="w-5 h-5" />Settings</a></li>
+                        {/* <li>
+                            <HoverCard>
+                                <HoverCardTrigger><ThemeToggle /></HoverCardTrigger>
+                                <HoverCardContent>
+                                    Toggle Theme
+                                </HoverCardContent>
+                            </HoverCard>
+                        </li> */}
+                        <li className='pl-5 pt-1 font-semibold mb-2 gap-2.5 absolute bottom-0 left-0 w-full flex items-center'>
+                            <Avatar>
+                                <AvatarImage src="https://github.com/shadcn.png" />
+                                <AvatarFallback>CN</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p>{admin ? admin.fullName : ''}</p>
+                                <p className='text-sm'>{admin ? admin.email.slice(0, 5).concat('....').concat(admin.email.slice(-9)) : ""}</p>
+                            </div>
+                            <LogOut className='cursor-pointer' onClick={() => {
+                                localStorage.removeItem('token')
+                                localStorage.removeItem('admin')
+                                navigate('/')
+                            }} />
+                        </li>
+                    </ul>
 
-                {/* Mobile Menu (Slide from Left) */}
-                <AnimatePresence>
-                    {isOpen && (
-                        <>
-                            {/* Backdrop */}
-                            <motion.div
-                                className="fixed inset-0 bg-white z-20"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                onClick={() => setIsOpen(false)}
-                            />
-
-                            {/* Sidebar Menu for Mobile */}
-                            <motion.div
-                                initial={{ x: "-100%" }}
-                                animate={{ x: 0 }}
-                                exit={{ x: "-100%" }}
-                                transition={{ duration: 0.3 }}
-                                className="fixed top-0 left-0 h-full w-64 bg-white shadow-md z-20 p-5"
-                            >
-                                <button onClick={() => setIsOpen(false)} className="absolute top-4 right-4">
-                                    <X className="w-6 h-6 cursor-pointer" />
-                                </button>
-                                <div className='flex items-center justify-center mb-6 mt-8'>
-                                    <img src={logo} alt="logo" className='w-8' />
-                                    <h1 className="text-xl font-bold">Admin Dashboard</h1>
-                                </div>
-                                <ul className="mt-10 space-y-4">
-                                    <li><a href="#" className={customClass("dashboard")} onClick={() => {
-                                        setActivePage('dashboard')
-                                    }}> <LayoutDashboard className="w-5 h-5" />Dashboard</a></li>
-                                    <li><a href="#" className={customClass('teachers')} onClick={() => {
-                                        setActivePage('teachers')
-                                    }}><GraduationCap className="w-5 h-5" />Teacher</a></li>
-                                    <li><a href="#" className={customClass('students')} onClick={() => {
-                                        setActivePage('students')
-                                    }}><Users className="w-5 h-5" />Students</a></li>
-                                    <li><a href="#" className={customClass('settings')} onClick={() => {
-                                        setActivePage('settings')
-                                    }}><Settings className="w-5 h-5" />Settings</a></li>
-                                    <li className='pl-5 pt-1 font-semibold mb-2 absolute bottom-0 left-0 w-full'>
-                                        <Avatar>
-                                            <AvatarImage src="https://github.com/shadcn.png" />
-                                            <AvatarFallback>CN</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <p>{admin ? admin.fullName : ''}</p>
-                                            <p className='text-sm'>{admin ? admin.email.slice(0, 5).concat('....').concat(admin.email.slice(-9)) : ""}</p>
-                                        </div>
-                                        <LogOut className='cursor-pointer' onClick={() => {
-                                            localStorage.removeItem('token')
-                                            localStorage.removeItem('admin')
-                                            navigate('/')
-                                        }} />
-                                    </li>
-                                </ul>
-                            </motion.div>
-                        </>
-                    )}
-                </AnimatePresence>
-
-                {/* Page Content */}
-                <div className="">
-                    {loading ? <Loader /> : <Suspense fallback={<div className='flex justify-center items-center h-screen'><Loader /></div>}>{handleActivePage()}</Suspense>}
                 </div>
-            </div>
-        </div >
+
+                {/* Content Wrapper (Shifts Content Right on Large Screens) */}
+                <div className="flex-1 md:ml-64">
+                    <nav className=" border-b shadow-md md:hidden">
+                        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+                            {/* Left Side: Mobile Menu Button */}
+                            <button onClick={() => setIsOpen(true)} className="md:hidden">
+                                <Menu className="w-6 h-6 cursor-pointer" />
+                            </button>
+
+                            {/* Center: Logo */}
+                            <a href="#" className="text-xl font-bold mx-auto">Admin Dashboard</a>
+                        </div>
+                    </nav>
+
+                    {/* Mobile Menu (Slide from Left) */}
+                    <AnimatePresence>
+                        {isOpen && (
+                            <>
+                                {/* Backdrop */}
+                                <motion.div
+                                    className={`fixed inset-0 ${theme==='dark' ? 'bg-black' : 'bg-white'}    z-20`}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    onClick={() => setIsOpen(false)}
+                                />
+
+                                {/* Sidebar Menu for Mobile */}
+                                <motion.div
+                                    initial={{ x: "-100%" }}
+                                    animate={{ x: 0 }}
+                                    exit={{ x: "-100%" }}
+                                    transition={{ duration: 0.3 }}
+                                    className={`fixed top-0 left-0 h-full w-64 ${theme==='dark' ? 'bg-black' : 'bg-white'} shadow-md z-20 p-5`}
+                                >
+                                    <button onClick={() => setIsOpen(false)} className="absolute top-4 right-4">
+                                        <X className="w-6 h-6 cursor-pointer" />
+                                    </button>
+                                    <div className='flex items-center justify-center mb-6 mt-8'>
+                                        <img src={logo} alt="logo" className='w-8' />
+                                        <h1 className="text-xl font-bold text-black">Admin Dashboard</h1>
+                                    </div>
+                                    <ul className="mt-10 space-y-4">
+                                        <li><a href="#" className={customClass("dashboard")} onClick={() => {
+                                            setActivePage('dashboard')
+                                        }}> <LayoutDashboard className="w-5 h-5" />Dashboard</a></li>
+                                        <li><a href="#" className={customClass('teachers')} onClick={() => {
+                                            setActivePage('teachers')
+                                        }}><GraduationCap className="w-5 h-5" />Teacher</a></li>
+                                        <li><a href="#" className={customClass('students')} onClick={() => {
+                                            setActivePage('students')
+                                        }}><Users className="w-5 h-5" />Students</a></li>
+                                        <li><a href="#" className={customClass('settings')} onClick={() => {
+                                            setActivePage('settings')
+                                        }}><Settings className="w-5 h-5" />Settings</a></li>
+                                        <li className='pl-5 pt-1 font-semibold mb-2 absolute bottom-0 left-0 w-full'>
+                                            <Avatar>
+                                                <AvatarImage src="https://github.com/shadcn.png" />
+                                                <AvatarFallback>CN</AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <p>{admin ? admin.fullName : ''}</p>
+                                                <p className='text-sm'>{admin ? admin.email.slice(0, 5).concat('....').concat(admin.email.slice(-9)) : ""}</p>
+                                            </div>
+                                            <LogOut className='cursor-pointer' onClick={() => {
+                                                localStorage.removeItem('token')
+                                                localStorage.removeItem('admin')
+                                                navigate('/')
+                                            }} />
+                                        </li>
+                                    </ul>
+                                </motion.div>
+                            </>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Page Content */}
+                    <div className="py-5">
+                        {loading ? <Loader /> : <Suspense fallback={<div className='flex justify-center items-center h-screen'><Loader /></div>}>{handleActivePage()}</Suspense>}
+                    </div>
+                </div>
+            </div >
+        </>
     )
 }
 
