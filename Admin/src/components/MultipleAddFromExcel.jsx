@@ -14,7 +14,7 @@ import {
 const apiUrl = import.meta.env.VITE_API_URL
 
 
-const MultipleAddFromExcel = () => {
+const MultipleAddFromExcel = ({title='Teachers'}) => {
     const inputRef = useRef()
     const { toast } = useToast()
 
@@ -41,8 +41,8 @@ const MultipleAddFromExcel = () => {
 
     const handleBulkUpload = async (teachers) => {
         try {
-            const response = await axios.post(`${apiUrl}/admin/addMultipleTeachers`,
-                { teachers },
+            const response = await axios.post(`${apiUrl}/admin/addMultiple${title}`,
+                { students:teachers },
                 {
                     headers: {
                         authorization: `Bearer ${localStorage.getItem('token')}`
@@ -66,7 +66,7 @@ const MultipleAddFromExcel = () => {
                     <Button className="cursor-pointer bg-green-500" onClick={selectFile}><FileJson /></Button>
                 </HoverCardTrigger>
                 <HoverCardContent>
-                    Add Multiple Teacher at Once Just Drop Excel File
+                    Add Multiple {title} at Once Just Drop Excel File
                 </HoverCardContent>
             </HoverCard>
             {/* <button className='bg-[#37ff62] text-white p-2 rounded text-sm' onClick={selectFile}>Add Multiple</button > */}

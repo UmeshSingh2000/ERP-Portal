@@ -43,6 +43,22 @@ const Students = () => {
     course: "",
     subjects: ""
   })
+  const fetchData = useCallback(async () => {
+    setSearch('')
+    setLoading(true);
+    try {
+      const response = await axios.get(`${apiUrl}/admin/getStudents`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      dispatch(setData(response.data.students));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [dispatch]);
   const InputFields = (label, type, name) => {
     return (
       <div className="w-full md:w-md">
@@ -97,23 +113,63 @@ const Students = () => {
       toastHelper(toast, err.response.data.message, 'Error', 1000, "destructive")
     }
   }
-
-  const fetchData = useCallback(async () => {
-    setSearch('')
-    setLoading(true);
+  /**
+     * @function handleDeleteMultiple
+     * @description This function delete multiple student by studentId require the id to be send as string seperated by comma which will be converted to array in the backend as db only accept array for multiple deletion
+     */
+  const handleDeleteMultiple = async () => {
+    const confirm = window.confirm(`Are you sure you want to delete Students?`)
+    if (!confirm) return
+    const studentIds = selectedStudent.join(',')
     try {
-      const response = await axios.get(`${apiUrl}/admin/getStudents`, {
+      const response = await axios.delete(`${apiUrl}/admin/delete-multipleStudent/${studentIds}`, {
         headers: {
           authorization: `Bearer ${localStorage.getItem('token')}`
         }
-      });
-      dispatch(setData(response.data.students));
+      })
+      if (response.status === 200) {
+        toastHelper(toast, response.data.message, 'success')
+        fetchData()
+        setSelectedTeacher([])
+      }
     } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+      toastHelper(toast, err.response.data.message, 'Error', 1000, "destructive")
     }
-  }, [dispatch]);
+  }
+
+  /**
+     * @function handlFormSubmit
+     * @description Add new student
+     */
+  const handlFormSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await axios.post(`${apiUrl}/admin/addStudent`, { ...addStudentData, role: 'student' },
+        {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      )
+      toastHelper(toast, response.data.message, 'Success')
+      setIsDrawerOpen(false)
+      setAddTeacherData({
+        name: "",
+        teacherId: "",
+        email: "",
+        password: "",
+        course: "",
+        subjects: ""
+      })
+    }
+    catch (err) {
+      toastHelper(toast, err.response.data.message, 'Error', 1000, "destructive")
+      console.log(err)
+    }
+    finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     setDuplicateStudentData(studentData);
@@ -144,7 +200,7 @@ const Students = () => {
               />
 
               <Button className="cursor-pointer" onClick={fetchData}>Refresh</Button>
-              <Button className={`${selectedStudent.length > 1 ? 'block' : 'hidden'} cursor-pointer bg-red-500`}><Delete /></Button>
+              <Button onClick={handleDeleteMultiple} className={`${selectedStudent.length > 1 ? 'block' : 'hidden'} cursor-pointer bg-red-500`}><Delete /></Button>
             </div>
 
             {/* Add Buttons */}
@@ -169,15 +225,14 @@ const Students = () => {
                     </div>
                   </div>
                   <DrawerFooter>
-                    <Button className="w-xs m-auto cursor-pointer" type="submit">Add</Button>
+                    <Button className="w-xs m-auto cursor-pointer" type="submit" onClick={handlFormSubmit}>Add</Button>
                     <DrawerClose>
                       <Button variant="outline">Cancel</Button>
                     </DrawerClose>
                   </DrawerFooter>
                 </DrawerContent>
               </Drawer>
-              <MultipleAddFromExcel />
-              {/* <Button className="cursor-pointer bg-green-500">Add Multiple Teachers</Button> */}
+              <MultipleAddFromExcel title="Students"/>
             </div>
           </div>
         </header>
@@ -196,7 +251,7 @@ const Students = () => {
               deleteTeacher={handleDelete}
               selectedTeacher={selectedStudent}
               setSelectedTeacher={setSelectedStudent}
-              title = "Student"
+              title="Student"
             />
           )}
         </section>
