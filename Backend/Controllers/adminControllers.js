@@ -203,16 +203,9 @@ const updateAdmin = async (req, res) => {
             if (!emailValid) return res.status(400).json({ message: "Invalid Email format" })
         }
 
-
-
-
         //hashing password to stored in db using bcrypt
         if (updateData.password) {
-            //comparing the password
-            const checkPass = await admin.findOne({ _id: id });
-            const isPasswordCorrect = await comparePass(updateData.password, checkPass.password)
-            if (!isPasswordCorrect) return res.status(400).json({ message: "Current Password is InCorrect" })
-            const hashedPass = await hashPassword(updateData.newPassword)
+            const hashedPass = await hashPassword(updateData.password)
             updateData.password = hashedPass
         }
 
@@ -229,6 +222,27 @@ const updateAdmin = async (req, res) => {
         res.status(500).json({ message: 'Error updating admin', error: e.message });
     }
 }
+
+const verifyPassword = async (req, res) => {
+    try {
+        const { currPassword } = req.body
+        const { id } = req.user
+        if (!currPassword) return res.status(400).json({ message: "Please provide current password" })
+        const findAdmin = await admin.findOne({ _id: id });
+        if (!findAdmin) return res.status(404).json({ message: "No Admin found" })
+
+        const checkPass = await comparePass(currPassword, findAdmin.password)
+        if (!checkPass) return res.status(400).json({ message: "Password is InCorrect" })
+        res.status(200).json({ message: "Password verified successfully" });
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Error verifying password', error: err.message });
+    }
+}
+
+
+
 
 /**
  * @description Get the count of all students and teachers
@@ -288,5 +302,6 @@ module.exports = {
     getAdminProfile,
     updateAdmin,
     getStudentTeacherCount,
-    studentPerCourse
+    studentPerCourse,
+    verifyPassword
 }

@@ -201,6 +201,10 @@ const updateStudent = async (req, res) => {
         if (email && !isValidEmail(email)) {
             return res.status(400).json({ message: "Invalid Email Format" });
         }
+        //spliting subjects by comma
+        if (updatedData.subjects && typeof updatedData.subjects === 'string') {
+            updatedData.subjects = seperateString(updatedData.subjects)
+        }
         const updatedStudent = await student.findByIdAndUpdate(studentId,
             { $set: updatedData },
             { new: true, runValidators: true }

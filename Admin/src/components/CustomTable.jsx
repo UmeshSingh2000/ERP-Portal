@@ -50,8 +50,8 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 const PAGE_SIZE = 10
 
-const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, deleteTeacher, selectedTeacher, setSelectedTeacher }) => {
-    const {toast} = useToast()
+const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, deleteTeacher, selectedTeacher, setSelectedTeacher, title = "Teacher" }) => {
+    const { toast } = useToast()
     const [loading, setLoading] = useState(false)
     const [editTeacherData, setEditTeacherData] = useState({})
     const totalPages = Math.ceil(data.length / PAGE_SIZE);
@@ -61,7 +61,9 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
     const [fieldController, setFieldController] = useState({
         name: editTeacherData?.name,
         email: editTeacherData?.email,
-        teacherId: editTeacherData?.teacherId,
+        [`${title.toLowerCase()}Id`]: title.toLowerCase() === 'Teacher' ?
+            editTeacherData.teacherId : editTeacherData.studentId,
+        // teacherId: editTeacherData?.teacherId,
         course: editTeacherData?.course,
         subjects: editTeacherData?.subjects
     })
@@ -78,16 +80,16 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
         e.preventDefault()
         setLoading(true)
         try {
-            const response = await axios.put(`${apiUrl}/admin/updateTeacher/${teacherId}`, fieldController, {
+            const response = await axios.put(`${apiUrl}/admin/update${title}/${teacherId}`, fieldController, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             })
             console.log(response)
-            toastHelper(toast, response.data.message,'Success')
+            toastHelper(toast, response.data.message, 'Success')
         }
         catch (err) {
-            toastHelper(toast, err.response.data.message,'Error')
+            toastHelper(toast, err.response.data.message, 'Error')
             console.log(err)
         }
         finally {
@@ -132,17 +134,17 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
     return (
         <>
             <div className="overflow-x-auto">
-                
+
 
                 {loading ? <div className='absolute top-1/2 left-1/2'><Loader /></div> :
                     <div className="w-full">
                         {/* Table for Larger Screens */}
                         <Table className="hidden sm:table">
-                            <TableCaption>A list of your Enrolled Teachers</TableCaption>
+                            <TableCaption>A list of your Enrolled {title}</TableCaption>
                             <TableHeader className="">
                                 <TableRow>
                                     <TableHead className="w-[50px]">Sno:</TableHead>
-                                    <TableHead className="w-[100px]">Teacher ID</TableHead>
+                                    <TableHead className="w-[100px]">{title} ID</TableHead>
                                     <TableHead>Name</TableHead>
                                     <TableHead>Email</TableHead>
                                     <TableHead className="text-left">Subjects</TableHead>
@@ -154,11 +156,11 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                                 {paginatedData.map((teacher, index) => (
                                     <Sheet key={teacher._id}>
                                         <SheetTrigger onClick={() => setEditTeacherData(teacher)} asChild>
-                                            <TableRow className={`${isExist(teacher._id) ? 'bg-[#EFEFEF] shadow-md' : 'bg-transparent'} cursor-cell`}>
+                                            <TableRow className={`${isExist(teacher._id) ? 'shadow-md' : 'bg-transparent'} cursor-cell`}>
                                                 <TableCell className="font-medium flex gap-0.5">
                                                     <Checkbox className="cursor-pointer h-4" onClick={(e) => handleSelect(e, teacher._id)} />
                                                     <p className='h-full'>{((currentPage - 1) * PAGE_SIZE) + index + 1}</p></TableCell>
-                                                <TableCell className="font-medium">{teacher.teacherId}</TableCell>
+                                                <TableCell className="font-medium">{title==='Teacher' ? teacher.teacherId : teacher.studentId}</TableCell>
                                                 <TableCell className="font-medium">{teacher.name}</TableCell>
                                                 <TableCell className="font-medium">{teacher.email}</TableCell>
                                                 <TableCell className="font-medium">
@@ -183,12 +185,12 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                                         </SheetTrigger>
                                         <SheetContent className="w-[400px] sm:w-[540px]">
                                             <SheetHeader>
-                                                <SheetTitle>Edit Teacher</SheetTitle>
+                                                <SheetTitle>Edit {title}</SheetTitle>
                                                 <SheetDescription>Modify details for {teacher.name}</SheetDescription>
                                                 <div className="grid py-4">
                                                     {InputFields('Name', 'text', 'name')}
                                                     {InputFields('Email', 'email', 'email')}
-                                                    {InputFields('Teacher ID', 'text', 'teacherId')}
+                                                    {InputFields(`${title === 'Teacher' ? 'TeacherId' : 'StudentId'}`, 'text', `${title === 'Teacher' ? 'teacherId' : 'studentId'}`)}
                                                     {InputFields('Course', 'text', 'course')}
                                                     {InputFields('Subjects', 'text', 'subjects')}
                                                 </div>
@@ -216,7 +218,7 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                                                 <h3 className="font-semibold text-lg">#{((currentPage - 1) * PAGE_SIZE) + index + 1}</h3>
                                                 <Button size="sm" onClick={(e) => { deleteTeacher(teacher._id, teacher.name); e.stopPropagation(); }}>Delete</Button>
                                             </div>
-                                            <p className="mt-2"><strong>Teacher ID:</strong> {teacher.teacherId}</p>
+                                            <p className="mt-2"><strong>{title} ID:</strong> {title==='Teacher' ? teacher.teacherId : teacher.studentId}</p>
                                             <p><strong>Name:</strong> {teacher.name}</p>
                                             <p><strong>Email:</strong> {teacher.email}</p>
                                             <p><strong>Course:</strong> {teacher.course}</p>
@@ -225,12 +227,12 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                                     </SheetTrigger>
                                     <SheetContent className="w-[400px] sm:w-[540px]">
                                         <SheetHeader>
-                                            <SheetTitle>Edit Teacher</SheetTitle>
+                                            <SheetTitle>Edit {title}</SheetTitle>
                                             <SheetDescription>Modify details for {teacher.name}</SheetDescription>
                                             <div className="grid py-4">
                                                 {InputFields('Name', 'text', 'name')}
                                                 {InputFields('Email', 'email', 'email')}
-                                                {InputFields('Teacher ID', 'text', 'teacherId')}
+                                                {InputFields(`${title === 'Teacher' ? 'TeacherId' : 'StudentId'}`, 'text', `${title === 'Teacher' ? 'teacherId' : 'studentId'}`)}
                                                 {InputFields('Course', 'text', 'course')}
                                                 {InputFields('Subjects', 'text', 'subjects')}
                                             </div>

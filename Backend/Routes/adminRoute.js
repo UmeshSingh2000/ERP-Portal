@@ -18,7 +18,8 @@ const {
     getAdminProfile,
     updateAdmin,
     getStudentTeacherCount,
-    studentPerCourse
+    studentPerCourse,
+    verifyPassword
 } = require('../Controllers/adminControllers') //Controllers for Admin
 
 const {
@@ -74,6 +75,7 @@ router.post('/dashboard', authenticateToken, adminOnly, adminDashboard)
 router.put('/updateProfile', authenticateToken, adminOnly, upload.single('image'), setAdminPicture)
 router.get('/getProfile/:id', getAdminProfile)
 router.put('/updateAdmin', authenticateToken, adminOnly, updateAdmin)
+router.post('/verifyPassword',authenticateToken,adminOnly,verifyPassword)
 
 
 /**

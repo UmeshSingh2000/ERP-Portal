@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useCallback, useEffect } from 'react'
+import React, { lazy, Suspense, useCallback, useEffect, useLayoutEffect } from 'react'
 import { useState } from "react";
 import axios from 'axios';
 import { Menu, X, LayoutDashboard, GraduationCap, Settings, Users, LogOut } from "lucide-react";
@@ -31,7 +31,7 @@ const AdminDashboard = () => {
         setLoading(false)
         navigate('/');
     }, [navigate])
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (admin) return;
         const checkAdmin = async () => {
             setLoading(true)
@@ -143,7 +143,7 @@ const AdminDashboard = () => {
                         </li> */}
                         <li className='pl-5 pt-1 font-semibold mb-2 gap-2.5 absolute bottom-0 left-0 w-full flex items-center'>
                             <Avatar>
-                                <AvatarImage className="object-cover" src={admin.profile ? `${apiUrl}${admin.profile}` : "https://github.com/shadcn.png"} />
+                                <AvatarImage className="object-cover" src={admin ? `${apiUrl}${admin.profile}` : "https://github.com/shadcn.png"} />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div>
@@ -217,7 +217,7 @@ const AdminDashboard = () => {
                                         }}><Settings className="w-5 h-5" />Settings</a></li>
                                         <li className='pl-5 pt-1 font-semibold mb-2 absolute bottom-0 left-0 w-full'>
                                             <Avatar>
-                                                <AvatarImage className="object-cover" src={admin.profile ? `${apiUrl}${admin.profile}` : "https://github.com/shadcn.png"} />
+                                                <AvatarImage className="object-cover" src={admin ? `${apiUrl}${admin.profile}` : "https://github.com/shadcn.png"} />
                                                 <AvatarFallback>CN</AvatarFallback>
                                             </Avatar>
                                             <div>
