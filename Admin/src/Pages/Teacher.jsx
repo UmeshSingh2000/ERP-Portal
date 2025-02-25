@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from '@/components/ui/button';
-import CustomTable from '@/components/customTable';
+import CustomTable from '@/components/CustomTable';
 import { useDispatch, useSelector } from 'react-redux';
 import { setData } from '@/ReduxStore/Features/Teachers/teacherSlices';
 import axios from 'axios';
