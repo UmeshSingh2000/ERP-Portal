@@ -20,7 +20,9 @@ const dbConnect = require('./Config/config')
 dbConnect();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+    origin:'https://erp-portal-admin.onrender.com'
+}));
 app.use(express.json());
 
 // Health check route
