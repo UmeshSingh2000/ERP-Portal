@@ -9,9 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Loader from '@/components/Loader/Loader';
 import toastHelper from '@/Helpers/toastHelper';
 import { useToast } from "@/hooks/use-toast"
-// import Teacher from './Teacher';
 const Teacher = lazy(() => import('./Teacher'));
-// import Home from './Home';
 const Home = lazy(() => import('./Home'));
 import Students from './Students';
 import AdminSettings from './AdminSettings';
@@ -106,7 +104,6 @@ const AdminDashboard = () => {
         }
     }
 
-
     if (loading) return <div className='absolute top-1/2 left-1/2'><Loader /></div>
     return (
         <>
@@ -133,14 +130,6 @@ const AdminDashboard = () => {
                         <li><a href="#" className={customClass('settings')} onClick={() => {
                             setActivePage('settings')
                         }}><Settings className="w-5 h-5" />Settings</a></li>
-                        {/* <li>
-                            <HoverCard>
-                                <HoverCardTrigger><ThemeToggle /></HoverCardTrigger>
-                                <HoverCardContent>
-                                    Toggle Theme
-                                </HoverCardContent>
-                            </HoverCard>
-                        </li> */}
                         <li className='pl-5 pt-1 font-semibold mb-2 gap-2.5 absolute bottom-0 left-0 w-full flex items-center'>
                             <Avatar>
                                 <AvatarImage className="object-cover" src={admin ? `${apiUrl}${admin.profile}` : "https://github.com/shadcn.png"} />

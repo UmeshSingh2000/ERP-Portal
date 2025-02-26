@@ -21,7 +21,7 @@ dbConnect();
 
 // Middlewares
 app.use(cors({
-    origin:'https://erp-portal-admin.onrender.com'
+    origin:process.env.CORS_ORIGIN
 }));
 app.use(express.json());
 

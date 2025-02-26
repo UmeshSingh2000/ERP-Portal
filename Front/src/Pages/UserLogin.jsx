@@ -70,7 +70,6 @@ const UserLogin = () => {
     }
 
 
-
     if (loading) {
         return <div className='flex items-center justify-center h-screen'><Loader /></div>
     }
@@ -78,7 +77,7 @@ const UserLogin = () => {
         <div className="grid min-h-svh lg:grid-cols-2">
             <div className="relative hidden bg-muted lg:block">
                 <img
-                    lazy
+                    lazy = 'true'
                     src="https://picsum.photos/1280/720?random"
                     alt="Image"
                     className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
@@ -92,7 +91,8 @@ const UserLogin = () => {
                             setPass('')
                             setActiveRole('student')
                             toast({
-                                title: 'Student Selected'
+                                title: 'Student Selected',
+                                'description': 'Please enter your student credentials to proceed.'
                             })
                         }}>Student</TabsTrigger>
                         <TabsTrigger value="teacher" onClick={() => {
@@ -101,6 +101,7 @@ const UserLogin = () => {
                             setActiveRole('teacher')
                             toast({
                                 title: 'Teacher Selected',
+                                'description': 'Please enter your teacher credentials to proceed.'
                             })
                         }}>Teacher</TabsTrigger>
                     </TabsList>
@@ -138,7 +139,7 @@ const UserLogin = () => {
                             <CardContent className="space-y-2">
                                 <div className="space-y-1">
                                     <Label htmlFor="teacherId" className="">Teacher ID:</Label>
-                                    <Input id="teacherId" placeholder="Enter your Teacher ID" value={id} onChange={(e) => setId(e.target.value)} />
+                                    <Input id="teacherId" placeholder="Enter your Teacher ID" value={id} onChange={(e) => setId(e.target.value.toUpperCase())} />
                                 </div>
                                 <div className="space-y-1">
                                     <Label htmlFor="teacherPassword">Password:</Label>
