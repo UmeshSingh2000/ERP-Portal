@@ -1,11 +1,36 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import logo from "@/assets/logo.ico"
 import { GraduationCap, LayoutDashboard, LogOut, Menu, Settings, Users, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { AnimatePresence,motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import TeacherSettings from '@/Pages/Teacher/TeacherSettings';
+import Home from './Home';
 const Dashboard = ({ title }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false)
+    const [activePage, setActivePage] = useState('Dashboard')
+    const customClass = (type) => {
+        return `${activePage === `${type}` ? 'bg-[#2F2F2F] text-white' : ''} block sidebar-item`
+    }
+    const PAGES = {
+        DASHBOARD: 'Dashboard',
+        STUDENTS: 'Students',
+        ATTENDANCE: 'Attendance',
+        SETTINGS: 'Settings'
+    }
+    const handleActivePage = () => {
+        switch (activePage) {
+            case PAGES.DASHBOARD:
+                return <Home title="Teacher" />
+            case PAGES.SETTINGS:
+                return title==='Teacher' ? <TeacherSettings/> : "student"
+            default:
+                return <Home title="Teacher"/>
+        }
+    }
+    useEffect(() => {
+        document.title = `${title}/${activePage.slice(0, 1).toUpperCase() + activePage.slice(1)}`
+    }, [activePage])
     return (
         <div className="flex">
             {/* Sidebar (Always Visible on Large Screens) */}
@@ -14,11 +39,11 @@ const Dashboard = ({ title }) => {
                     <img src={logo} alt="logo" className='w-8' />
                     <h1 className="text-xl font-bold">{title} Dashboard</h1>
                 </div>
-                <ul className="space-y-4">
-                    <li><LayoutDashboard className="w-5 h-5" />Dashboard</li>
-                    <li><GraduationCap className="w-5 h-5" />Teacher</li>
-                    <li><Users className="w-5 h-5" />Students</li>
-                    <li><Settings className="w-5 h-5" />Settings</li>
+                <ul className="space-y-4 teacher_dashboard">
+                    <li className={customClass('Dashboard')} onClick={() => setActivePage('Dashboard')}><LayoutDashboard className="w-5 h-5" />Dashboard</li>
+                    <li className={customClass('Students')} onClick={() => setActivePage('Students')}><Users className="w-5 h-5" />Students</li>
+                    <li className={customClass('Attendance')} onClick={() => setActivePage('Attendance')}><GraduationCap className="w-5 h-5" />Attendance</li>
+                    <li className={customClass('Settings')} onClick={() => setActivePage('Settings')}><Settings className="w-5 h-5" />Settings</li>
                     <li className='pl-5 pt-1 font-semibold mb-2 gap-2.5 absolute bottom-0 left-0 w-full flex items-center'>
                         <Avatar>
                             <AvatarImage className="object-cover" src="https://github.com/shadcn.png" />
@@ -80,7 +105,7 @@ const Dashboard = ({ title }) => {
                                     <img src={logo} alt="logo" className='w-8' />
                                     <h1 className="text-xl font-bold text-black">{title} Dashboard</h1>
                                 </div>
-                                <ul className="mt-10 space-y-4">
+                                <ul className="mt-10 space-y-4 teacher_dashboard">
                                     <li><LayoutDashboard className="w-5 h-5" />Dashboard</li>
                                     <li><GraduationCap className="w-5 h-5" />Teacher</li>
                                     <li><Users className="w-5 h-5" />Students</li>
@@ -105,10 +130,9 @@ const Dashboard = ({ title }) => {
                         </>
                     )}
                 </AnimatePresence>
-
                 {/* Page Content */}
                 <div className="py-5">
-                    hello
+                    {handleActivePage()}
                 </div>
             </div>
         </div >

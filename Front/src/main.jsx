@@ -3,7 +3,7 @@ import './index.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import UserLogin from './Pages/UserLogin'
 import { Toaster } from "@/components/ui/toaster"
-import TeacherDashboard from './Pages/TeacherDashboard'
+import TeacherDashboard from './Pages/Teacher/TeacherDashboard'
 
 createRoot(document.getElementById('root')).render(
   <>
