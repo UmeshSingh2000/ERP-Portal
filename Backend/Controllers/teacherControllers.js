@@ -267,6 +267,79 @@ const teacherLogin = async (req, res) => {
     }
 }
 
+
+const teacherDashboard = async (req, res) => {
+    try {
+        const { id, role } = req.user
+        if (role !== 'teacher') {
+            return res.status(403).json({ message: "Access Denied" })
+        }
+        const teacherData = await teacher.findById(id, '-password -__v -createdAt -updatedAt').lean()
+        if (!teacherData) {
+            return res.status(404).json({ message: "Teacher not found" })
+        }
+        res.status(200).json({
+            name: teacherData.name,
+            email: teacherData.email,
+            teacherId: teacherData.teacherId,
+            course: teacherData.course,
+            subjects: teacherData.subjects,
+            profile: teacherData.photo ? `/teacher/getProfile/${id}` : null
+        })
+    }
+    catch (err) {
+        console.error(err)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+/**
+ * @description Update the teacher profile picture
+ * @returns {Promise<void>} - A promise that resolves when the profile picture is updated.
+ *
+ * @throws {Error} - If there is an internal server error.
+ */
+const setTeacherPicture = async (req, res) => {
+    try {
+        const { id, role } = req.user
+        if (!req.file) return res.status(400).json({ message: "Please upload a file" })
+
+        if (role !== "teacher") return res.status(403).json({ message: "Access denied: Teacher privileges required." })
+        const photo = req.file.buffer;
+        const imageType = req.file.mimetype;
+
+        const findTeacher = await teacher.findOne({ _id: id })
+        if (!findTeacher) return res.status(401).json({ message: "Unauthorized access: Token invalid." })
+
+        findTeacher.photo = photo
+        findTeacher.photoType = imageType
+        await findTeacher.save()
+        res.status(200).json({ message: "Profile picture updated" })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+const getTeacherProfile = async (req, res) => {
+    try {
+        const { id } = req.params
+        if (!id) return res.status(400).json({ message: "Please provide an ID" })
+        const findTeacher = await teacher.findById(id)
+        if (!findTeacher) return res.status(404).json({ message: "Teacher not found" })
+
+        res.set('Content-Type', findTeacher.photoType)
+        res.send(findTeacher.photo);
+    }
+    catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+
+
+
 /**
  * @description Fetch all teachers
  * @route GET /api/admin/getTeacher
@@ -292,7 +365,10 @@ module.exports = {
     deleteTeacher,
     updateTeacher,
     teacherLogin,
+    teacherDashboard,
     getTeacher,
     deleteMultipleTeacher,
-    multipleAddTeacher
+    multipleAddTeacher,
+    setTeacherPicture,
+    getTeacherProfile
 }

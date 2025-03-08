@@ -1,16 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import logo from "@/assets/logo.ico"
 import { GraduationCap, LayoutDashboard, LogOut, Menu, Settings, Users, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { AnimatePresence, motion } from 'framer-motion';
 import TeacherSettings from '@/Pages/Teacher/TeacherSettings';
 import Home from './Home';
+import { useNavigate } from 'react-router-dom';
+const apiUrl = import.meta.env.VITE_API_URL
+
 const Dashboard = ({ title }) => {
+    const navigate = useNavigate()
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false)
     const [activePage, setActivePage] = useState('Dashboard')
+    const [userData, setUserData] = useState(() => JSON.parse(localStorage.getItem(title.toLowerCase())) || null);
+
     const customClass = (type) => {
-        return `${activePage === `${type}` ? 'bg-[#2F2F2F] text-white' : ''} block sidebar-item`
+        return `${activePage === `${type}` ? 'bg-[#2F2F2F] text-white' : ''} block sidebar-item flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-[#777676] hover:text-white font-semibold`
     }
     const PAGES = {
         DASHBOARD: 'Dashboard',
@@ -23,9 +29,9 @@ const Dashboard = ({ title }) => {
             case PAGES.DASHBOARD:
                 return <Home title="Teacher" />
             case PAGES.SETTINGS:
-                return title==='Teacher' ? <TeacherSettings/> : "student"
+                return title === 'Teacher' ? <TeacherSettings /> : "student"
             default:
-                return <Home title="Teacher"/>
+                return <Home title="Teacher" />
         }
     }
     useEffect(() => {
@@ -46,16 +52,15 @@ const Dashboard = ({ title }) => {
                     <li className={customClass('Settings')} onClick={() => setActivePage('Settings')}><Settings className="w-5 h-5" />Settings</li>
                     <li className='pl-5 pt-1 font-semibold mb-2 gap-2.5 absolute bottom-0 left-0 w-full flex items-center'>
                         <Avatar>
-                            <AvatarImage className="object-cover" src="https://github.com/shadcn.png" />
+                            <AvatarImage className="object-cover" src={userData?.profile ? `${apiUrl}${userData.profile}` : "https://github.com/shadcn.png"} />
                             <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
                         <div>
-                            <p>Name</p>
-                            <p className='text-sm'>Email</p>
+                            <p>{userData ? userData.name : ''}</p>
+                            <p className='text-sm'>{userData ? userData.email.slice(0, 5).concat('....').concat(userData.email.slice(-9)) : ""}</p>
                         </div>
                         <LogOut className='cursor-pointer' onClick={() => {
-                            localStorage.removeItem('token')
-                            localStorage.removeItem('admin')
+                            localStorage.clear()
                             navigate('/')
                         }} />
                     </li>
@@ -106,22 +111,21 @@ const Dashboard = ({ title }) => {
                                     <h1 className="text-xl font-bold text-black">{title} Dashboard</h1>
                                 </div>
                                 <ul className="mt-10 space-y-4 teacher_dashboard">
-                                    <li><LayoutDashboard className="w-5 h-5" />Dashboard</li>
-                                    <li><GraduationCap className="w-5 h-5" />Teacher</li>
-                                    <li><Users className="w-5 h-5" />Students</li>
-                                    <li><Settings className="w-5 h-5" />Settings</li>
+                                    <li className={customClass('Dashboard')} onClick={() => setActivePage('Dashboard')}><LayoutDashboard className="w-5 h-5" />Dashboard</li>
+                                    <li className={customClass('Students')} onClick={() => setActivePage('Students')}><GraduationCap className="w-5 h-5" />Students</li>
+                                    <li className={customClass('Attendance')} onClick={() => setActivePage('Attendance')}><Users className="w-5 h-5" />Attendance</li>
+                                    <li className={customClass('Settings')} onClick={() => setActivePage('Settings')}><Settings className="w-5 h-5" />Settings</li>
                                     <li className='pl-5 pt-1 font-semibold mb-2 absolute bottom-0 left-0 w-full'>
                                         <Avatar>
-                                            <AvatarImage className="object-cover" src="https://github.com/shadcn.png" />
+                                            <AvatarImage className="object-cover" src={userData?.profile ? `${apiUrl}${userData.profile}` : "https://github.com/shadcn.png"} />
                                             <AvatarFallback>CN</AvatarFallback>
                                         </Avatar>
                                         <div>
-                                            <p>Name</p>
-                                            <p className='text-sm'>Email</p>
+                                            <p>{userData ? userData.name : ""}</p>
+                                            <p className='text-sm'>{userData ? userData.email.slice(0, 5).concat('....').concat(userData.email.slice(-9)) : ""}</p>
                                         </div>
                                         <LogOut className='cursor-pointer' onClick={() => {
-                                            localStorage.removeItem('token')
-                                            localStorage.removeItem('admin')
+                                            localStorage.clear()
                                             navigate('/')
                                         }} />
                                     </li>

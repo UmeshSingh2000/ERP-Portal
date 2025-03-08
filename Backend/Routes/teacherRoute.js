@@ -6,10 +6,19 @@ const { authenticateToken } = require('../Middelwares/jwtMiddleware') //JWT Toke
 const teacherOnly = require('../Middelwares/teacherOnlyMiddleware') //middleware for teacher check
 
 //controller for teacher
-const {teacherLogin} = require('../Controllers/teacherControllers')
+const { teacherLogin, teacherDashboard, setTeacherPicture, getTeacherProfile } = require('../Controllers/teacherControllers')
 
 //controller for attendance
-const {markAttendance} =require('../Controllers/attendanceControllers')
+const { markAttendance } = require('../Controllers/attendanceControllers')
+
+
+//multer configuration
+const multer = require('multer')
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
+
+
+
 
 //teacher related Route
 
@@ -18,14 +27,36 @@ const {markAttendance} =require('../Controllers/attendanceControllers')
  * @route POST /api/teacher/login
  * @access Public
  */
-router.post('/login',teacherLogin);
+router.post('/login', teacherLogin);
+
+
+
+/**
+ * @description Teacher Dashboard
+ * @route GET /api/teacher/dashboard
+ * @access Private
+ */
+router.post('/dashboard', authenticateToken, teacherOnly, teacherDashboard)
+
 
 /**
  * @description Mark attendance (Teacher Only)
  * @route POST /api/teacher/attendance/mark
  * @access Protected (Required Valid token and allowed User(teacher only))
  */
-router.post('/attendance/mark',authenticateToken,teacherOnly,markAttendance)
+router.post('/attendance/mark', authenticateToken, teacherOnly, markAttendance)
+
+
+/**
+ * @description Set Profile Picture (Teacher Only)
+ * @route POST /api/teacher/updateProfile
+ * @access Protected (Required Valid token and allowed User(teacher only))
+ */
+
+router.put('/updateProfile', authenticateToken, teacherOnly, upload.single('image'), setTeacherPicture)
+router.get('/getProfile/:id', getTeacherProfile)
+
+
 
 
 module.exports = router;

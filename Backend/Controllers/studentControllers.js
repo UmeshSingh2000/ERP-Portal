@@ -90,7 +90,7 @@ const multipleAddStudent = async (req, res) => {
             insertedCount: result.length
         });
     } catch (err) {
-        console.error("Error occurred:", err);
+        // console.error("Error occurred:", err);
 
         if (err.code === 11000) {
             // Handle duplicate key error (studentId or email conflicts)

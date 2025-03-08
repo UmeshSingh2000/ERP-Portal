@@ -35,11 +35,7 @@ const AdminDashboard = () => {
             setLoading(true)
             const token = localStorage.getItem('token')
             try {
-                const response = await axios.post(`${apiUrl}/admin/dashboard`, {}, {
-                    headers: {
-                        authorization: `Bearer ${token}`
-                    }
-                })
+                d
                 const localData = response.data.admin;
                 localStorage.setItem('admin', JSON.stringify(localData));
                 setAdmin(localData);

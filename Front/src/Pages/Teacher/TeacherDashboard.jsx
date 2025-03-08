@@ -1,45 +1,52 @@
 import Dashboard from '@/components/Dashboard'
+import Loader from '@/components/ui/Loader'
+import toastHelper from '@/Helpers/toastHelper'
+import { useToast } from '@/hooks/use-toast'
 import axios from 'axios'
 import { LogOut } from 'lucide-react'
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 const apiUrl = import.meta.env.VITE_API_URL
 
 const TeacherDashboard = () => {
+  const { toast } = useToast()
   const navigate = useNavigate()
   const [teacher, setTeacher] = useState(() => JSON.parse(localStorage.getItem('teacher')) || null)
   const [loading, setLoading] = useState(false)
+  const navigationHelper = useCallback(() => {
+    setLoading(false)
+    navigate('/');
+  }, [navigate])
+
   useLayoutEffect(() => {
     if (teacher) return;
     const checkTeacher = async () => {
       setLoading(true)
       const token = localStorage.getItem('token')
       try {
-        const response = await axios.post(`${apiUrl}/admin/dashboard`, {}, {
+        const response = await axios.post(`${apiUrl}/teacher/dashboard`, {}, {
           headers: {
             authorization: `Bearer ${token}`
           }
         })
-        // const localData = response.data.admin;
-        // localStorage.setItem('admin', JSON.stringify(localData));
-        // setAdmin(localData);
-        // toastHelper(toast, "Welcome to Dashboard", 'Success', 2000)
-        // setLoading(false)
+        const localData = response.data;
+        localStorage.setItem('teacher', JSON.stringify(localData));
+        setTeacher(localData);
+        toastHelper(toast, "Welcome to Dashboard", 'Success', 2000)
+        setLoading(false)
       }
       catch (err) {
         if (err.response && err.response.status === 403) {
-
-          // toastHelper(toast, 'Access denied: Admin privileges required.', 'Error', 2000, "destructive")
-          // return navigationHelper()
+          toastHelper(toast, 'Access denied: Teacher privileges required.', 'Error', 2000, "destructive")
+          return navigationHelper()
         }
         else if (err.response && err.response.status === 401) {
-          // toastHelper(toast, 'Unauthorized access: Token invalid.', 'Error', 2000, "destructive")
-
-          // return navigationHelper()
+          toastHelper(toast, 'Unauthorized access: Token invalid.', 'Error', 2000, "destructive")
+          return navigationHelper()
         }
         else {
-          // toastHelper(toast, err.response.data.message, 'Error', 2000, "destructive")
-          // return navigationHelper()
+          toastHelper(toast, err.response.data.message, 'Error', 2000, "destructive")
+          return navigationHelper()
         }
       }
       finally {
@@ -50,7 +57,9 @@ const TeacherDashboard = () => {
   }, [navigate, teacher])
   return (
     <>
-      <Dashboard title="Teacher" />
+      {
+        loading ? <Loader /> : <Dashboard title="Teacher" />
+      }
     </>
   )
 }

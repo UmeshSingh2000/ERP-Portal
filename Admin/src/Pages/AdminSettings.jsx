@@ -64,9 +64,8 @@ const AdminSettings = () => {
           authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
-      console.log(response)
       toastHelper(toast, response.data.message, 'Success')
-      setTimeout(() => toastHelper(toast, "Refresh to Update", 'Success', 2000), 500)
+      setTimeout(() => toastHelper(toast, "Login Again to Update", 'Success', 2000), 500)
     }
     catch (error) {
       toastHelper(toast, error.response.data.message, 'Error', 1000, "destructive")

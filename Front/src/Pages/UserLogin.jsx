@@ -30,7 +30,6 @@ const UserLogin = () => {
     //login button handler
     const handleLogin = async () => {
         //if user not filled any field return
-        console.log(id, pass)
         if (!id.trim() || !pass.trim()) {
             return toast({
                 variant: "destructive",
@@ -68,8 +67,6 @@ const UserLogin = () => {
             setLoading(false)
         }
     }
-
-
     if (loading) {
         return <div className='flex items-center justify-center h-screen'><Loader /></div>
     }

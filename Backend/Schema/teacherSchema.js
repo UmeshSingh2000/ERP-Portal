@@ -1,44 +1,47 @@
 const mongoose = require('mongoose')
-const {Schema} = mongoose
+const { Schema } = mongoose
 
 const teacher = new Schema({
-    name:{
-        type:String,
-        required:true
+    name: {
+        type: String,
+        required: true
     },
-    email:{
-        type:String,
-        required:true,
-        unique:true
+    email: {
+        type: String,
+        required: true,
+        unique: true
     },
-    photo:{
-        type:Buffer
+    photo: {
+        type: Buffer
     },
-    teacherId :{
-        type:String,
-        required:true,
-        unique:true
+    photoType: {
+        type: String
     },
-    password:{
-        type:String,
-        required:true
+    teacherId: {
+        type: String,
+        required: true,
+        unique: true
     },
-    role:{
-        type:String,
-        required:true,
-        enum:['teacher']
+    password: {
+        type: String,
+        required: true
     },
-    course:{ // course to which the teacher is assigned
-        type:String,
-        required:true
+    role: {
+        type: String,
+        required: true,
+        enum: ['teacher']
     },
-    subjects:{ // subjects that the teacher can teach
-        type:[String],
-        required:true
+    course: { // course to which the teacher is assigned
+        type: String,
+        required: true
+    },
+    subjects: { // subjects that the teacher can teach
+        type: [String],
+        required: true
     }
-},{
-    timestamps:true
+}, {
+    timestamps: true
 })
 
-const teacherModel = mongoose.model('Teacher',teacher)
+const teacherModel = mongoose.model('Teacher', teacher)
 module.exports = teacherModel;
