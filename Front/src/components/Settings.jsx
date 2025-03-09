@@ -10,11 +10,19 @@ import { useToast } from '@/hooks/use-toast'
 const apiUrl = import.meta.env.VITE_API_URL
 
 const Settings = ({ title }) => {
-    const {toast} = useToast()
-    const [loading,setLoading] = useState(false)
+    const { toast } = useToast()
+    const [loading, setLoading] = useState(false)
     const fileInputRef = useRef()
     const [passwordVerified, setPasswordVerified] = useState(false)
-    const [userDetails, setUserDetails] = useState(() => title === 'Teacher' ? JSON.parse(localStorage.getItem('teacher')) : JSON.parse(localStorage.getItem('student')))
+    const [teacher, setTeacher] = useState(() => title === 'Teacher' ? JSON.parse(localStorage.getItem('teacher')) : JSON.parse(localStorage.getItem('student'))) //details stored in local storage
+    const [userDetails, setUserDetails] = useState({
+        name: teacher?.name,
+        email: teacher?.email,
+        [`${title.toLowerCase()}Id`]: title === 'Teacher' ? teacher?.teacherId : '',
+        currPassword: "",
+        newPassword: "",
+        confirmNewPassword: ""
+    })
 
 
 
@@ -26,7 +34,7 @@ const Settings = ({ title }) => {
                     {label}:
                 </Label>
                 <Input disabled={name === 'teacherId' || name === 'studentId'} onChange={(e) => setUserDetails({ ...userDetails, [name]: e.target.value })} id={name} value={userDetails[name]} type={type} className="w-full" />
-                {name === 'currPassword' && <SendHorizontal className='absolute top-1/2 right-3 w-4 cursor-pointer hover:w-6 transition-all' />}
+                {name === 'currPassword' && <SendHorizontal className='absolute top-1/2 right-3 w-4 cursor-pointer hover:w-6 transition-all' onClick={() => verifyPassword(userDetails['currPassword'])} />}
             </div>
         )
     }
@@ -51,12 +59,84 @@ const Settings = ({ title }) => {
                     authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             })
-            console.log(response)
             toastHelper(toast, response.data.message, 'Success')
             setTimeout(() => toastHelper(toast, "Refresh to Update", 'Success', 2000), 500)
         }
         catch (error) {
             toastHelper(toast, error.response.data.message, 'Error', 1000, "destructive")
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+
+    /**
+   * @description Verify Password
+   * @param {string} password - The password to verify 
+   */
+    const verifyPassword = async (password) => {
+        if (!password) return toastHelper(toast, "Please provide password", 'Error', 1000, "destructive")
+        try {
+            setLoading(true)
+            const response = await axios.post(`${apiUrl}/${title.toLowerCase()}/verifyPassword`, { password }, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            if (response.status === 200) {
+                toastHelper(toast, response.data.message, 'Success')
+                setPasswordVerified(true)
+            }
+        }
+        catch (err) {
+            toastHelper(toast, err.response.data.message, 'Error', 1000, "destructive")
+        }
+        finally {
+            setLoading(false)
+            userDetails['currPassword'] = ""
+        }
+    }
+
+    const handleTeacherUpdate = async () => {
+        try {
+            setLoading(true)
+            if (passwordVerified && (userDetails.currPassword && !userDetails.newPassword)) {
+                return toastHelper(toast, "Please provide new password", 'Error', 1000, "destructive")
+            }
+            if (passwordVerified && (userDetails.newPassword !== userDetails.confirmNewPassword)) {
+                return toastHelper(toast, "Password does not match", 'Error', 1000, "destructive")
+            }
+            let payload = Object.entries(userDetails).filter(([key, value]) => value != null && value !== '')
+                .filter(([key, value]) => value !== teacher[key])
+            payload = Object.fromEntries(payload)
+            if (Object.keys(payload).length === 0) {
+                return toastHelper(toast, "No changes detected", 'Info', 1000, "destructive")
+            }
+            if (payload.newPassword) {
+                payload.password = userDetails.newPassword
+                delete payload.currPassword
+                delete payload.confirmNewPassword
+                delete payload.newPassword
+            }
+            await axios.put(`${apiUrl}/${title.toLowerCase()}/update${title}/${teacher['id']}`, payload, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            const updateLocal = () => {
+                if (payload.password) {
+                    delete payload.password
+                }
+                const updatedTeacher = { ...teacher, ...payload };
+                setTeacher(updatedTeacher); // Update state
+                localStorage.setItem('teacher', JSON.stringify(updatedTeacher));
+            }
+            updateLocal();
+            toastHelper(toast, "Teacher Updated", 'Success', 1000, "success")
+        }
+        catch (err) {
+            toastHelper(toast, err.response.data.message, 'Error', 1000, "destructive")
         }
         finally {
             setLoading(false)
@@ -75,7 +155,7 @@ const Settings = ({ title }) => {
                     {/* Profile Image Section */}
                     <aside className="flex flex-col items-center gap-4 w-full">
                         <Avatar className="w-40 h-40 md:w-80 md:h-80">
-                            <AvatarImage className="object-cover" src={userDetails.profile? `${apiUrl}${userDetails.profile}` : "https://github.com/shadcn.png"} />
+                            <AvatarImage className="object-cover" src={teacher.profile ? `${apiUrl}${teacher.profile}` : "https://github.com/shadcn.png"} />
                             <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
                         <Button className="cursor-pointer" onClick={handleUpdateProfile}>Upload Photo</Button>
@@ -101,7 +181,7 @@ const Settings = ({ title }) => {
                                 {passwordVerified && InputFields('Confirm New Password', 'password', 'confirmNewPassword')}
                             </div>
                             <footer className="flex justify-center md:justify-start">
-                                <Button className="cursor-pointer w-full md:w-auto">Update</Button>
+                                <Button className="cursor-pointer w-full md:w-auto" onClick={handleTeacherUpdate}>Update</Button>
                             </footer>
                         </div>
                     </article>

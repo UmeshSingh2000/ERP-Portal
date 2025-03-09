@@ -6,7 +6,15 @@ const { authenticateToken } = require('../Middelwares/jwtMiddleware') //JWT Toke
 const teacherOnly = require('../Middelwares/teacherOnlyMiddleware') //middleware for teacher check
 
 //controller for teacher
-const { teacherLogin, teacherDashboard, setTeacherPicture, getTeacherProfile } = require('../Controllers/teacherControllers')
+
+const {
+    teacherLogin,
+    teacherDashboard,
+    setTeacherPicture,
+    getTeacherProfile,
+    verifyPassword,
+    updateTeacher
+} = require('../Controllers/teacherControllers')
 
 //controller for attendance
 const { markAttendance } = require('../Controllers/attendanceControllers')
@@ -55,6 +63,8 @@ router.post('/attendance/mark', authenticateToken, teacherOnly, markAttendance)
 
 router.put('/updateProfile', authenticateToken, teacherOnly, upload.single('image'), setTeacherPicture)
 router.get('/getProfile/:id', getTeacherProfile)
+router.post('/verifyPassword', authenticateToken, teacherOnly, verifyPassword)
+router.put('/updateTeacher/:teacherId', authenticateToken, teacherOnly, updateTeacher)
 
 
 

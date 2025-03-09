@@ -131,7 +131,6 @@ const AdminSettings = () => {
           authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
-      // complete this!!!!!!!!!!!!
       const updateLocal = () => {
         if (payload.currPassword) {
           delete payload.currPassword

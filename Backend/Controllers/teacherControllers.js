@@ -217,6 +217,9 @@ const updateTeacher = async (req, res) => {
             updatedData.teacherId = capitalize(updatedData.teacherId)
         }
 
+        if (updatedData.password) {
+            updatedData.password = await hashPassword(updatedData.password)
+        }
         //updating teacher
         const updatedTeacher = await teacher.findByIdAndUpdate(teacherId,
             { $set: updatedData },
@@ -279,6 +282,7 @@ const teacherDashboard = async (req, res) => {
             return res.status(404).json({ message: "Teacher not found" })
         }
         res.status(200).json({
+            id: teacherData._id,
             name: teacherData.name,
             email: teacherData.email,
             teacherId: teacherData.teacherId,
@@ -338,6 +342,27 @@ const getTeacherProfile = async (req, res) => {
 }
 
 
+const verifyPassword = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { password } = req.body;
+
+        if (!password) return res.status(400).json({ message: "Please provide password" })
+        const findTeacher = await teacher.findById(id)
+
+        if (!findTeacher) return res.status(404).json({ message: "Teacher not found" })
+        const checkPassword = await comparePass(password, findTeacher.password)
+
+        if (!checkPassword) return res.status(400).json({ message: "Wrong Password" })
+        res.status(200).json({ message: "Password verified" })
+    }
+    catch (err) {
+        console.error(err)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+
 
 
 /**
@@ -370,5 +395,6 @@ module.exports = {
     deleteMultipleTeacher,
     multipleAddTeacher,
     setTeacherPicture,
-    getTeacherProfile
+    getTeacherProfile,
+    verifyPassword
 }

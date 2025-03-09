@@ -60,7 +60,7 @@ router.post('/login', adminLogin)
 
 /**
  * @description Get admin dashboard (protected route)
- * @route GET /api/admin/dashboard
+ * @route posta /api/admin/dashboard
  * @access Protected (required valid token)
  */
 router.post('/dashboard', authenticateToken, adminOnly, adminDashboard)

@@ -85,7 +85,6 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                     authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             })
-            console.log(response)
             toastHelper(toast, response.data.message, 'Success')
         }
         catch (err) {

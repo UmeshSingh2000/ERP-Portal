@@ -111,7 +111,6 @@ const adminDashboard = async (req, res) => {
         const findAdmin = await admin.findOne({ _id: id })
         if (!findAdmin) return res.status(401).json({ message: "Unauthorized access: Token invalid." })
 
-
         res.status(200).json({
             message: "Welcome to Dashboard", admin: {
                 email: findAdmin.email,
