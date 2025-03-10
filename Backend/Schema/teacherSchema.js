@@ -32,7 +32,7 @@ const teacher = new Schema({
         enum: ['teacher']
     },
     course: { // course to which the teacher is assigned
-        type: String,
+        type: [String],
         required: true
     },
     subjects: { // subjects that the teacher can teach

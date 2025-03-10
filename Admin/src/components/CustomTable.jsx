@@ -159,7 +159,7 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                                                 <TableCell className="font-medium flex gap-0.5">
                                                     <Checkbox className="cursor-pointer h-4" onClick={(e) => handleSelect(e, teacher._id)} />
                                                     <p className='h-full'>{((currentPage - 1) * PAGE_SIZE) + index + 1}</p></TableCell>
-                                                <TableCell className="font-medium">{title==='Teacher' ? teacher.teacherId : teacher.studentId}</TableCell>
+                                                <TableCell className="font-medium">{title === 'Teacher' ? teacher.teacherId : teacher.studentId}</TableCell>
                                                 <TableCell className="font-medium">{teacher.name}</TableCell>
                                                 <TableCell className="font-medium">{teacher.email}</TableCell>
                                                 <TableCell className="font-medium">
@@ -174,7 +174,16 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                                                         </SelectContent>
                                                     </Select>
                                                 </TableCell>
-                                                <TableCell className="font-medium">{teacher.course}</TableCell>
+                                                <TableCell className="font-medium">{title === 'Teacher' ? <Select>
+                                                    <SelectTrigger className="w-[100px]">
+                                                        <SelectValue placeholder="Course" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {teacher.course.map((itm, idx) => (
+                                                            <SelectItem value={itm} key={idx}>{itm}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select> : teacher.course}</TableCell>
                                                 <TableCell className="font-medium">
                                                     <Button size="sm" className="cursor-pointer" onClick={(e) => { deleteTeacher(teacher._id, teacher.name); e.stopPropagation(); }}>
                                                         Delete
@@ -217,10 +226,10 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                                                 <h3 className="font-semibold text-lg">#{((currentPage - 1) * PAGE_SIZE) + index + 1}</h3>
                                                 <Button size="sm" onClick={(e) => { deleteTeacher(teacher._id, teacher.name); e.stopPropagation(); }}>Delete</Button>
                                             </div>
-                                            <p className="mt-2"><strong>{title} ID:</strong> {title==='Teacher' ? teacher.teacherId : teacher.studentId}</p>
+                                            <p className="mt-2"><strong>{title} ID:</strong> {title === 'Teacher' ? teacher.teacherId : teacher.studentId}</p>
                                             <p><strong>Name:</strong> {teacher.name}</p>
                                             <p><strong>Email:</strong> {teacher.email}</p>
-                                            <p><strong>Course:</strong> {teacher.course}</p>
+                                            <p><strong>Course:</strong> {title==='Teacher' ? teacher.course.join(', '): teacher.course}</p>
                                             <p><strong>Subjects:</strong> {teacher.subjects.join(', ')}</p>
                                         </div>
                                     </SheetTrigger>

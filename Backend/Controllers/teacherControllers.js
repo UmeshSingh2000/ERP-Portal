@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 //Teacher Schema
 const teacher = require('../Schema/teacherSchema')
 
+const student = require('../Schema/studentSchema')
+
 //validate email module
 const { isValidEmail } = require('../Utils/validationUtils')
 
@@ -44,6 +46,9 @@ const addTeacher = async (req, res) => {
         //capitalize course
         course = capitalize(course)
 
+        //spliting course by comma
+        course = seperateString(course)
+
         //if not found
         if (!emailValid) return res.status(400).json({ message: "Invalid Email format" })
 
@@ -74,7 +79,6 @@ const addTeacher = async (req, res) => {
 const multipleAddTeacher = async (req, res) => {
     try {
         const { teachers } = req.body;
-
         if (!teachers || !Array.isArray(teachers) || teachers.length === 0) {
             return res.status(400).json({ message: "Invalid teacher data provided." });
         }
@@ -102,6 +106,9 @@ const multipleAddTeacher = async (req, res) => {
                     subjects: typeof teacher.subjects === 'string'
                         ? teacher.subjects.split(',').map(subject => subject.trim())
                         : teacher.subjects,
+                    course: typeof teacher.course === 'string'
+                        ? teacher.course.split(',').map(course => course.trim())
+                        : teacher.course,
                     password: hashedPassword
                 };
             })
@@ -385,6 +392,25 @@ const getTeacher = async (req, res) => {
 
 
 
+const getTeacherStudents = async (req, res) => {
+    try {
+        const { course, subject } = req.body;
+
+
+        let students = await student.find({
+            course: course,
+            subjects: subject
+        });
+
+        res.status(200).json({ students })
+    }
+    catch (err) {
+        console.error(err)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+
 module.exports = {
     addTeacher,
     deleteTeacher,
@@ -396,5 +422,6 @@ module.exports = {
     multipleAddTeacher,
     setTeacherPicture,
     getTeacherProfile,
-    verifyPassword
+    verifyPassword,
+    getTeacherStudents
 }

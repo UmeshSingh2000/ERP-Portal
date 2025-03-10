@@ -13,7 +13,8 @@ const {
     setTeacherPicture,
     getTeacherProfile,
     verifyPassword,
-    updateTeacher
+    updateTeacher,
+    getTeacherStudents
 } = require('../Controllers/teacherControllers')
 
 //controller for attendance
@@ -46,6 +47,7 @@ router.post('/login', teacherLogin);
  */
 router.post('/dashboard', authenticateToken, teacherOnly, teacherDashboard)
 
+router.post('/myStudents', authenticateToken, teacherOnly, getTeacherStudents)
 
 /**
  * @description Mark attendance (Teacher Only)

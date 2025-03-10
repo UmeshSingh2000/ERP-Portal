@@ -14,7 +14,7 @@ import {
 const apiUrl = import.meta.env.VITE_API_URL
 
 
-const MultipleAddFromExcel = ({title='Teachers'}) => {
+const MultipleAddFromExcel = ({ title = 'Teachers' }) => {
     const inputRef = useRef()
     const { toast } = useToast()
 
@@ -41,8 +41,9 @@ const MultipleAddFromExcel = ({title='Teachers'}) => {
 
     const handleBulkUpload = async (teachers) => {
         try {
+            const payload = title === 'Teachers' ? { teachers } : { students: teachers }
             const response = await axios.post(`${apiUrl}/admin/addMultiple${title}`,
-                { students:teachers },
+                payload,
                 {
                     headers: {
                         authorization: `Bearer ${localStorage.getItem('token')}`

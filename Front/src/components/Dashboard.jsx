@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import TeacherSettings from '@/Pages/Teacher/TeacherSettings';
 import Home from './Home';
 import { useNavigate } from 'react-router-dom';
+import TeacherStudent from '@/Pages/Teacher/TeacherStudent';
 const apiUrl = import.meta.env.VITE_API_URL
 
 const Dashboard = ({ title }) => {
@@ -28,6 +29,8 @@ const Dashboard = ({ title }) => {
         switch (activePage) {
             case PAGES.DASHBOARD:
                 return <Home title="Teacher" />
+            case PAGES.STUDENTS:
+                return <TeacherStudent/>
             case PAGES.SETTINGS:
                 return title === 'Teacher' ? <TeacherSettings /> : "student"
             default:
