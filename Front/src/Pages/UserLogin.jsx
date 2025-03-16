@@ -121,7 +121,7 @@ const UserLogin = () => {
                                 </div>
                             </CardContent>
                             <CardFooter>
-                                <Button onClick={handleLogin}>Login</Button>
+                                <Button className={"cursor-pointer"} onClick={handleLogin}>Login</Button>
                             </CardFooter>
                         </Card>
                     </TabsContent>

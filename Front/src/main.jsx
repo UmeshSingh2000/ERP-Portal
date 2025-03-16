@@ -4,15 +4,19 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import UserLogin from './Pages/UserLogin'
 import { Toaster } from "@/components/ui/toaster"
 import TeacherDashboard from './Pages/Teacher/TeacherDashboard'
+import { store } from './Redux/store'
+import { Provider } from 'react-redux'
 
 createRoot(document.getElementById('root')).render(
   <>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<UserLogin />} />
-        <Route path='/teacher/dashboard' element={<TeacherDashboard />} />
-      </Routes>
-    </BrowserRouter>
-    <Toaster />
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<UserLogin />} />
+          <Route path='/teacher/dashboard' element={<TeacherDashboard />} />
+        </Routes>
+      </BrowserRouter>
+      <Toaster />
+    </Provider>
   </>
 )

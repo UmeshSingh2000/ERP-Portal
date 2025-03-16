@@ -382,7 +382,7 @@ const verifyPassword = async (req, res) => {
 const getTeacher = async (req, res) => {
     try {
         //fetch teacher exluding those fields
-        const teachers = await teacher.find({}, '-password -__v -createdAt -updatedAt -role');
+        const teachers = await teacher.find({}, '-password -__v -createdAt -updatedAt -role -photo -photoType');
         res.status(200).json({ teachers })
     } catch (error) {
         console.error(error)
@@ -394,15 +394,36 @@ const getTeacher = async (req, res) => {
 
 const getTeacherStudents = async (req, res) => {
     try {
-        const { course, subject } = req.body;
+        let { course, subjects } = req.body;
+        if (!course || !subjects) {
+            return res.status(400).json({ message: "Please provide course and subject" })
+        }
+        // Ensure course is an array
+        if (!Array.isArray(course)) {
+            course = [course]; // Convert to array if a single value is provided
+        }
+        // Ensure subjects is an array
+        if (!Array.isArray(subjects)) {
+            subjects = [subjects]; // Convert single value to array
+        }
 
+        let courseRegexArray = course.map(c => ({
+            course: { $regex: new RegExp(`^${c}$`, "i") } // Case-insensitive exact match
+        }));
+
+        // Convert teacher's subjects array into regex for case-insensitive search
+        let subjectRegexArray = subjects.map(s => ({
+            subjects: { $regex: new RegExp(`^${s}$`, "i") } // Case-insensitive exact match
+        }));
 
         let students = await student.find({
-            course: course,
-            subjects: subject
+            $and: [
+                { $or: courseRegexArray }, // Case-insensitive course match
+                { $or: subjectRegexArray } // Case-insensitive subjects array match
+            ]
         });
 
-        res.status(200).json({ students })
+        res.status(200).json({ students, message: "Students Fetched..." });
     }
     catch (err) {
         console.error(err)

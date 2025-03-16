@@ -133,8 +133,6 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
     return (
         <>
             <div className="overflow-x-auto">
-
-
                 {loading ? <div className='absolute top-1/2 left-1/2'><Loader /></div> :
                     <div className="w-full">
                         {/* Table for Larger Screens */}
@@ -229,7 +227,7 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                                             <p className="mt-2"><strong>{title} ID:</strong> {title === 'Teacher' ? teacher.teacherId : teacher.studentId}</p>
                                             <p><strong>Name:</strong> {teacher.name}</p>
                                             <p><strong>Email:</strong> {teacher.email}</p>
-                                            <p><strong>Course:</strong> {title==='Teacher' ? teacher.course.join(', '): teacher.course}</p>
+                                            <p><strong>Course:</strong> {title === 'Teacher' ? teacher.course.join(', ') : teacher.course}</p>
                                             <p><strong>Subjects:</strong> {teacher.subjects.join(', ')}</p>
                                         </div>
                                     </SheetTrigger>
