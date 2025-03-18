@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { setData } from '@/Redux/features/students(teachers)/teacherStudentsSlice';
 import axios from 'axios';
 import { Delete } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -24,9 +24,10 @@ const TeacherStudent = () => {
         setSearch(e.target.value.trim().toLowerCase());
     };
 
-    const teacherDetails = JSON.parse(localStorage.getItem('teacher')) || {};
+    const teacherDetails = useMemo(() => JSON.parse(localStorage.getItem('teacher')) || {},[]);
 
     const getMyStudents = async () => {
+
         setLoading(true);
         try {
             const payload = {
@@ -41,7 +42,10 @@ const TeacherStudent = () => {
         } catch (err) {
             toastHelper(toast, err.response?.data?.message || 'Failed to fetch students', 'error');
         } finally {
-            setLoading(false);
+            setTimeout(() => {
+                setLoading(false);
+                
+            }, 2000);
         }
     };
 
@@ -49,7 +53,7 @@ const TeacherStudent = () => {
         if (!data.length) {
             getMyStudents();
         }
-    }, [data.length, dispatch, teacherDetails]);
+    }, [data.length]);
 
     return (
         <main className='px-4 md:px-6 flex flex-col'>
@@ -125,18 +129,34 @@ const TeacherStudent = () => {
                                 </TableBody>
                             </Table>
                             <div className="sm:hidden flex flex-col gap-4">
-                                {data.map((student,index) => (
-                                    <div key={student._id} className="border rounded-lg p-4 shadow-md">
-                                        <div className="flex justify-between items-center">
-                                            <h3 className="font-semibold text-lg">{index+1}</h3>
+                                {data.length > 0 ? data
+                                    .filter(student =>
+                                        student.name.toLowerCase().includes(search) ||
+                                        student.email.toLowerCase().includes(search) ||
+                                        student.studentId.toLowerCase().includes(search)
+                                    ).map((student, index) => (
+                                        <div key={student._id} className="border rounded-lg p-4 shadow-md">
+                                            <div className="flex justify-between items-center">
+                                                <h3 className="font-semibold text-lg">#{index + 1}</h3>
+                                            </div>
+                                            <p className="mt-2"><strong>StudentID:{student.studentId}</strong></p>
+                                            <p><strong>Name:</strong> {student.name}</p>
+                                            <p><strong>Email:</strong> {student.email}</p>
+                                            <p><strong>Course:</strong>{student.course}</p>
+                                            <p><strong>Subjects:</strong> {student.subjects.join(', ')}</p>
                                         </div>
-                                        <p className="mt-2"><strong>StudentID:{student.studentId}</strong></p>
-                                        <p><strong>Name:</strong> {student.name}</p>
-                                        <p><strong>Email:</strong> {student.email}</p>
-                                        <p><strong>Course:</strong>{student.course}</p>
-                                        <p><strong>Subjects:</strong> {student.subjects.join(', ')}</p>
-                                    </div>
-                                ))}
+                                    ))
+                                    : (
+                                        <Table>
+                                            <TableBody>
+                                                <TableRow>
+                                                    <TableCell colSpan="6" className="text-center">
+                                                        No students found.
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    )}
                             </div>
                         </div>
                     )}

@@ -219,6 +219,12 @@ const updateTeacher = async (req, res) => {
             updatedData.subjects = seperateString(updatedData.subjects)
         }
 
+        //split course by comma
+        if (updatedData.course && typeof updatedData.course === 'string') {
+            updatedData.course = seperateString(updatedData.course)
+        }
+
+
         //capitalize name
         if (updatedData.teacherId) {
             updatedData.teacherId = capitalize(updatedData.teacherId)

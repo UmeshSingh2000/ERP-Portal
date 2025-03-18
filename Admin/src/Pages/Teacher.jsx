@@ -76,8 +76,7 @@ const Teacher = () => {
             const filteredData = teacherData.filter(({ name = "", email = "", teacherId = "", course = "" }) =>
                 name.toLowerCase().includes(value) ||
                 email.toLowerCase().includes(value) ||
-                teacherId.toLowerCase().includes(value) ||
-                course.toLowerCase().includes(value)
+                teacherId.toLowerCase().includes(value)
             );
             setDuplicateTeacherData(filteredData);
         }

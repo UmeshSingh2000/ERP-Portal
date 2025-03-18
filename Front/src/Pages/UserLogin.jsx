@@ -15,6 +15,7 @@ import Loader from '@/components/ui/Loader'
 import { useToast } from '@/hooks/use-toast'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import toastHelper from '@/Helpers/toastHelper'
 const apiUrl = import.meta.env.VITE_API_URL;
 
 
@@ -59,7 +60,7 @@ const UserLogin = () => {
         catch (err) {
             return toast({
                 variant: "destructive",
-                title : "Error",
+                title: "Error",
                 description: err.response.data?.message
             })
         }
@@ -67,6 +68,37 @@ const UserLogin = () => {
             setLoading(false)
         }
     }
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+        if (!token) return;
+        const teacher = localStorage.getItem('teacher');
+        const student = localStorage.getItem('student');
+
+        const checkTokenValidation = async () => {
+            try {
+                const response = await axios.post(`${apiUrl}/verify-token`, {}, {
+                    headers: {
+                        authorization: `Bearer ${token}`
+                    }
+                })
+                if (response.status === 200 && (teacher || student)) {
+                    toastHelper(toast, 'Redirecting...!', 'success', 1000);
+                    setTimeout(() => {
+                        if (teacher) {
+                            navigate('/teacher/dashboard');
+                        } else if (student) {
+                            navigate('/student/dashboard');
+                        }
+                    }, 1000);
+                }
+            }
+            catch (err) {
+                toastHelper(toast, err.response.data.message, 'Error', 2000, 'destructive')
+            }
+        }
+        if (token) checkTokenValidation()
+    }, [navigate])
+
     if (loading) {
         return <div className='flex items-center justify-center h-screen'><Loader /></div>
     }
@@ -74,7 +106,7 @@ const UserLogin = () => {
         <div className="grid min-h-svh lg:grid-cols-2">
             <div className="relative hidden bg-muted lg:block">
                 <img
-                    lazy = 'true'
+                    lazy='true'
                     src="https://picsum.photos/1280/720?random"
                     alt="Image"
                     className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"

@@ -78,6 +78,9 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
     }
     const updateTeacher = async (e, teacherId) => {
         e.preventDefault()
+        if (title === 'Teacher') fieldController.course = String(fieldController.course)
+        fieldController.subjects = fieldController.subjects = String(fieldController.subjects)
+
         setLoading(true)
         try {
             const response = await axios.put(`${apiUrl}/admin/update${title}/${teacherId}`, fieldController, {
@@ -100,7 +103,7 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
 
     useEffect(() => {
         setFieldController({
-            ...editTeacherData
+            ...editTeacherData,
         })
     }, [editTeacherData])
 
@@ -244,7 +247,9 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                                             </div>
                                             <SheetFooter>
                                                 <SheetClose asChild>
-                                                    <Button type="submit" className="cursor-pointer">Save changes</Button>
+                                                    <Button type="submit" className="cursor-pointer" onClick={(e) => {
+                                                        updateTeacher(e, teacher._id)
+                                                    }}>Save changes</Button>
                                                 </SheetClose>
                                             </SheetFooter>
                                         </SheetHeader>
