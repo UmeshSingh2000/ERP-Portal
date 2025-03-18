@@ -24,7 +24,7 @@ const TeacherStudent = () => {
         setSearch(e.target.value.trim().toLowerCase());
     };
 
-    const teacherDetails = useMemo(() => JSON.parse(localStorage.getItem('teacher')) || {},[]);
+    const teacherDetails = useMemo(() => JSON.parse(localStorage.getItem('teacher')) || {}, []);
 
     const getMyStudents = async () => {
 
@@ -42,10 +42,7 @@ const TeacherStudent = () => {
         } catch (err) {
             toastHelper(toast, err.response?.data?.message || 'Failed to fetch students', 'error');
         } finally {
-            setTimeout(() => {
-                setLoading(false);
-                
-            }, 2000);
+            setLoading(false);
         }
     };
 
