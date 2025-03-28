@@ -8,7 +8,7 @@ const attendance = require('../Schema/attendanceSchema')
 const markAttendance = async (req, res) => {
     try {
         //acquiring all fields from request body
-        const { student_id, subject, status, marked_by } = req.body
+        const { student_id, subject, status, marked_by } = req.body //here student_id is mongoid not my custom id also marked_by is teacher mongid
         if (!student_id || !subject  || !status || !marked_by) {
             return res.status(400).json({ message: "All fields are required" })
         }

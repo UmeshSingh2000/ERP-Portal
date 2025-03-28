@@ -1,4 +1,5 @@
 import Dashboard from '@/components/Dashboard'
+import ThemeToggle from '@/components/ThemeToggle'
 import Loader from '@/components/ui/Loader'
 import toastHelper from '@/Helpers/toastHelper'
 import { useToast } from '@/hooks/use-toast'
@@ -58,7 +59,13 @@ const TeacherDashboard = () => {
   return (
     <>
       {
-        loading ? <Loader /> : <Dashboard title="Teacher" />
+        loading ? <Loader /> :
+          <>
+            <div className="fixed top-2 right-2 z-30 rounded-lg">
+              <ThemeToggle />
+            </div>
+            <Dashboard title="Teacher" />
+          </>
       }
     </>
   )

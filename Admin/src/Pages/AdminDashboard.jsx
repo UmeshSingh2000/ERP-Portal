@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useCallback, useEffect, useLayoutEffect } from 'react'
 import { useState } from "react";
 import axios from 'axios';
-import { Menu, X, LayoutDashboard, GraduationCap, Settings, Users, LogOut } from "lucide-react";
+import { Menu, X, LayoutDashboard, GraduationCap, Settings, Users, LogOut, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from '../assets/logo.ico'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -15,6 +15,8 @@ import Students from './Students';
 import AdminSettings from './AdminSettings';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useSelector } from 'react-redux';
+import Subjects from './Subjects';
+import Course from './Course';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const AdminDashboard = () => {
@@ -86,7 +88,9 @@ const AdminDashboard = () => {
         DASHBOARD: 'dashboard',
         STUDENTS: 'students',
         TEACHERS: 'teachers',
-        SETTINGS: 'settings'
+        SETTINGS: 'settings',
+        SUBJECTS: 'subjects',
+        COURSE: 'course'
     }
 
     const handleActivePage = () => {
@@ -99,6 +103,10 @@ const AdminDashboard = () => {
                 return <Teacher />
             case PAGES.SETTINGS:
                 return <AdminSettings />
+            case PAGES.SUBJECTS:
+                return <Subjects />
+            case PAGES.COURSE:
+                return < Course />
             default:
                 return <Home />
         }
@@ -127,9 +135,19 @@ const AdminDashboard = () => {
                         <li><a href="#" className={customClass('students')} onClick={() => {
                             setActivePage('students')
                         }}><Users className="w-5 h-5" />Students</a></li>
+
+                        <li><a href="#" className={customClass('subjects')} onClick={() => {
+                            setActivePage('subjects')
+                        }}><BookOpen className="w-5 h-5" />Subjects</a></li>
+
+                        <li><a href="#" className={customClass('course')} onClick={() => {
+                            setActivePage('course')
+                        }}><BookOpen className="w-5 h-5" />Course</a></li>
+
                         <li><a href="#" className={customClass('settings')} onClick={() => {
                             setActivePage('settings')
                         }}><Settings className="w-5 h-5" />Settings</a></li>
+
                         <li className='pl-5 pt-1 font-semibold mb-2 gap-2.5 absolute bottom-0 left-0 w-full flex items-center'>
                             <Avatar>
                                 <AvatarImage className="object-cover" src={admin ? `${apiUrl}${admin.profile}` : "https://github.com/shadcn.png"} />
@@ -201,6 +219,12 @@ const AdminDashboard = () => {
                                         <li><a href="#" className={customClass('students')} onClick={() => {
                                             setActivePage('students')
                                         }}><Users className="w-5 h-5" />Students</a></li>
+                                        <li><a href="#" className={customClass('subjects')} onClick={() => {
+                                            setActivePage('subjects')
+                                        }}><BookOpen className="w-5 h-5" />Subjects</a></li>
+                                        <li><a href="#" className={customClass('course')} onClick={() => {
+                                            setActivePage('course')
+                                        }}><BookOpen className="w-5 h-5" />Course</a></li>
                                         <li><a href="#" className={customClass('settings')} onClick={() => {
                                             setActivePage('settings')
                                         }}><Settings className="w-5 h-5" />Settings</a></li>

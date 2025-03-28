@@ -29,7 +29,7 @@ const {
     getStudent,
     deleteMultipleStudent,
     multipleAddStudent,
-    
+
 } = require('../Controllers/studentControllers') //Controllers for Student
 
 const {
@@ -40,6 +40,9 @@ const {
     deleteMultipleTeacher,
     multipleAddTeacher
 } = require('../Controllers/teacherControllers') //Controllers for Teacher
+
+
+const { addSubject, getSubjects, deleteSubject, updateSubject } = require('../Controllers/subjectControllers') //subject controller
 
 
 //admin related routes
@@ -75,7 +78,7 @@ router.post('/dashboard', authenticateToken, adminOnly, adminDashboard)
 router.put('/updateProfile', authenticateToken, adminOnly, upload.single('image'), setAdminPicture)
 router.get('/getProfile/:id', getAdminProfile)
 router.put('/updateAdmin', authenticateToken, adminOnly, updateAdmin)
-router.post('/verifyPassword',authenticateToken,adminOnly,verifyPassword)
+router.post('/verifyPassword', authenticateToken, adminOnly, verifyPassword)
 
 
 /**
@@ -140,6 +143,17 @@ router.get('/getTeachers', authenticateToken, adminOnly, getTeacher)
 router.get('/getStudents', authenticateToken, adminOnly, getStudent)
 router.get('/count', authenticateToken, adminOnly, getStudentTeacherCount)
 router.get('/student-per-course', authenticateToken, adminOnly, studentPerCourse)
+
+
+
+/**
+ * @description Subjects Routes
+ * @acess Protected (only Admin)
+ */
+router.post('/addSubject', authenticateToken, adminOnly, addSubject)
+router.get('/getSubjects', authenticateToken, adminOnly, getSubjects)
+router.delete('/deleteSubject/:id', authenticateToken, adminOnly, deleteSubject)
+router.put('/updateSubject/:id', authenticateToken, adminOnly, updateSubject)
 
 
 module.exports = router
