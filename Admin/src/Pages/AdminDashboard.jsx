@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useCallback, useEffect, useLayoutEffect } from 'react'
 import { useState } from "react";
 import axios from 'axios';
-import { Menu, X, LayoutDashboard, GraduationCap, Settings, Users, LogOut, BookOpen } from "lucide-react";
+import { Menu, X, LayoutDashboard, GraduationCap, Settings, Users, LogOut, BookOpen, UserCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from '../assets/logo.ico'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -131,7 +131,7 @@ const AdminDashboard = () => {
                         }}> <LayoutDashboard className="w-5 h-5" />Dashboard</a></li>
                         <li><a href="#" className={customClass('teachers')} onClick={() => {
                             setActivePage('teachers')
-                        }}><GraduationCap className="w-5 h-5" />Teacher</a></li>
+                        }}><UserCheck className="w-5 h-5" />Teacher</a></li>
                         <li><a href="#" className={customClass('students')} onClick={() => {
                             setActivePage('students')
                         }}><Users className="w-5 h-5" />Students</a></li>
@@ -142,7 +142,7 @@ const AdminDashboard = () => {
 
                         <li><a href="#" className={customClass('course')} onClick={() => {
                             setActivePage('course')
-                        }}><BookOpen className="w-5 h-5" />Course</a></li>
+                        }}><GraduationCap className="w-5 h-5" />Course</a></li>
 
                         <li><a href="#" className={customClass('settings')} onClick={() => {
                             setActivePage('settings')
@@ -215,7 +215,7 @@ const AdminDashboard = () => {
                                         }}> <LayoutDashboard className="w-5 h-5" />Dashboard</a></li>
                                         <li><a href="#" className={customClass('teachers')} onClick={() => {
                                             setActivePage('teachers')
-                                        }}><GraduationCap className="w-5 h-5" />Teacher</a></li>
+                                        }}><UserCheck className="w-5 h-5" />Teacher</a></li>
                                         <li><a href="#" className={customClass('students')} onClick={() => {
                                             setActivePage('students')
                                         }}><Users className="w-5 h-5" />Students</a></li>
@@ -224,7 +224,7 @@ const AdminDashboard = () => {
                                         }}><BookOpen className="w-5 h-5" />Subjects</a></li>
                                         <li><a href="#" className={customClass('course')} onClick={() => {
                                             setActivePage('course')
-                                        }}><BookOpen className="w-5 h-5" />Course</a></li>
+                                        }}><GraduationCap className="w-5 h-5" />Course</a></li>
                                         <li><a href="#" className={customClass('settings')} onClick={() => {
                                             setActivePage('settings')
                                         }}><Settings className="w-5 h-5" />Settings</a></li>

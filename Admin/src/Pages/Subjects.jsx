@@ -192,9 +192,9 @@ const Subjects = () => {
                                                 </div>
 
                                                 <DrawerFooter className="w-full flex flex-col items-center mt-4">
-                                                    <Button className="w-40" onClick={()=>handleUpdate(subject._id)}>Save Changes</Button>
-                                                    <DrawerClose>
-                                                        <Button variant="outline" className="w-40 mt-2">Cancel</Button>
+                                                    <Button className="w-40 cursor-pointer" onClick={() => handleUpdate(subject._id)}>Save Changes</Button>
+                                                    <DrawerClose className='cursor-pointer'>
+                                                        Cancel
                                                     </DrawerClose>
                                                 </DrawerFooter>
                                             </DrawerContent>
@@ -204,6 +204,45 @@ const Subjects = () => {
                             </Table>
                         </div>
                     }
+                </div>
+                <div className="sm:hidden flex flex-col gap-4">
+                    {filteredSubject.map((subject, index) => (
+                        <Drawer key={subject._id}>
+                            <DrawerTrigger asChild>
+                                <div className="border rounded-lg p-4 shadow-md cursor-pointer" onClick={() => setSelectedSubject(subject)}>
+                                    <p className="font-semibold">#{index + 1}</p>
+                                    <p><strong>Subject Code:</strong> {subject.subjectCode}</p>
+                                    <p><strong>Subject Name:</strong> {subject.subjectName}</p>
+                                    <div className="flex justify-end mt-2">
+                                        <Delete className='cursor-pointer text-red-500' onClick={(e) => {
+                                            e.stopPropagation()
+                                            handleDelete(subject._id)
+                                        }} />
+                                    </div>
+                                </div>
+                            </DrawerTrigger>
+                            <DrawerContent>
+                                <DrawerHeader>
+                                    <DrawerTitle>Edit Subject</DrawerTitle>
+                                    <DrawerDescription>Modify the details.</DrawerDescription>
+                                </DrawerHeader>
+                                <div className='flex flex-col gap-2'>
+                                    <div>
+                                        <label className="block text-sm font-medium">Subject Code</label>
+                                        <Input value={selectedSubject.subjectCode} onChange={(e) => setSelectedSubject({ ...selectedSubject, subjectCode: e.target.value })} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium">Subject Code</label>
+                                        <Input value={selectedSubject.subjectName} onChange={(e) => setSelectedSubject({ ...selectedSubject, subjectName: e.target.value })} />
+                                    </div>
+                                </div>
+                                <DrawerFooter>
+                                    <Button className="cursor-pointer" onClick={()=>handleUpdate(subject._id)}>Save</Button>
+                                    <DrawerClose className='cursor-pointer'>Cancel</DrawerClose>
+                                </DrawerFooter>
+                            </DrawerContent>
+                        </Drawer>
+                    ))}
                 </div>
             </main>
         </>

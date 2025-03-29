@@ -43,6 +43,7 @@ const {
 
 
 const { addSubject, getSubjects, deleteSubject, updateSubject } = require('../Controllers/subjectControllers') //subject controller
+const { addCourse, getCourses } = require('../Controllers/courseController')
 
 
 //admin related routes
@@ -154,6 +155,14 @@ router.post('/addSubject', authenticateToken, adminOnly, addSubject)
 router.get('/getSubjects', authenticateToken, adminOnly, getSubjects)
 router.delete('/deleteSubject/:id', authenticateToken, adminOnly, deleteSubject)
 router.put('/updateSubject/:id', authenticateToken, adminOnly, updateSubject)
+
+
+/**
+ * @description Course Routes
+ * @acess Protected (only Admin)
+ */
+router.post('/addCourse', authenticateToken, adminOnly, addCourse)
+router.get('/getCourses', authenticateToken, adminOnly, getCourses)
 
 
 module.exports = router
