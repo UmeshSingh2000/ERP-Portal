@@ -1,5 +1,5 @@
 const Course = require('../Schema/courseSchema')
-
+const mongoose = require('mongoose')
 
 /**
  * @function createCourse
@@ -38,7 +38,51 @@ const getCourses = async (req, res) => {
     }
 }
 
+const deleteCourse = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({ message: "Id required" })
+        }
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid Id" })
+        }
+        const deletedCourse = await Course.findByIdAndDelete(id)
+
+        if (!deletedCourse) {
+            res.status(404).json({ message: "Course not found" })
+        }
+
+        res.status(200).json({ message: "Course Deleted Successfully" })
+    }
+    catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+}
+const updateCourse = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedBody = req.body;
+        if (!id) {
+            return res.status(400).json({ message: "Id required" })
+        }
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid Id" })
+        }
+        if (Object.keys(updatedBody).length === 0) {
+            return res.status(400).json({ message: "No data to update" })
+        }
+        await Course.findByIdAndUpdate(id, updatedBody, { new: true })
+        res.status(200).json({ message: "Course Updated Successfully" })
+    }
+    catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+}
+
 module.exports = {
     addCourse,
-    getCourses
+    getCourses,
+    deleteCourse,
+    updateCourse
 }

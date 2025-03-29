@@ -171,7 +171,6 @@ const Subjects = () => {
                                                     <DrawerTitle>Edit Subject</DrawerTitle>
                                                     <DrawerDescription>Modify the subject details below.</DrawerDescription>
                                                 </DrawerHeader>
-
                                                 <div className="w-full max-w-sm space-y-4">
                                                     <div>
                                                         <label className="block text-sm font-medium">Subject Code</label>
@@ -190,7 +189,6 @@ const Subjects = () => {
                                                         />
                                                     </div>
                                                 </div>
-
                                                 <DrawerFooter className="w-full flex flex-col items-center mt-4">
                                                     <Button className="w-40 cursor-pointer" onClick={() => handleUpdate(subject._id)}>Save Changes</Button>
                                                     <DrawerClose className='cursor-pointer'>

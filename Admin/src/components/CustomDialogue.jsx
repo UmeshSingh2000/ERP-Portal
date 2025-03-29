@@ -18,7 +18,7 @@ import Loader from "./Loader/Loader"
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export default function CustomDialogue({ title, desc, dbData = [] }) {
+export default function CustomDialogue({ title, desc}) {
     const { toast } = useToast()
     const [loading, setLoading] = useState(false)
     const [dialogueState, setDialogueState] = useState(false) // This is the state that will control the dialogue
@@ -93,7 +93,7 @@ export default function CustomDialogue({ title, desc, dbData = [] }) {
                 </div>
                 <DialogFooter>
                     {loading ? <Loader /> :
-                        <Button type="submit" className="cursor-pointer" onClick={handleSubmit}>{dbData ? "Update" : "Save"} Changes</Button>
+                        <Button type="submit" className="cursor-pointer" onClick={handleSubmit}>Save Changes</Button>
                     }
                 </DialogFooter>
             </DialogContent>
