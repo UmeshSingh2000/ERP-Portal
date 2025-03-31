@@ -290,6 +290,16 @@ const studentPerCourse = async (req, res) => {
 
 
 
+/**
+ * @description send email to user that the account is created
+ * @route post /api/admin/sendEmail
+ * @access Private
+ * @throws {Error} - If there is an internal server error.
+ */
+
+
+
+
 
 
 

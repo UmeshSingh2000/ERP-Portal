@@ -16,11 +16,14 @@ import {
 } from "@/components/ui/drawer"
 import axios from 'axios';
 import { setData } from '@/ReduxStore/Features/Students/studentsSlice';
+import { setData as courseData } from '@/ReduxStore/Features/Courses/courseSlice'
+import { setData as subjectData } from '@/ReduxStore/Features/Subjects/subjectSlices'
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import MultipleAddFromExcel from '@/components/MultipleAddFromExcel';
 import Loader from '@/components/Loader/Loader';
 import CustomTable from '@/components/CustomTable';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 const apiUrl = import.meta.env.VITE_API_URL;
 
 
@@ -35,14 +38,21 @@ const Students = () => {
   const [selectedStudent, setSelectedStudent] = useState([])
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  const availableCourses = useSelector((state) => state.courses.value)
+  const availableSubjects = useSelector((state) => state.subjects.value)
+
+
   const [addStudentData, setAddStudentData] = useState({
     name: "",
     studentId: "",
     email: "",
     password: "",
     course: "",
-    subjects: ""
+    subjects: []
   })
+
+
+
   const fetchData = useCallback(async () => {
     setSearch('')
     setLoading(true);
@@ -130,7 +140,7 @@ const Students = () => {
       if (response.status === 200) {
         toastHelper(toast, response.data.message, 'success')
         fetchData()
-        setSelectedTeacher([])
+        setSelectedStudent([])
       }
     } catch (err) {
       toastHelper(toast, err.response.data.message, 'Error', 1000, "destructive")
@@ -171,6 +181,44 @@ const Students = () => {
     }
   }
 
+  const getCourses = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/admin/getCourses`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      dispatch(courseData(response.data.courses))
+    }
+    catch (err) {
+      console.log(err)
+    }
+  }
+  const getSubjects = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/admin/getSubjects`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      dispatch(subjectData(response.data.subjects))
+    }
+    catch (err) {
+      console.log(err)
+    }
+  }
+  //get the courses and subjects
+  useEffect(() => {
+    if (availableCourses.length === 0) {
+      getCourses()
+    }
+    if (availableSubjects.length === 0) {
+      getSubjects()
+    }
+  }, [])
+
+
+
   useEffect(() => {
     setDuplicateStudentData(studentData);
   }, [studentData]);
@@ -198,7 +246,6 @@ const Students = () => {
                 placeholder="Search..."
                 className="flex-1 min-w-[200px] md:w-52"
               />
-
               <Button className="cursor-pointer" onClick={fetchData}>Refresh</Button>
               <Button onClick={handleDeleteMultiple} className={`${selectedStudent.length > 1 ? 'block' : 'hidden'} cursor-pointer bg-red-500`}><Delete /></Button>
             </div>
@@ -220,19 +267,65 @@ const Students = () => {
                       {InputFields("StudentId", "text", "studentId")}
                       {InputFields("Email", "email", "email")}
                       {InputFields("Password", "password", "password")}
-                      {InputFields("Course", "text", "course")}
-                      {InputFields("Subjects", "text", "subjects")}
+                      <Select value={addStudentData.course}
+                        onValueChange={(value) => setAddStudentData({ ...addStudentData, course: value })}>
+                        <SelectTrigger className="w-full md:w-md mt-2">
+                          <SelectValue placeholder="Course" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableCourses.map((course) => {
+                            return (
+                              <SelectItem key={course._id} value={course.courseCode}>{course.courseCode}</SelectItem>
+                            )
+                          })}
+                        </SelectContent>
+                      </Select>
+                      <Select
+                        onValueChange={(value) => {
+                          setAddStudentData((prev) => ({
+                            ...prev,
+                            subjects: prev.subjects.includes(value)
+                              ? prev.subjects.filter((subject) => subject !== value)
+                              : [...prev.subjects, value],
+                          }));
+                        }}
+                      >
+                        <SelectTrigger className="w-full md:w-md mt-2">
+                          <SelectValue placeholder='Subjects'>
+                            {addStudentData.subjects.length > 0
+                              ? addStudentData.subjects.join(", ")  // Show selected subjects
+                              : "Select Subjects"}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableSubjects.map((subject) => (
+                            <SelectItem key={subject._id} value={subject.subjectName}>
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="checkbox"
+                                  checked={addStudentData.subjects.includes(subject.subjectName)}
+                                  className="mr-2"
+                                  readOnly
+                                />
+                                {subject.subjectName}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+
                     </div>
                   </div>
                   <DrawerFooter>
                     <Button className="w-xs m-auto cursor-pointer" type="submit" onClick={handlFormSubmit}>Add</Button>
                     <DrawerClose>
-                      <Button variant="outline">Cancel</Button>
+                      Cancel
                     </DrawerClose>
                   </DrawerFooter>
                 </DrawerContent>
               </Drawer>
-              <MultipleAddFromExcel title="Students"/>
+              <MultipleAddFromExcel title="Students" />
             </div>
           </div>
         </header>

@@ -35,6 +35,8 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 
+import { setData as courseData } from '@/ReduxStore/Features/Courses/courseSlice'
+import { setData as subjectData } from '@/ReduxStore/Features/Subjects/subjectSlices'
 
 
 import { Button } from './ui/button'
@@ -45,17 +47,21 @@ import { Checkbox } from './ui/checkbox'
 import axios from 'axios'
 import { useToast } from '@/hooks/use-toast'
 import toastHelper from '@/Helpers/toastHelper'
+import { useDispatch, useSelector } from 'react-redux'
 const apiUrl = import.meta.env.VITE_API_URL;
 
 
 const PAGE_SIZE = 10
 
 const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, deleteTeacher, selectedTeacher, setSelectedTeacher, title = "Teacher" }) => {
+    const dispatch = useDispatch()
     const { toast } = useToast()
     const [loading, setLoading] = useState(false)
     const [editTeacherData, setEditTeacherData] = useState({})
     const totalPages = Math.ceil(data.length / PAGE_SIZE);
     const [paginatedData, setPaginatedData] = useState([])
+    const availableCourses = useSelector((state) => state.courses.value)
+    const availableSubjects = useSelector((state) => state.subjects.value)
 
 
     const [fieldController, setFieldController] = useState({
@@ -65,7 +71,7 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
             editTeacherData.teacherId : editTeacherData.studentId,
         // teacherId: editTeacherData?.teacherId,
         course: editTeacherData?.course,
-        subjects: editTeacherData?.subjects
+        subjects: editTeacherData?.subjects || []
     })
 
     const handleSelect = (e, teacherId) => {
@@ -98,6 +104,44 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
             setLoading(false)
         }
     }
+
+
+    const getCourses = async () => {
+        try {
+            const response = await axios.get(`${apiUrl}/admin/getCourses`, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            dispatch(courseData(response.data.courses))
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+    const getSubjects = async () => {
+        try {
+            const response = await axios.get(`${apiUrl}/admin/getSubjects`, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            dispatch(subjectData(response.data.subjects))
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+    //get the courses and subjects
+    useEffect(() => {
+        if (availableCourses.length === 0) {
+            getCourses()
+        }
+        if (availableSubjects.length === 0) {
+            getSubjects()
+        }
+    }, [])
+
 
 
 
@@ -200,8 +244,69 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                                                     {InputFields('Name', 'text', 'name')}
                                                     {InputFields('Email', 'email', 'email')}
                                                     {InputFields(`${title === 'Teacher' ? 'TeacherId' : 'StudentId'}`, 'text', `${title === 'Teacher' ? 'teacherId' : 'studentId'}`)}
-                                                    {InputFields('Course', 'text', 'course')}
-                                                    {InputFields('Subjects', 'text', 'subjects')}
+                                                    {title === 'Teacher' ?
+                                                        <Select>
+                                                            <SelectTrigger className="w-full mt-3">
+                                                                <SelectValue placeholder="Select Course(s)" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                {availableCourses.map((course) => (
+                                                                    <div key={course._id} className="flex items-center gap-2 p-2">
+                                                                        <Checkbox
+                                                                            checked={Array.isArray(fieldController.course) && fieldController.course.includes(course.courseCode)}
+                                                                            onCheckedChange={(checked) => {
+                                                                                setFieldController((prev) => ({
+                                                                                    ...prev,
+                                                                                    course: checked
+                                                                                        ? [...(Array.isArray(prev.course) ? prev.course : []), course.courseCode]
+                                                                                        : prev.course.filter((c) => c !== course.courseCode),
+                                                                                }));
+                                                                            }}
+                                                                        />
+                                                                        <Label>{course.courseCode}</Label>
+                                                                    </div>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                        : <Select value={fieldController.course}
+                                                            onValueChange={(value) => setFieldController({ ...fieldController, course: value })}>
+                                                            <SelectTrigger className="w-full">
+                                                                <SelectValue placeholder="Course" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                {availableCourses.map((course) => {
+                                                                    return (
+                                                                        <SelectItem key={course._id} value={course.courseCode}>{course.courseCode}</SelectItem>
+                                                                    )
+                                                                })}
+                                                            </SelectContent>
+                                                        </Select>}
+
+                                                    <Select>
+                                                        <SelectTrigger className="w-full mt-3">
+                                                            <SelectValue placeholder="Select Subject(s)">
+                                                            </SelectValue>
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {availableSubjects.map((subject) => (
+                                                                <div key={subject._id} className="flex items-center gap-2 p-2">
+                                                                    <Checkbox
+                                                                        checked={Array.isArray(fieldController.subjects) && fieldController.subjects.includes(subject.subjectName)}
+                                                                        onCheckedChange={(checked) => {
+                                                                            setFieldController((prev) => ({
+                                                                                ...prev,
+                                                                                subjects: checked
+                                                                                    ? [...(Array.isArray(prev.subjects) ? prev.subjects : []), subject.subjectName]
+                                                                                    : prev.subjects.filter((s) => s !== subject.subjectName),
+                                                                            }));
+                                                                        }}
+                                                                    />
+                                                                    <Label>{subject.subjectName}</Label>
+                                                                </div>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+
                                                 </div>
                                                 <SheetFooter>
                                                     <SheetClose asChild>
@@ -242,8 +347,69 @@ const CustomTable = React.memo(({ data = [], currentPage, setCurrentPage, delete
                                                 {InputFields('Name', 'text', 'name')}
                                                 {InputFields('Email', 'email', 'email')}
                                                 {InputFields(`${title === 'Teacher' ? 'TeacherId' : 'StudentId'}`, 'text', `${title === 'Teacher' ? 'teacherId' : 'studentId'}`)}
-                                                {InputFields('Course', 'text', 'course')}
-                                                {InputFields('Subjects', 'text', 'subjects')}
+                                                {/* {InputFields('Course', 'text', 'course')} */}
+                                                {title === 'Teacher' ?
+                                                    <Select>
+                                                        <SelectTrigger className="w-full mt-3">
+                                                            <SelectValue placeholder="Select Course(s)" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {availableCourses.map((course) => (
+                                                                <div key={course._id} className="flex items-center gap-2 p-2">
+                                                                    <Checkbox
+                                                                        checked={Array.isArray(fieldController.course) && fieldController.course.includes(course.courseCode)}
+                                                                        onCheckedChange={(checked) => {
+                                                                            setFieldController((prev) => ({
+                                                                                ...prev,
+                                                                                course: checked
+                                                                                    ? [...(Array.isArray(prev.course) ? prev.course : []), course.courseCode]
+                                                                                    : prev.course.filter((c) => c !== course.courseCode),
+                                                                            }));
+                                                                        }}
+                                                                    />
+                                                                    <Label>{course.courseCode}</Label>
+                                                                </div>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    : <Select value={fieldController.course}
+                                                        onValueChange={(value) => setFieldController({ ...fieldController, course: value })}>
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="Course" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {availableCourses.map((course) => {
+                                                                return (
+                                                                    <SelectItem key={course._id} value={course.courseCode}>{course.courseCode}</SelectItem>
+                                                                )
+                                                            })}
+                                                        </SelectContent>
+                                                    </Select>}
+                                                {/* {InputFields('Subjects', 'text', 'subjects')} */}
+                                                <Select>
+                                                    <SelectTrigger className="w-full mt-3">
+                                                        <SelectValue placeholder="Select Subject(s)">
+                                                        </SelectValue>
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {availableSubjects.map((subject) => (
+                                                            <div key={subject._id} className="flex items-center gap-2 p-2">
+                                                                <Checkbox
+                                                                    checked={Array.isArray(fieldController.subjects) && fieldController.subjects.includes(subject.subjectName)}
+                                                                    onCheckedChange={(checked) => {
+                                                                        setFieldController((prev) => ({
+                                                                            ...prev,
+                                                                            subjects: checked
+                                                                                ? [...(Array.isArray(prev.subjects) ? prev.subjects : []), subject.subjectName]
+                                                                                : prev.subjects.filter((s) => s !== subject.subjectName),
+                                                                        }));
+                                                                    }}
+                                                                />
+                                                                <Label>{subject.subjectName}</Label>
+                                                            </div>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
                                             </div>
                                             <SheetFooter>
                                                 <SheetClose asChild>

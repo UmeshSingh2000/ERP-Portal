@@ -26,8 +26,7 @@ const addTeacher = async (req, res) => {
             return res.status(400).json({ message: "All Fields are mandetory" })
         }
 
-        //spliting subjects by comma 
-        subjects = seperateString(subjects)
+        
 
         //email validate format
         const emailValid = isValidEmail(email);
@@ -43,11 +42,7 @@ const addTeacher = async (req, res) => {
         //capitalize name
         name = capitalize(name)
 
-        //capitalize course
-        course = capitalize(course)
 
-        //spliting course by comma
-        course = seperateString(course)
 
         //if not found
         if (!emailValid) return res.status(400).json({ message: "Invalid Email format" })

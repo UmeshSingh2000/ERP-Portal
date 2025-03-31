@@ -9,6 +9,8 @@ import Loader from '@/components/Loader/Loader';
 import toastHelper from '@/Helpers/toastHelper';
 import { useToast } from '@/hooks/use-toast';
 import { Delete } from 'lucide-react';
+import { setData as courseData } from '@/ReduxStore/Features/Courses/courseSlice'
+import { setData as subjectData } from '@/ReduxStore/Features/Subjects/subjectSlices'
 import {
     Drawer,
     DrawerClose,
@@ -21,6 +23,7 @@ import {
 } from "@/components/ui/drawer"
 import { Label } from '@/components/ui/label';
 import MultipleAddFromExcel from '@/components/MultipleAddFromExcel';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -38,10 +41,12 @@ const Teacher = () => {
         teacherId: "",
         email: "",
         password: "",
-        course: "",
-        subjects: ""
+        course: [],
+        subjects: []
     })
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const availableCourses = useSelector((state) => state.courses.value);
+    const availableSubjects = useSelector((state) => state.subjects.value);
 
     const fetchData = useCallback(async () => {
         setSearch('')
@@ -181,6 +186,43 @@ const Teacher = () => {
     }
 
 
+    const getCourses = async () => {
+        try {
+            const response = await axios.get(`${apiUrl}/admin/getCourses`, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            dispatch(courseData(response.data.courses))
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+    const getSubjects = async () => {
+        try {
+            const response = await axios.get(`${apiUrl}/admin/getSubjects`, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            dispatch(subjectData(response.data.subjects))
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+    //get the courses and subjects
+    useEffect(() => {
+        if (availableCourses.length === 0) {
+            getCourses()
+        }
+        if (availableSubjects.length === 0) {
+            getSubjects()
+        }
+    }, [])
+
+
 
 
 
@@ -233,14 +275,80 @@ const Teacher = () => {
                                         {InputFields("TeacherId", "text", "teacherId")}
                                         {InputFields("Email", "email", "email")}
                                         {InputFields("Password", "password", "password")}
-                                        {InputFields("Course", "text", "course")}
-                                        {InputFields("Subjects", "text", "subjects")}
+                                        <Select
+                                            onValueChange={(value) => {
+                                                setAddTeacherData((prev) => ({
+                                                    ...prev,
+                                                    course: prev.course.includes(value)
+                                                        ? prev.course.filter((c) => c !== value)
+                                                        : [...prev.course, value],
+                                                }));
+                                            }}
+                                        >
+                                            <SelectTrigger className="w-full md:w-md mt-2">
+                                                <SelectValue placeholder='Course'>
+                                                    {addTeacherData.course.length > 0
+                                                        ? addTeacherData.course.join(", ")  // Show selected courses
+                                                        : "Select Courses"}
+                                                </SelectValue>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {availableCourses.map((course) => (
+                                                    <SelectItem key={course._id} value={course.courseCode}>
+                                                        <div className="flex items-center gap-2">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={addTeacherData.course.includes(course.courseCode)}
+                                                                className="mr-2"
+                                                                readOnly
+                                                            />
+                                                            {course.courseCode}
+                                                        </div>
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+
+                                        <Select
+                                            onValueChange={(value) => {
+                                                setAddTeacherData((prev) => ({
+                                                    ...prev,
+                                                    subjects: prev.subjects.includes(value)
+                                                        ? prev.subjects.filter((subject) => subject !== value)
+                                                        : [...prev.subjects, value],
+                                                }));
+                                            }}
+                                        >
+                                            <SelectTrigger className="w-full md:w-md mt-2">
+                                                <SelectValue placeholder='Subjects'>
+                                                    {addTeacherData.subjects.length > 0
+                                                        ? addTeacherData.subjects.join(", ")  // Show selected subjects
+                                                        : "Select Subjects"}
+                                                </SelectValue>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {availableSubjects.map((subject) => (
+                                                    <SelectItem key={subject._id} value={subject.subjectName}>
+                                                        <div className="flex items-center gap-2">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={addTeacherData.subjects.includes(subject.subjectName)}
+                                                                className="mr-2"
+                                                                readOnly
+                                                            />
+                                                            {subject.subjectName}
+                                                        </div>
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+
                                     </div>
                                 </div>
                                 <DrawerFooter>
                                     <Button className="w-xs m-auto cursor-pointer" type="submit" onClick={handlFormSubmit}>Add</Button>
                                     <DrawerClose>
-                                        <Button variant="outline">Cancel</Button>
+                                        Cancel
                                     </DrawerClose>
                                 </DrawerFooter>
                             </DrawerContent>

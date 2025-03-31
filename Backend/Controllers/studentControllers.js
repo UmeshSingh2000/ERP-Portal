@@ -37,7 +37,7 @@ const addStudent = async (req, res) => {
         studentId = capitalize(studentId);
 
         //spliting subjects by comma 
-        subjects = seperateString(subjects)
+        // subjects = seperateString(subjects)
 
         //creating new student 
         const newStudent = new student({
