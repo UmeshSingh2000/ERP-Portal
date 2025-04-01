@@ -1,6 +1,10 @@
+
 import StudentsPerCourseChart from '@/components/StudentsPerCourseChart'
 import StudentTeacherChart from '@/components/StudentTeacherChart'
 import React from 'react'
+
+import SubjectChart from './SubjectChart'
+import CourseChart from './CourseChart'
 
 const Home = () => {
   return (
@@ -13,6 +17,8 @@ const Home = () => {
         <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
           <StudentsPerCourseChart />
           <StudentTeacherChart />
+          <SubjectChart/>
+          <CourseChart/>
         </section>
       </main>
     </>
