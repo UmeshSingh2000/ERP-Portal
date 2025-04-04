@@ -12,7 +12,7 @@ const courseSchema = new Schema({
         unique: true,
     },
 }, {
-    timeRangestamps: true,
+    timestamps: true,
 })
 
 const Course = mongoose.model('course', courseSchema)
