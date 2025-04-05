@@ -7,6 +7,7 @@ import TeacherSettings from '@/Pages/Teacher/TeacherSettings';
 import Home from './Home';
 import { useNavigate } from 'react-router-dom';
 import TeacherStudent from '@/Pages/Teacher/TeacherStudent';
+import TeacherAttendance from '@/Pages/Teacher/TeacherAttendance';
 const apiUrl = import.meta.env.VITE_API_URL
 
 const Dashboard = ({ title }) => {
@@ -21,6 +22,7 @@ const Dashboard = ({ title }) => {
     }
     const PAGES = {
         DASHBOARD: 'Dashboard',
+        ATTENDANCE: 'Attendance',
         STUDENTS: 'Students',
         ATTENDANCE: 'Attendance',
         SETTINGS: 'Settings'
@@ -30,7 +32,9 @@ const Dashboard = ({ title }) => {
             case PAGES.DASHBOARD:
                 return <Home title="Teacher" />
             case PAGES.STUDENTS:
-                return <TeacherStudent/>
+                return <TeacherStudent />
+            case PAGES.ATTENDANCE:
+                return <TeacherAttendance />
             case PAGES.SETTINGS:
                 return title === 'Teacher' ? <TeacherSettings /> : "student"
             default:
