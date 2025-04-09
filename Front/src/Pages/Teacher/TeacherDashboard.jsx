@@ -6,7 +6,6 @@ import { useToast } from '@/hooks/use-toast'
 import { setData } from '@/Redux/features/TeachersData/teacherCourseSlice'
 import { setData as teacherSubject } from '@/Redux/features/TeachersData/teacherSubjectSlice'
 import axios from 'axios'
-import { LogOut } from 'lucide-react'
 import React, { useCallback, useLayoutEffect, useState } from 'react'
 
 import { useDispatch } from 'react-redux'

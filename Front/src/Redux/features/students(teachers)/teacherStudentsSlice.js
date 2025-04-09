@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
     value: [],
+    myStudents: [],
 }
 
 export const teacherStudentsSlice = createSlice({
