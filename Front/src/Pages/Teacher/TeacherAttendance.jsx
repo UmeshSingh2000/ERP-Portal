@@ -22,12 +22,15 @@ import { Checkbox } from '@/components/ui/checkbox'
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const TeacherAttendance = () => {
+  const teacherData = localStorage.getItem('teacher') || null
   const { toast } = useToast()
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [date, setDate] = useState(new Date())
-  const teacherCourse = useSelector((state) => state.teacherCourse.value)
-  const teacherSubject = useSelector((state) => state.teacherSubject.value)
+  // const teacherCourse = useSelector((state) => state.teacherCourse.value)
+  const [teacherCourse, setTeacherCourse] = useState(useSelector((state) => state.teacherCourse.value))
+  const [teacherSubject, setTeacherSubject] = useState(useSelector((state) => state.teacherSubject.value))
+  // const teacherSubject = useSelector((state) => state.teacherSubject.value)
 
   const [selectedCourse, setSelectedCourse] = useState('')
   const [selectedSubject, setSelectedSubject] = useState('')
@@ -36,9 +39,10 @@ const TeacherAttendance = () => {
 
   const [filteredStudents, setFilteredStudents] = useState([])
 
+  const [selectedStudents, setSelectedStudents] = useState([])
+
   const teacherDetails = useMemo(() => JSON.parse(localStorage.getItem('teacher')) || {}, []);
   const getMyStudents = async () => {
-
     setLoading(true);
     try {
       const payload = {
@@ -61,16 +65,28 @@ const TeacherAttendance = () => {
       getMyStudents()
     }
   }, [])
+  useEffect(() => {
+    if (teacherData) {
+      const parsedData = JSON.parse(teacherData)
+      setTeacherCourse(parsedData.course)
+      setTeacherSubject(parsedData.subjects)
+    }
+  }, [])
 
   const handleApplyFilter = () => {
     try {
       setLoading(true)
       if (!date || !selectedCourse || !selectedSubject) {
-        alert('Please select a date, course, and subject')
+        alert('Please select a course, and subject')
         return
       }
-      const filtered = myStudents.filter((st) => {
+      let filtered = myStudents.filter((st) => {
         return st.course === selectedCourse && st.subjects.includes(selectedSubject)
+      })
+      filtered.sort((a, b) => {
+        const numA = parseInt(a.studentId.replace(/\D/g, ''), 10);
+        const numB = parseInt(b.studentId.replace(/\D/g, ''), 10);
+        return numA - numB;
       })
       setFilteredStudents(filtered)
     }
@@ -82,9 +98,55 @@ const TeacherAttendance = () => {
     }
   }
 
-  useEffect(() => {
-    console.log(filteredStudents)
-  }, [filteredStudents])
+  const handleSelectStudent = (student) => {
+    if (selectedStudents.includes(student)) {
+      setSelectedStudents(selectedStudents.filter((s) => s !== student))
+    } else {
+      setSelectedStudents([...selectedStudents, student])
+    }
+  }
+
+  const handleToggleSelectAll = () => {
+    if (selectedStudents.length === filteredStudents.length) {
+      setSelectedStudents([]);
+    } else {
+      setSelectedStudents(filteredStudents);
+    }
+  };
+
+  const checkExistence = (id) => {
+    const isExist = selectedStudents.find((student) => student._id === id)
+    return isExist ? true : false
+  }
+
+
+  const submitAttendance = async () => {
+    if (selectedStudents.length === 0) {
+      toastHelper(toast, 'No student Selected', 'Info')
+      return
+    }
+    const attendanceData = {
+      students: filteredStudents.map(student => ({
+        student_id: student._id,
+        status: selectedStudents.includes(student) ? 'Present' : 'Absent'
+      })),
+      courseId: selectedCourse,
+      subjectId: selectedSubject,
+      marked_by: teacherDetails.id,
+      date
+    };
+    try {
+      const res = await axios.put(`${apiUrl}/teacher/attendance/mark`, attendanceData, {
+        headers: { authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+
+      toastHelper(toast, res.data.message, 'success');
+    } catch (err) {
+      toastHelper(toast, err.response?.data?.message || 'Failed to mark attendance', 'error');
+    }
+  }
+
+
   return (
     <main>
       <header className="flex flex-col gap-4 p-4 md:p-6 lg:p-10">
@@ -151,7 +213,6 @@ const TeacherAttendance = () => {
               </SelectContent>
             </Select>
           </div>
-
           {/* Apply Filter Button */}
           <Button
             onClick={handleApplyFilter}
@@ -168,13 +229,14 @@ const TeacherAttendance = () => {
           ) : (
             <div className="w-full">
               <Table className="hidden sm:table">
-                <TableCaption>{filteredStudents.length>0 ? <Button className="cursor-pointer">Submit</Button> : 'No Available Student'}</TableCaption>
+                <TableCaption>{filteredStudents.length > 0 ? <Button onClick={submitAttendance} className="cursor-pointer">Mark Attendance</Button> : 'No Available Student'}</TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[50px]">Sno:</TableHead>
                     <TableHead className="">Student ID</TableHead>
                     <TableHead>Student Name</TableHead>
-                    <TableHead>Action</TableHead>
+                    <TableHead>Action <span className='ml-2'><Checkbox checked={selectedStudents.length === filteredStudents.length && filteredStudents.length > 0}
+                      onClick={handleToggleSelectAll} /></span> </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -184,7 +246,7 @@ const TeacherAttendance = () => {
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{student.studentId}</TableCell>
                         <TableCell>{student.name}</TableCell>
-                        <TableCell><Checkbox /></TableCell>
+                        <TableCell><Checkbox checked={checkExistence(student._id)} onClick={() => handleSelectStudent(student)} /></TableCell>
                       </TableRow>
                     )
                   })}

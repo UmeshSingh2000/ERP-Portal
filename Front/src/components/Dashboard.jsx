@@ -24,7 +24,6 @@ const Dashboard = ({ title }) => {
         DASHBOARD: 'Dashboard',
         ATTENDANCE: 'Attendance',
         STUDENTS: 'Students',
-        ATTENDANCE: 'Attendance',
         SETTINGS: 'Settings'
     }
     const handleActivePage = () => {

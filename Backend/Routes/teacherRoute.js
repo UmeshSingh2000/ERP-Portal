@@ -54,7 +54,7 @@ router.post('/myStudents', authenticateToken, teacherOnly, getTeacherStudents)
  * @route POST /api/teacher/attendance/mark
  * @access Protected (Required Valid token and allowed User(teacher only))
  */
-router.post('/attendance/mark', authenticateToken, teacherOnly, markAttendance)
+router.put('/attendance/mark', authenticateToken, teacherOnly, markAttendance)
 
 
 /**

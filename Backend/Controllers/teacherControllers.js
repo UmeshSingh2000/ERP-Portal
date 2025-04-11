@@ -422,7 +422,7 @@ const getTeacherStudents = async (req, res) => {
                 { $or: courseRegexArray }, // Case-insensitive course match
                 { $or: subjectRegexArray } // Case-insensitive subjects array match
             ]
-        });
+        }).select('-password');
 
         res.status(200).json({ students, message: "Students Fetched..." });
     }
