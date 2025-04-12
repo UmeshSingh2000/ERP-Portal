@@ -4,10 +4,10 @@ import { GraduationCap, LayoutDashboard, LogOut, Menu, Settings, Users, X } from
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { AnimatePresence, motion } from 'framer-motion';
 import TeacherSettings from '@/Pages/Teacher/TeacherSettings';
-import Home from './Home';
 import { useNavigate } from 'react-router-dom';
 import TeacherStudent from '@/Pages/Teacher/TeacherStudent';
 import TeacherAttendance from '@/Pages/Teacher/TeacherAttendance';
+import TeacherHome from '@/Pages/Teacher/TeacherHome';
 const apiUrl = import.meta.env.VITE_API_URL
 
 const Dashboard = ({ title }) => {
@@ -29,7 +29,7 @@ const Dashboard = ({ title }) => {
     const handleActivePage = () => {
         switch (activePage) {
             case PAGES.DASHBOARD:
-                return <Home title="Teacher" />
+                return <TeacherHome />
             case PAGES.STUDENTS:
                 return <TeacherStudent />
             case PAGES.ATTENDANCE:
@@ -37,7 +37,7 @@ const Dashboard = ({ title }) => {
             case PAGES.SETTINGS:
                 return title === 'Teacher' ? <TeacherSettings /> : "student"
             default:
-                return <Home title="Teacher" />
+                return <TeacherHome />
         }
     }
     useEffect(() => {
