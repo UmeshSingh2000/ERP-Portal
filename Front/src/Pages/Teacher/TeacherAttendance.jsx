@@ -88,9 +88,6 @@ const TeacherAttendance = () => {
         const numB = parseInt(b.studentId.replace(/\D/g, ''), 10);
         return numA - numB;
       })
-      if (filtered.length === 0) {
-        toastHelper(toast, 'No Student Found', 'Info')
-      }
       setFilteredStudents(filtered)
     }
     catch (err) {
