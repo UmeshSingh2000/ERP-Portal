@@ -467,8 +467,25 @@ const getCourseWiseStudents = async (req, res) => {
             students
         }));
 
+        const subjectWiseNumber = new Map();
+        matchedStudents.forEach(student => {
+            student.subjects.forEach(subject => {
+                if (subjectWiseNumber.has(subject)) {
+                    subjectWiseNumber.set(subject, subjectWiseNumber.get(subject) + 1)
+                }
+                else {
+                    subjectWiseNumber.set(subject, 1)
+                }
+            })
+        })
+        const subjectWiseData = Array.from(subjectWiseNumber, ([subject, students]) => ({
+            subject,
+            students
+        }));
+
         res.status(200).json({
-            courseWiseData
+            courseWiseData,
+            subjectWiseData
         });
 
     } catch (err) {

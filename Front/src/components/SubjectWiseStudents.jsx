@@ -10,9 +10,9 @@ import {
     Legend,
     ResponsiveContainer
 } from "recharts";
-
-const CoursewiseStudents = () => {
-    const data = useSelector(state => state.teachersCourseWiseStudentNumber.value);
+const SubjectWiseStudents = () => {
+    const data = useSelector(state => state.teacherSubjectWiseStudentNumber.value);
+    console.log(data)
     return (
         <ResponsiveContainer width="100%" height={300}>
             <BarChart
@@ -20,14 +20,14 @@ const CoursewiseStudents = () => {
                 margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="course" />
+                <XAxis dataKey="subject" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="students" fill="#8884d8" />
+                <Bar dataKey="students" fill="#ab47bc" />
             </BarChart>
         </ResponsiveContainer>
     )
 }
 
-export default CoursewiseStudents
+export default SubjectWiseStudents
