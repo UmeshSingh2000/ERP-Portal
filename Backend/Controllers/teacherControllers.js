@@ -26,7 +26,7 @@ const addTeacher = async (req, res) => {
             return res.status(400).json({ message: "All Fields are mandetory" })
         }
 
-        
+
 
         //email validate format
         const emailValid = isValidEmail(email);
@@ -432,6 +432,52 @@ const getTeacherStudents = async (req, res) => {
     }
 }
 
+const getCourseWiseStudents = async (req, res) => {
+    try {
+        let { course, subjects } = req.body;
+
+        if (!course) {
+            return res.status(400).json({ message: "Please provide course" });
+        }
+
+        if (!Array.isArray(course)) {
+            course = [course];
+        }
+
+        if (!Array.isArray(subjects)) {
+            subjects = [subjects];
+        }
+
+        // Final query: students who match both course and at least one subject
+        const matchedStudents = await student.find({
+            course: { $in: course },
+            subjects: { $in: subjects }
+        }).select('-password');
+        const courseWiseNumber = new Map();
+        matchedStudents.forEach(student => {
+            if (courseWiseNumber.has(student.course)) {
+                courseWiseNumber.set(student.course, courseWiseNumber.get(student.course) + 1)
+            }
+            else {
+                courseWiseNumber.set(student.course, 1)
+            }
+        })
+        const courseWiseData = Array.from(courseWiseNumber, ([course, students]) => ({
+            course,
+            students
+        }));
+
+        res.status(200).json({
+            courseWiseData
+        });
+
+    } catch (err) {
+        console.error("Error fetching students:", err);
+        res.status(500).json({ message: "Internal Server Error", err });
+    }
+};
+
+
 
 module.exports = {
     addTeacher,
@@ -445,5 +491,6 @@ module.exports = {
     setTeacherPicture,
     getTeacherProfile,
     verifyPassword,
-    getTeacherStudents
+    getTeacherStudents,
+    getCourseWiseStudents
 }

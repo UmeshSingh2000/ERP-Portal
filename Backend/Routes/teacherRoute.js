@@ -14,7 +14,8 @@ const {
     getTeacherProfile,
     verifyPassword,
     updateTeacher,
-    getTeacherStudents
+    getTeacherStudents,
+    getCourseWiseStudents
 } = require('../Controllers/teacherControllers')
 
 //controller for attendance
@@ -67,6 +68,10 @@ router.put('/updateProfile', authenticateToken, teacherOnly, upload.single('imag
 router.get('/getProfile/:id', getTeacherProfile)
 router.post('/verifyPassword', authenticateToken, teacherOnly, verifyPassword)
 router.put('/updateTeacher/:teacherId', authenticateToken, teacherOnly, updateTeacher)
+
+
+
+router.post('/getCourseWiseStudent', authenticateToken, teacherOnly, getCourseWiseStudents)
 
 
 
