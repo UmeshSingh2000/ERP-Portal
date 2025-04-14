@@ -32,9 +32,6 @@ const markAttendance = async (req, res) => {
                 attendanceResults.push({ student_id, success: false, message: "Student not found" });
                 continue;
             }
-
-
-
             const existingAttendance = await Attendance.findOne({
                 student_id,
                 courseId: courseId._id,

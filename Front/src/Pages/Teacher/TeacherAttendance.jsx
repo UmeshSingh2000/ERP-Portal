@@ -121,10 +121,10 @@ const TeacherAttendance = () => {
 
 
   const submitAttendance = async () => {
-    if (selectedStudents.length === 0) {
-      toastHelper(toast, 'No student Selected', 'Info')
-      return
-    }
+    // if (selectedStudents.length === 0) {
+    //   toastHelper(toast, 'No student Selected', 'Info')
+    //   return
+    // }
     const attendanceData = {
       students: filteredStudents.map(student => ({
         student_id: student._id,
