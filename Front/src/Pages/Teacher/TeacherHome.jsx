@@ -11,8 +11,8 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const TeacherHome = () => {
     const dispatch = useDispatch()
     const courseData = useSelector(state => state.teachersCourseWiseStudentNumber.value);
-    const teacherCourse = JSON.parse(localStorage.getItem('teacher')).course
-    const teacherSubjects = JSON.parse(localStorage.getItem('teacher')).subjects
+    const teacherCourse = JSON.parse(localStorage.getItem('teacher'))?.course
+    const teacherSubjects = JSON.parse(localStorage.getItem('teacher'))?.subjects
     const getCourseWiseStudents = async () => {
         try {
             const response = await axios.post(`${apiUrl}/teacher/getCourseWiseStudent`, { course: teacherCourse, subjects: teacherSubjects }, {
