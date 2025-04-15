@@ -248,6 +248,40 @@ const login = async (req, res) => {
     }
 }
 
+/**
+ * @description Student Dashboard
+ * @routes POST /api/student/dashboard
+ * @access Private
+ */
+const studentDashboard = async (req, res) => {
+    try {
+        const { id, role } = req.user
+        if (role !== 'student') {
+            return res.status(403).json({ message: "Access Denied" })
+        }
+        const studentData = await student.findById(id, '-password -__v -createdAt -updatedAt').lean()
+        if (!studentData) {
+            return res.status(404).json({ message: "Student not found" })
+        }
+        res.status(200).json({
+            id: studentData._id,
+            name: studentData.name,
+            email: studentData.email,
+            studentId: studentData.studentId,
+            course: studentData.course,
+            subjects: studentData.subjects,
+            profile: studentData.photo ? `/student/getProfile/${id}` : null
+        })
+    }
+    catch (err) {
+        console.error(err)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+
+
+
 const getStudent = async (req, res) => {
     try {
         //fetch teacher exluding those fields
@@ -267,5 +301,6 @@ module.exports = {
     login,
     getStudent,
     deleteMultipleStudent,
-    multipleAddStudent
+    multipleAddStudent,
+    studentDashboard
 }

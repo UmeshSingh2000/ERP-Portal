@@ -18,7 +18,7 @@ const Settings = ({ title }) => {
     const [userDetails, setUserDetails] = useState({
         name: teacher?.name,
         email: teacher?.email,
-        [`${title.toLowerCase()}Id`]: title === 'Teacher' ? teacher?.teacherId : '',
+        [`${title.toLowerCase()}Id`]: title === 'Teacher' ? teacher?.teacherId : teacher?.studentId,
         currPassword: "",
         newPassword: "",
         confirmNewPassword: ""

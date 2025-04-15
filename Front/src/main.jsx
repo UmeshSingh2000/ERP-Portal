@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster"
 import TeacherDashboard from './Pages/Teacher/TeacherDashboard'
 import { store } from './Redux/store'
 import { Provider } from 'react-redux'
+import StudentDashboard from './Pages/Student/StudentDashboard'
 
 createRoot(document.getElementById('root')).render(
   <>
@@ -14,6 +15,7 @@ createRoot(document.getElementById('root')).render(
         <Routes>
           <Route path="/" element={<UserLogin />} />
           <Route path='/teacher/dashboard' element={<TeacherDashboard />} />
+          <Route path='/student/dashboard' element={<StudentDashboard />} />
         </Routes>
       </BrowserRouter>
       <Toaster />

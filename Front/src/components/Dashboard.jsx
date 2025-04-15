@@ -10,6 +10,9 @@ import TeacherStudent from '@/Pages/Teacher/TeacherStudent';
 import TeacherAttendance from '@/Pages/Teacher/TeacherAttendance';
 import TeacherHome from '@/Pages/Teacher/TeacherHome';
 import { useSelector } from 'react-redux';
+import StudentHome from '@/Pages/Student/StudentHome';
+import StudentAttendance from '@/Pages/Student/StudentAttendance';
+import StudentSettings from '@/Pages/Student/StudentSettings';
 const apiUrl = import.meta.env.VITE_API_URL
 
 const Dashboard = ({ title }) => {
@@ -33,13 +36,13 @@ const Dashboard = ({ title }) => {
         switch (activePage) {
             case PAGES.DASHBOARD:
                 // return <Home title="Teacher" />
-                return <TeacherHome />
+                return title === 'Teacher' ? <TeacherHome /> : <StudentHome />
             case PAGES.STUDENTS:
                 return <TeacherStudent />
             case PAGES.ATTENDANCE:
-                return <TeacherAttendance />
+                return title === 'Teacher' ? <TeacherAttendance /> : <StudentAttendance />
             case PAGES.SETTINGS:
-                return title === 'Teacher' ? <TeacherSettings /> : "student"
+                return title === 'Teacher' ? <TeacherSettings /> : <StudentSettings />
             default:
                 // return <Home title="Teacher" />
                 return <TeacherHome />
@@ -58,7 +61,10 @@ const Dashboard = ({ title }) => {
                 </div>
                 <ul className="space-y-4 teacher_dashboard">
                     <li className={customClass('Dashboard')} onClick={() => setActivePage('Dashboard')}><LayoutDashboard className="w-5 h-5" />Dashboard</li>
-                    <li className={customClass('Students')} onClick={() => setActivePage('Students')}><Users className="w-5 h-5" />Students</li>
+                    {
+                        title === 'Teacher' &&
+                        <li className={customClass('Students')} onClick={() => setActivePage('Students')}><Users className="w-5 h-5" />Students</li>
+                    }
                     <li className={customClass('Attendance')} onClick={() => setActivePage('Attendance')}><GraduationCap className="w-5 h-5" />Attendance</li>
                     <li className={customClass('Settings')} onClick={() => setActivePage('Settings')}><Settings className="w-5 h-5" />Settings</li>
                     <li className='pl-5 pt-1 font-semibold mb-2 gap-2.5 absolute bottom-0 left-0 w-full flex items-center'>
@@ -123,7 +129,10 @@ const Dashboard = ({ title }) => {
                                 </div>
                                 <ul className="mt-10 space-y-4 teacher_dashboard">
                                     <li className={customClass('Dashboard')} onClick={() => setActivePage('Dashboard')}><LayoutDashboard className="w-5 h-5" />Dashboard</li>
-                                    <li className={customClass('Students')} onClick={() => setActivePage('Students')}><GraduationCap className="w-5 h-5" />Students</li>
+                                    {
+                                        title === 'Teacher' &&
+                                        <li className={customClass('Students')} onClick={() => setActivePage('Students')}><GraduationCap className="w-5 h-5" />Students</li>
+                                    }
                                     <li className={customClass('Attendance')} onClick={() => setActivePage('Attendance')}><Users className="w-5 h-5" />Attendance</li>
                                     <li className={customClass('Settings')} onClick={() => setActivePage('Settings')}><Settings className="w-5 h-5" />Settings</li>
                                     <li className='pl-5 pt-1 font-semibold mb-2 absolute bottom-0 left-0 w-full'>

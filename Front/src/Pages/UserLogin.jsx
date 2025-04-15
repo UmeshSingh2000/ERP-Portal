@@ -100,6 +100,20 @@ const UserLogin = () => {
         if (token) checkTokenValidation()
     }, [navigate])
 
+    useEffect(() => {
+        const handleEnter = (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault()
+                handleLogin()
+            }
+        }
+        window.addEventListener('keydown', handleEnter)
+
+        return () => {
+            window.removeEventListener('keydown', handleEnter)
+        }
+    }, [])
+
     if (loading) {
         return <div className='flex items-center justify-center h-screen'><Loader /></div>
     }
