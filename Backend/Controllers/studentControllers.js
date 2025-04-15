@@ -175,7 +175,7 @@ const deleteMultipleStudent = async (req, res) => {
 
 
 /**
- * @description Update Student record (Admin Only)
+ * @description Update Student record (Admin and student)
  * @routes PUT /api/admin/updateStudent/:studentId
  * @access Private
  */
@@ -204,6 +204,9 @@ const updateStudent = async (req, res) => {
         //spliting subjects by comma
         if (updatedData.subjects && typeof updatedData.subjects === 'string') {
             updatedData.subjects = seperateString(updatedData.subjects)
+        }
+        if (updatedData.password) {
+            updatedData.password = await hashPassword(updatedData.password)
         }
         const updatedStudent = await student.findByIdAndUpdate(studentId,
             { $set: updatedData },
@@ -280,11 +283,85 @@ const studentDashboard = async (req, res) => {
 }
 
 
+const verifyPassword = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { password } = req.body;
+
+        if (!password) return res.status(400).json({ message: "Please provide password" })
+        const findStudent = await student.findById(id)
+
+        if (!findStudent) return res.status(404).json({ message: "Student not found" })
+        const checkPassword = await comparePass(password, findStudent.password)
+
+        if (!checkPassword) return res.status(400).json({ message: "Wrong Password" })
+        res.status(200).json({ message: "Password verified" })
+    }
+    catch (err) {
+        console.error(err)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+/**
+ * @description Update the student profile picture
+ * @returns {Promise<void>} - A promise that resolves when the profile picture is updated.
+ *
+ * @throws {Error} - If there is an internal server error.
+ */
+const setStudentPicture = async (req, res) => {
+    try {
+        const { id, role } = req.user
+        if (!req.file) return res.status(400).json({ message: "Please upload a file" })
+
+        if (role !== "student") return res.status(403).json({ message: "Access denied: Student privileges required." })
+        const photo = req.file.buffer;
+        const imageType = req.file.mimetype;
+
+        const findStudent = await student.findOne({ _id: id })
+        if (!findStudent) return res.status(401).json({ message: "Unauthorized access: Token invalid." })
+
+        findStudent.photo = photo
+        findStudent.photoType = imageType
+        await findStudent.save()
+        res.status(200).json({ message: "Profile picture updated" })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+const getStudentProfile = async (req, res) => {
+    try {
+        const { id } = req.params
+        if (!id) return res.status(400).json({ message: "Please provide an ID" })
+        const findStudent = await student.findById(id)
+        if (!findStudent) return res.status(404).json({ message: "Student not found" })
+
+        res.set('Content-Type', findStudent.photoType)
+        res.send(findStudent.photo);
+    }
+    catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
 
 
+
+
+
+
+
+
+/**
+ * @description Fetch All student record (Admin Only)
+ * @route PUT /api/admin/getStudents
+ * @access Private
+ */
 const getStudent = async (req, res) => {
     try {
-        //fetch teacher exluding those fields
+        //fetch student exluding those fields
         const students = await student.find({}, '-password -__v -createdAt -updatedAt -role');
         res.status(200).json({ students })
     } catch (error) {
@@ -302,5 +379,8 @@ module.exports = {
     getStudent,
     deleteMultipleStudent,
     multipleAddStudent,
-    studentDashboard
+    studentDashboard,
+    verifyPassword,
+    setStudentPicture,
+    getStudentProfile
 }

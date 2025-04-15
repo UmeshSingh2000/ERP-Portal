@@ -130,10 +130,11 @@ const Settings = ({ title }) => {
                 }
                 const updatedTeacher = { ...teacher, ...payload };
                 setTeacher(updatedTeacher); // Update state
-                localStorage.setItem('teacher', JSON.stringify(updatedTeacher));
+                title === 'Teacher' ? localStorage.setItem('teacher', JSON.stringify(updatedTeacher)) :
+                    localStorage.setItem('student', JSON.stringify(updatedTeacher))
             }
             updateLocal();
-            toastHelper(toast, "Teacher Updated", 'Success', 1000, "success")
+            toastHelper(toast, `${title} Updated`, 'Success', 1000, "success")
         }
         catch (err) {
             toastHelper(toast, err.response.data.message, 'Error', 1000, "destructive")

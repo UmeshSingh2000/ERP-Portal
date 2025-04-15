@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 import logo from "@/assets/logo.ico"
-import { GraduationCap, LayoutDashboard, LogOut, Menu, Settings, Users, X } from 'lucide-react';
+import { GraduationCap, LayoutDashboard, LogOut, Menu, Settings, TabletSmartphone, Users, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { AnimatePresence, motion } from 'framer-motion';
 import TeacherSettings from '@/Pages/Teacher/TeacherSettings';
@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import StudentHome from '@/Pages/Student/StudentHome';
 import StudentAttendance from '@/Pages/Student/StudentAttendance';
 import StudentSettings from '@/Pages/Student/StudentSettings';
+import MobileApp from '@/Pages/Student/MobileApp';
 const apiUrl = import.meta.env.VITE_API_URL
 
 const Dashboard = ({ title }) => {
@@ -30,7 +31,8 @@ const Dashboard = ({ title }) => {
         DASHBOARD: 'Dashboard',
         ATTENDANCE: 'Attendance',
         STUDENTS: 'Students',
-        SETTINGS: 'Settings'
+        SETTINGS: 'Settings',
+        MOBILEAPP: 'mobileApp'
     }
     const handleActivePage = () => {
         switch (activePage) {
@@ -43,9 +45,11 @@ const Dashboard = ({ title }) => {
                 return title === 'Teacher' ? <TeacherAttendance /> : <StudentAttendance />
             case PAGES.SETTINGS:
                 return title === 'Teacher' ? <TeacherSettings /> : <StudentSettings />
+            case PAGES.MOBILEAPP:
+                return <MobileApp />
             default:
                 // return <Home title="Teacher" />
-                return <TeacherHome />
+                return title === 'Teacher' ? <TeacherHome /> : <StudentHome />
         }
     }
     useEffect(() => {
@@ -67,6 +71,7 @@ const Dashboard = ({ title }) => {
                     }
                     <li className={customClass('Attendance')} onClick={() => setActivePage('Attendance')}><GraduationCap className="w-5 h-5" />Attendance</li>
                     <li className={customClass('Settings')} onClick={() => setActivePage('Settings')}><Settings className="w-5 h-5" />Settings</li>
+                    <li className={customClass('mobileApp')} onClick={() => setActivePage('mobileApp')}><TabletSmartphone className="w-5 h-5" />Download App!</li>
                     <li className='pl-5 pt-1 font-semibold mb-2 gap-2.5 absolute bottom-0 left-0 w-full flex items-center'>
                         <Avatar>
                             <AvatarImage className="object-cover" src={userData?.profile ? `${apiUrl}${userData.profile}` : "https://github.com/shadcn.png"} />
@@ -135,6 +140,7 @@ const Dashboard = ({ title }) => {
                                     }
                                     <li className={customClass('Attendance')} onClick={() => setActivePage('Attendance')}><Users className="w-5 h-5" />Attendance</li>
                                     <li className={customClass('Settings')} onClick={() => setActivePage('Settings')}><Settings className="w-5 h-5" />Settings</li>
+                                    <li className={customClass('mobileApp')} onClick={() => setActivePage('mobileApp')}><TabletSmartphone className="w-5 h-5" />Download App!</li>
                                     <li className='pl-5 pt-1 font-semibold mb-2 absolute bottom-0 left-0 w-full'>
                                         <Avatar>
                                             <AvatarImage className="object-cover" src={userData?.profile ? `${apiUrl}${userData.profile}` : "https://github.com/shadcn.png"} />
