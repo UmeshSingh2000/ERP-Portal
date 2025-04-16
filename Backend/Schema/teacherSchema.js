@@ -43,5 +43,5 @@ const teacher = new Schema({
     timestamps: true
 })
 
-const teacherModel = mongoose.model('Teacher', teacher)
+const teacherModel = mongoose.model('teachers', teacher)
 module.exports = teacherModel;

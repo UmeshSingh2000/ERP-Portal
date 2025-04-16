@@ -5,7 +5,8 @@ const router = express.Router();
 const { login, studentDashboard, updateStudent, verifyPassword, setStudentPicture, getStudentProfile } = require('../Controllers/studentControllers');
 const studentOnly = require('../Middelwares/studentOnlyMiddleware');
 const { authenticateToken } = require('../Middelwares/jwtMiddleware');
-const multer = require('multer')
+const multer = require('multer');
+const { getAttendance } = require('../Controllers/attendanceControllers');
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 
@@ -30,5 +31,13 @@ router.put('/updateStudent/:studentId', authenticateToken, studentOnly, updateSt
 router.put('/updateProfile', authenticateToken, studentOnly, upload.single('image'), setStudentPicture)
 router.post('/verifyPassword', authenticateToken, studentOnly, verifyPassword)
 router.get('/getProfile/:id', getStudentProfile)
+
+/**
+ * @description Student Attendance
+ * @route GET /api/student/myAttendance
+ * @access Private
+ */
+router.post('/myAttendance', authenticateToken, studentOnly, getAttendance)
+
 
 module.exports = router;

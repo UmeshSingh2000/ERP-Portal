@@ -65,4 +65,34 @@ const markAttendance = async (req, res) => {
     }
 };
 
-module.exports = { markAttendance };
+/**
+ * @description Fetch Student Attendance (Student Only)
+ * @route GET /api/student/getAttendance
+ * @access Private
+ */
+
+const getAttendance = async (req, res) => {
+    try {
+        const { student_id } = req.body;
+        if (!student_id) {
+            return res.status(400).json({ message: "Student ID is required" });
+        }
+
+        const attendance = await Attendance.find({ student_id }).populate('courseId','courseCode').populate('subjectId','subjectName subjectCode').populate('marked_by','name');
+
+        if (!attendance || attendance.length === 0) {
+            return res.status(404).json({ message: "No attendance records found" });
+        }
+        return res.status(200).json({ attendance, message: "Attendance fetched successfully" });
+
+    } catch (err) {
+        console.error("Error fetching attendance:", err);
+        res.status(500).json({ message: "Internal Server Error", error: err.message });
+    }
+}
+
+
+
+
+
+module.exports = { markAttendance, getAttendance };

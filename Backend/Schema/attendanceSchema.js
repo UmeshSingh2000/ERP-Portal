@@ -4,18 +4,18 @@ const { Schema } = mongoose;
 const attendanceSchema = new Schema({
     student_id: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Student', 
+        ref: 'students', 
         required: true 
     },
 
     courseId: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Course', 
+        ref: 'courses', 
         required: true 
     },
     subjectId: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Subject', 
+        ref: 'subjects', 
         required: true 
     },
 
@@ -28,7 +28,7 @@ const attendanceSchema = new Schema({
 
     marked_by: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Teacher', 
+        ref: 'teachers', 
         required: true 
     },
     date: { 

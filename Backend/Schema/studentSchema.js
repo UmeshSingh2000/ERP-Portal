@@ -34,5 +34,5 @@ const student = new Schema({
     timestamps: true
 })
 
-const studentModel=mongoose.model('Student',student)
+const studentModel=mongoose.model('students',student)
 module.exports = studentModel;
