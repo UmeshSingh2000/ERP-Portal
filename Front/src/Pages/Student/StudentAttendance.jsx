@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
 import Loader from '@/components/ui/Loader'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCaption, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -8,6 +9,7 @@ import { setData } from '@/Redux/features/StudentsData/StudentAttendanceSlice'
 import axios from 'axios'
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
 
 const apiUrl = import.meta.env.VITE_API_URL
 
@@ -162,9 +164,64 @@ const StudentAttendance = () => {
                                                         <TableHead className="w-[50px]">{index + 1}</TableHead>
                                                         <TableHead>{attendance.subjectCode}</TableHead>
                                                         <TableHead>{attendance.subjectName}</TableHead>
-                                                        <TableHead>{attendance.attended}/<span className='cursor-pointer hover:text-orange-600'>{attendance.total}</span></TableHead>
+                                                        <TableHead>{attendance.attended}/<span className='cursor-pointer hover:text-orange-600'>
+                                                            <Drawer>
+                                                                <DrawerTrigger className="cursor-pointer">
+                                                                    {attendance.total}
+                                                                </DrawerTrigger>
+                                                                <DrawerContent
+                                                                    className="fixed inset-0 z-50 p-0 flex items-center justify-center"
+                                                                >
+                                                                    <div className="w-full h-full max-w-4xl flex flex-col overflow-hidden">
+                                                                        {/* Optional Header */}
+                                                                        <DrawerHeader className="p-4 border-b">
+                                                                            <DrawerTitle>Detailed Attendance {attendance.subjectName} ({attendance.subjectCode})</DrawerTitle>
+                                                                            <DrawerDescription>Scroll to view all lectures</DrawerDescription>
+                                                                        </DrawerHeader>
+
+                                                                        {/* Scrollable Table */}
+                                                                        <div className="flex-1 overflow-auto p-4">
+                                                                            <Table>
+                                                                                <TableHeader>
+                                                                                    <TableRow>
+                                                                                        <TableHead className="w-[50px]">Sno:</TableHead>
+                                                                                        <TableHead>Lecture Date</TableHead>
+                                                                                        <TableHead>Attendance Status</TableHead>
+                                                                                        <TableHead>Marked By</TableHead>
+                                                                                        <TableHead>Mark Date</TableHead>
+                                                                                    </TableRow>
+                                                                                </TableHeader>
+                                                                                <TableBody>
+                                                                                    {myAttendance
+                                                                                        .filter((att) => att.subjectId.subjectCode === attendance.subjectCode).sort((a, b) => new Date(b.date) - new Date(a.date))
+                                                                                        .map((att, index) => (
+                                                                                            <TableRow key={index}>
+                                                                                                <TableHead>{index + 1}</TableHead>
+                                                                                                <TableHead>{new Date(att.date).toLocaleDateString()}</TableHead>
+                                                                                                <TableHead>{att.status}</TableHead>
+                                                                                                <TableHead>{att.marked_by.name}</TableHead>
+                                                                                                <TableHead>{new Date(att.createdAt).toLocaleDateString()}</TableHead>
+                                                                                            </TableRow>
+                                                                                        ))}
+                                                                                </TableBody>
+                                                                            </Table>
+                                                                        </div>
+
+                                                                        {/* Optional Footer */}
+                                                                        <DrawerFooter className="border-t p-4">
+                                                                            <DrawerClose>
+                                                                                <Button variant="outline">Close</Button>
+                                                                            </DrawerClose>
+                                                                        </DrawerFooter>
+                                                                    </div>
+                                                                </DrawerContent>
+
+
+                                                            </Drawer>
+                                                        </span>
+                                                        </TableHead>
                                                         <TableHead
-                                                            className={calculateAttendancePercentage(attendance.attended, attendance.total) < 75 ? 'bg-red-500 text-white' : ''}
+                                                            className={calculateAttendancePercentage(attendance.attended, attendance.total) < 75 ? 'bg-red-400 text-white' : ''}
                                                         >{calculateAttendancePercentage(attendance.attended, attendance.total)}%</TableHead>
                                                     </TableRow>
                                                 )
