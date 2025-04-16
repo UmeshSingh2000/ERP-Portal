@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const fs = require('fs')
+const path = require('path')
 
 //validate email module
 const { isValidEmail } = require('../Utils/validationUtils')
@@ -7,7 +9,7 @@ const { isValidEmail } = require('../Utils/validationUtils')
 const student = require('../Schema/studentSchema')
 
 //helper function
-const { hashPassword, comparePass, capitalize, seperateString } = require('../Utils/helperFunction')
+const { hashPassword, comparePass, capitalize, seperateString, sendMail } = require('../Utils/helperFunction')
 
 //jwt token generator
 const { generateToken } = require('../JWT/jwtToken')
@@ -51,6 +53,17 @@ const addStudent = async (req, res) => {
         })
         //save student to to database
         await newStudent.save();
+        //get the template
+        let template = fs.readFileSync(path.join(__dirname, "../Utils/emailTemplate.html"), 'utf-8')
+        template = template
+            .replace('{{name}}', name)
+            .replace('{{username}}', studentId)
+            .replace('{{password}}', password);
+        await sendMail({
+            to: email,
+            subject: "Your Account Credentials",
+            html: template
+        })
         return res.status(200).json({ message: "Student Added Successfully" })
     }
     catch (err) {

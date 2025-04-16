@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 //Teacher Schema
 const teacher = require('../Schema/teacherSchema')
+const fs = require('fs')
+const path = require('path')
 
 const student = require('../Schema/studentSchema')
 
@@ -8,7 +10,7 @@ const student = require('../Schema/studentSchema')
 const { isValidEmail } = require('../Utils/validationUtils')
 
 //helper functions
-const { hashPassword, comparePass, capitalize, seperateString, checkTeacherExist } = require('../Utils/helperFunction')
+const { hashPassword, comparePass, capitalize, seperateString, checkTeacherExist, sendMail } = require('../Utils/helperFunction')
 
 //jwt token generator
 const { generateToken } = require('../JWT/jwtToken')
@@ -26,8 +28,6 @@ const addTeacher = async (req, res) => {
             return res.status(400).json({ message: "All Fields are mandetory" })
         }
 
-
-
         //email validate format
         const emailValid = isValidEmail(email);
 
@@ -41,7 +41,6 @@ const addTeacher = async (req, res) => {
 
         //capitalize name
         name = capitalize(name)
-
 
 
         //if not found
@@ -58,6 +57,16 @@ const addTeacher = async (req, res) => {
         })
         //save teacher to to database
         await newTeacher.save();
+        let template = fs.readFileSync(path.join(__dirname, "../Utils/emailTemplate.html"), 'utf-8')
+        template = template
+            .replace('{{name}}', name)
+            .replace('{{username}}', teacherId)
+            .replace('{{password}}', password);
+        await sendMail({
+            to: email,
+            subject: "Your Account Credentials",
+            html: template
+        })
         return res.status(200).json({ message: "Teacher Added Successfully" })
     }
     catch (err) {

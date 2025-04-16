@@ -154,6 +154,7 @@ const Students = () => {
   const handlFormSubmit = async (e) => {
     e.preventDefault()
     try {
+      setLoading(true)
       const response = await axios.post(`${apiUrl}/admin/addStudent`, { ...addStudentData, role: 'student' },
         {
           headers: {
@@ -318,7 +319,9 @@ const Students = () => {
                     </div>
                   </div>
                   <DrawerFooter>
-                    <Button className="w-xs m-auto cursor-pointer" type="submit" onClick={handlFormSubmit}>Add</Button>
+                    {loading ? <div className='m-auto'><Loader /></div>
+                      : <Button className="w-xs m-auto cursor-pointer" type="submit" onClick={handlFormSubmit}>Add</Button>
+                    }
                     <DrawerClose>
                       Cancel
                     </DrawerClose>

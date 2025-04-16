@@ -65,7 +65,7 @@ const StudentAttendance = () => {
             if (!grouped[subjectId]) {
                 grouped[subjectId] = {
                     subjectCode: record.subjectId.subjectCode,
-                    subjectName: record .subjectId.subjectName,
+                    subjectName: record.subjectId.subjectName,
                     attended: 0,
                     total: 0
                 };

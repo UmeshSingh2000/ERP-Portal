@@ -1,13 +1,15 @@
 const bcrypt = require('bcrypt')
 const student = require('../Schema/studentSchema')
 const teacher = require('../Schema/teacherSchema')
+const nodemailer = require('nodemailer')
+require('dotenv').config()
 /**
  * @function hashPassword
  * @description Create Hashed password
  * @param {string} password
  * @returns {string} - Returns hashed password
 */
-const hashPassword = async (password) => {    
+const hashPassword = async (password) => {
     password = password.toString()
     return await bcrypt.hash(password, 10);
 }
@@ -24,18 +26,18 @@ const comparePass = async (password, hashedPassword) => {
 }
 
 
-const checkStudentExist=async(id)=>{
+const checkStudentExist = async (id) => {
     try {
-        const isStudent = await student.exists({ _id: id });        
+        const isStudent = await student.exists({ _id: id });
         return isStudent;
     } catch (error) {
         console.error("Error checking student existence:", error);
         throw new Error("Unable to check student existence");
     }
 }
-const checkTeacherExist=async(id)=>{
+const checkTeacherExist = async (id) => {
     try {
-        const isTeacher = await teacher.exists({ _id: id });        
+        const isTeacher = await teacher.exists({ _id: id });
         return isTeacher;
     } catch (error) {
         console.error("Error checking teacher existence:", error);
@@ -50,7 +52,7 @@ const checkTeacherExist=async(id)=>{
  * @returns {string} - Returns capitalized string
 */
 
-const capitalize = (str)=>{
+const capitalize = (str) => {
     return str.toUpperCase();
 }
 
@@ -66,11 +68,38 @@ const seperateString = (str) => {
     return str.split(',');
 }
 
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS
+    }
+})
+
+const sendMail = async ({ to, subject, text, html }) => {
+    try {
+        const info = await transporter.sendMail({
+            from: process.env.MAIL_USER,
+            to,
+            subject,
+            text,
+            html
+        })
+        return { success: true };
+    }
+    catch (error) {
+        console.error("Error sending email:", error);
+        return { success: false, error: error };
+    }
+}
+
 module.exports = {
     hashPassword,
     comparePass,
     checkStudentExist,
     checkTeacherExist,
     capitalize,
-    seperateString
+    seperateString,
+    sendMail
 }
