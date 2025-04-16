@@ -233,6 +233,74 @@ const StudentAttendance = () => {
                         }
                     </div>
                 </section>
+                <div className="block sm:hidden mt-2">
+                    {filteredAttendance.map((attendance, index) => (
+                        <div key={index} className="mb-4 border rounded-md shadow-sm">
+                            <div className="p-4 flex justify-between items-center bg-gray-100 cursor-pointer" onClick={() => {
+                                const panel = document.getElementById(`panel-${index}`)
+                                panel.classList.toggle('hidden')
+                            }}>
+                                <div>
+                                    <h3 className="font-semibold">{attendance.subjectName}</h3>
+                                    <p className="text-sm text-gray-600">{attendance.subjectCode}</p>
+                                </div>
+                                <span className="text-sm font-medium">
+                                    {calculateAttendancePercentage(attendance.attended, attendance.total)}%
+                                </span>
+                            </div>
+                            <div id={`panel-${index}`} className="hidden p-4 bg-white text-sm">
+                                <p><strong>Attended:</strong> {attendance.attended}</p>
+                                <p><strong>Total Lectures:</strong> {attendance.total}</p>
+                                <p><strong>Subject Code:</strong> {attendance.subjectCode}</p>
+                                <p><strong>Attendance:</strong> {attendance.attended}/{attendance.total}</p>
+
+                                <Drawer>
+                                    <DrawerTrigger className="text-blue-600 mt-2 inline-block underline cursor-pointer">View Detailed Attendance</DrawerTrigger>
+                                    <DrawerContent className="fixed inset-0 z-50 p-0 flex items-center justify-center">
+                                        <div className="w-full h-full max-w-4xl flex flex-col overflow-hidden">
+                                            <DrawerHeader className="p-4 border-b">
+                                                <DrawerTitle>Detailed Attendance - {attendance.subjectName}</DrawerTitle>
+                                                <DrawerDescription>Scroll to view all lectures</DrawerDescription>
+                                            </DrawerHeader>
+                                            <div className="flex-1 overflow-auto p-4">
+                                                <Table>
+                                                    <TableHeader>
+                                                        <TableRow>
+                                                            <TableHead className="w-[50px]">Sno:</TableHead>
+                                                            <TableHead>Date</TableHead>
+                                                            <TableHead>Status</TableHead>
+                                                            <TableHead>Marked By</TableHead>
+                                                            <TableHead>Mark Date</TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        {myAttendance
+                                                            .filter((att) => att.subjectId.subjectCode === attendance.subjectCode)
+                                                            .sort((a, b) => new Date(b.date) - new Date(a.date))
+                                                            .map((att, i) => (
+                                                                <TableRow key={i}>
+                                                                    <TableHead>{i + 1}</TableHead>
+                                                                    <TableHead>{new Date(att.date).toLocaleDateString()}</TableHead>
+                                                                    <TableHead>{att.status}</TableHead>
+                                                                    <TableHead>{att.marked_by.name}</TableHead>
+                                                                    <TableHead>{new Date(att.createdAt).toLocaleDateString()}</TableHead>
+                                                                </TableRow>
+                                                            ))}
+                                                    </TableBody>
+                                                </Table>
+                                            </div>
+                                            <DrawerFooter className="border-t p-4">
+                                                <DrawerClose asChild>
+                                                    <Button variant="outline">Close</Button>
+                                                </DrawerClose>
+                                            </DrawerFooter>
+                                        </div>
+                                    </DrawerContent>
+                                </Drawer>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </article>
         </main>
     )
