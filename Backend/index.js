@@ -22,6 +22,12 @@ dbConnect();
 const seedAdminData = require('./SeedData/adminSeedData')
 seedAdminData();
 
+
+const allowedOrigins = [
+    process.env.CORS_ORIGIN,
+    process.env.CORS_ORIGIN_USER
+]
+
 // Middlewares
 app.use(cors({
     origin:process.env.CORS_ORIGIN
