@@ -27,11 +27,22 @@ const allowedOrigins = [
     process.env.CORS_ORIGIN,
     process.env.CORS_ORIGIN_USER
 ]
+const corsOptions = {
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+  
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true, // if you want to allow cookies/auth headers
+  };
 
 // Middlewares
-app.use(cors({
-    origin:process.env.CORS_ORIGIN
-}));
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Health check route
