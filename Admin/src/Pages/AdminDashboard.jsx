@@ -80,7 +80,7 @@ const AdminDashboard = () => {
 
     //custom class for sidebar item
     const customClass = (type) => {
-        return `${activePage === `${type}` ? 'bg-[#2F2F2F] text-white' : ''} block sidebar-item`
+        return `${activePage === `${type}` ? 'bg-[#2F2F2F] text-white' : ''} block sidebar-item font-semibold`
     }
 
 
