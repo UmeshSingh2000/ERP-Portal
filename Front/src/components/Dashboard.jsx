@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 import logo from "@/assets/logo.ico"
-import { GraduationCap, LayoutDashboard, LogOut, Menu, Settings, TabletSmartphone, Users, X } from 'lucide-react';
+import { ClipboardPen, GraduationCap, LayoutDashboard, LogOut, Menu, Settings, TabletSmartphone, Users, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { AnimatePresence, motion } from 'framer-motion';
 import TeacherSettings from '@/Pages/Teacher/TeacherSettings';
@@ -14,6 +14,7 @@ import StudentHome from '@/Pages/Student/StudentHome';
 import StudentAttendance from '@/Pages/Student/StudentAttendance';
 import StudentSettings from '@/Pages/Student/StudentSettings';
 import MobileApp from '@/Pages/Student/MobileApp';
+import StudentLeave from '@/Pages/Student/StudentLeave';
 const apiUrl = import.meta.env.VITE_API_URL
 
 const Dashboard = ({ title }) => {
@@ -32,7 +33,9 @@ const Dashboard = ({ title }) => {
         ATTENDANCE: 'Attendance',
         STUDENTS: 'Students',
         SETTINGS: 'Settings',
-        MOBILEAPP: 'mobileApp'
+        LEAVE: "Leave",
+        MOBILEAPP: 'mobileApp',
+
     }
     const handleActivePage = () => {
         switch (activePage) {
@@ -45,6 +48,8 @@ const Dashboard = ({ title }) => {
                 return title === 'Teacher' ? <TeacherAttendance /> : <StudentAttendance />
             case PAGES.SETTINGS:
                 return title === 'Teacher' ? <TeacherSettings /> : <StudentSettings />
+            case PAGES.LEAVE:
+                return <StudentLeave />
             case PAGES.MOBILEAPP:
                 return <MobileApp />
             default:
@@ -70,6 +75,7 @@ const Dashboard = ({ title }) => {
                         <li className={customClass('Students')} onClick={() => setActivePage('Students')}><Users className="w-5 h-5" />Students</li>
                     }
                     <li className={customClass('Attendance')} onClick={() => setActivePage('Attendance')}><GraduationCap className="w-5 h-5" />Attendance</li>
+                    <li className={customClass('Leave')} onClick={() => setActivePage('Leave')}><ClipboardPen className="w-5 h-5" />Leave</li>
                     <li className={customClass('Settings')} onClick={() => setActivePage('Settings')}><Settings className="w-5 h-5" />Settings</li>
                     <li className={customClass('mobileApp')} onClick={() => setActivePage('mobileApp')}><TabletSmartphone className="w-5 h-5" />Download App!</li>
                     <li className='pl-5 pt-1 font-semibold mb-2 gap-2.5 absolute bottom-0 left-0 w-full flex items-center'>
@@ -139,6 +145,7 @@ const Dashboard = ({ title }) => {
                                         <li className={customClass('Students')} onClick={() => setActivePage('Students')}><GraduationCap className="w-5 h-5" />Students</li>
                                     }
                                     <li className={customClass('Attendance')} onClick={() => setActivePage('Attendance')}><Users className="w-5 h-5" />Attendance</li>
+                                    <li className={customClass('Leave')} onClick={() => setActivePage('Leave')}><ClipboardPen className="w-5 h-5" />Leave</li>
                                     <li className={customClass('Settings')} onClick={() => setActivePage('Settings')}><Settings className="w-5 h-5" />Settings</li>
                                     <li className={customClass('mobileApp')} onClick={() => setActivePage('mobileApp')}><TabletSmartphone className="w-5 h-5" />Download App!</li>
                                     <li className='pl-5 pt-1 font-semibold mb-2 absolute bottom-0 left-0 w-full'>
