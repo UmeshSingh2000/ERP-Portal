@@ -8,8 +8,6 @@ const { isValidEmail } = require('../Utils/validationUtils')
 //student schema
 const student = require('../Schema/studentSchema')
 
-const Leave = require('../Schema/LeaveSchema')
-
 //helper function
 const { hashPassword, comparePass, capitalize, seperateString, sendMail } = require('../Utils/helperFunction')
 
@@ -363,58 +361,6 @@ const getStudentProfile = async (req, res) => {
 }
 
 
-const applyLeave = async (req, res) => {
-    try {
-        const { studentId, course, leaveType, leaveDate, reason } = req.body;
-
-        // Check required fields
-        if (!studentId || !course || !leaveType || !leaveDate || !reason) {
-            return res.status(400).json({ message: "All fields are required." });
-        }
-
-        // Create new leave entry
-        const newLeave = new Leave({
-            studentId,
-            course,
-            leaveType,
-            leaveDate,
-            reason
-        });
-
-        const savedLeave = await newLeave.save();
-
-        res.status(201).json({ message: "Leave applied successfully.", leave: savedLeave });
-    } catch (error) {
-        console.error("Error applying leave:", error.message);
-        res.status(500).json({ message: "Server error. Could not apply for leave.", error: error.message });
-    }
-};
-
-
-// Controller to delete a leave by ID
-const deleteLeave = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        if (!id) {
-            return res.status(400).json({ message: "Leave ID is required." });
-        }
-
-        const deletedLeave = await Leave.findByIdAndDelete(id);
-
-        if (!deletedLeave) {
-            return res.status(404).json({ message: "Leave not found." });
-        }
-
-        res.status(200).json({ message: "Leave deleted successfully.", deletedLeave });
-    } catch (error) {
-        console.error("Error deleting leave:", error.message);
-        res.status(500).json({ message: "Server error. Could not delete leave.", error: error.message });
-    }
-};
-
-
-
 
 
 
@@ -453,7 +399,5 @@ module.exports = {
     studentDashboard,
     verifyPassword,
     setStudentPicture,
-    getStudentProfile,
-    applyLeave,
-    deleteLeave
+    getStudentProfile
 }
