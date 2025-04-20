@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useCallback, useEffect, useLayoutEffect } from 'react'
 import { useState } from "react";
 import axios from 'axios';
-import { Menu, X, LayoutDashboard, GraduationCap, Settings, Users, LogOut, BookOpen, UserCheck } from "lucide-react";
+import { Menu, X, LayoutDashboard, GraduationCap, Settings, Users, LogOut, BookOpen, UserCheck, CreativeCommons } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from '../assets/logo.ico'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -150,7 +150,7 @@ const AdminDashboard = () => {
 
                         <li><a href="#" className={customClass('coordinator')} onClick={() => {
                             setActivePage('coordinator')
-                        }}><GraduationCap className="w-5 h-5" />Coordinator</a></li>
+                        }}><CreativeCommons className="w-5 h-5" />Coordinator</a></li>
 
                         <li><a href="#" className={customClass('settings')} onClick={() => {
                             setActivePage('settings')
@@ -241,7 +241,7 @@ const AdminDashboard = () => {
                                         <li><a href="#" className={customClass('coordinator')} onClick={() => {
                                             setIsOpen(false)
                                             setActivePage('coordinator')
-                                        }}><GraduationCap className="w-5 h-5" />Coordinator</a></li>
+                                        }}><CreativeCommons className="w-5 h-5" />Coordinator</a></li>
                                         <li><a href="#" className={customClass('settings')} onClick={() => {
                                             setIsOpen(false)
                                             setActivePage('settings')

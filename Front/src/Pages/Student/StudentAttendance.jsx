@@ -100,9 +100,6 @@ const StudentAttendance = () => {
         }
         fetchMyAttendance()
     }, [])
-    useEffect(() => {
-        console.log(myAttendance)
-    }, [myAttendance])
     return (
         <main>
             <header className="flex flex-col gap-4 p-4 md:p-6 lg:p-10">
