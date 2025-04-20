@@ -17,6 +17,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import { useSelector } from 'react-redux';
 import Subjects from './Subjects';
 import Course from './Course';
+import Coordinator from './Coordinator';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const AdminDashboard = () => {
@@ -90,7 +91,8 @@ const AdminDashboard = () => {
         TEACHERS: 'teachers',
         SETTINGS: 'settings',
         SUBJECTS: 'subjects',
-        COURSE: 'course'
+        COURSE: 'course',
+        COORDINATOR: 'coordinator'
     }
 
     const handleActivePage = () => {
@@ -107,6 +109,8 @@ const AdminDashboard = () => {
                 return <Subjects />
             case PAGES.COURSE:
                 return < Course />
+            case PAGES.COORDINATOR:
+                return <Coordinator />
             default:
                 return <Home />
         }
@@ -143,6 +147,10 @@ const AdminDashboard = () => {
                         <li><a href="#" className={customClass('course')} onClick={() => {
                             setActivePage('course')
                         }}><GraduationCap className="w-5 h-5" />Course</a></li>
+
+                        <li><a href="#" className={customClass('coordinator')} onClick={() => {
+                            setActivePage('coordinator')
+                        }}><GraduationCap className="w-5 h-5" />Coordinator</a></li>
 
                         <li><a href="#" className={customClass('settings')} onClick={() => {
                             setActivePage('settings')
@@ -211,21 +219,31 @@ const AdminDashboard = () => {
                                     </div>
                                     <ul className="mt-10 space-y-4">
                                         <li><a href="#" className={customClass("dashboard")} onClick={() => {
+                                            setIsOpen(false)
                                             setActivePage('dashboard')
                                         }}> <LayoutDashboard className="w-5 h-5" />Dashboard</a></li>
                                         <li><a href="#" className={customClass('teachers')} onClick={() => {
+                                            setIsOpen(false)
                                             setActivePage('teachers')
                                         }}><UserCheck className="w-5 h-5" />Teacher</a></li>
                                         <li><a href="#" className={customClass('students')} onClick={() => {
+                                            setIsOpen(false)
                                             setActivePage('students')
                                         }}><Users className="w-5 h-5" />Students</a></li>
                                         <li><a href="#" className={customClass('subjects')} onClick={() => {
+                                            setIsOpen(false)
                                             setActivePage('subjects')
                                         }}><BookOpen className="w-5 h-5" />Subjects</a></li>
                                         <li><a href="#" className={customClass('course')} onClick={() => {
+                                            setIsOpen(false)
                                             setActivePage('course')
                                         }}><GraduationCap className="w-5 h-5" />Course</a></li>
+                                        <li><a href="#" className={customClass('coordinator')} onClick={() => {
+                                            setIsOpen(false)
+                                            setActivePage('coordinator')
+                                        }}><GraduationCap className="w-5 h-5" />Coordinator</a></li>
                                         <li><a href="#" className={customClass('settings')} onClick={() => {
+                                            setIsOpen(false)
                                             setActivePage('settings')
                                         }}><Settings className="w-5 h-5" />Settings</a></li>
                                         <li className='pl-5 pt-1 font-semibold mb-2 absolute bottom-0 left-0 w-full'>

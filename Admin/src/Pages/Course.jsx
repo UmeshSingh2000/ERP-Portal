@@ -115,7 +115,7 @@ const Course = () => {
                 <p className="text-sm md:text-base text-gray-600 font-medium">Manage Course</p>
             </header>
             <div className="flex flex-col lg:flex-row w-full justify-between items-center gap-4">
-                <div className="flex w-full md:w-3/4 lg:w-1/2 gap-2 ml-10 flex-wrap">
+                <div className="flex w-full md:w-3/4 lg:w-1/2 gap-2 flex-wrap">
                     <Input
                         type="text"
                         placeholder="Search..."

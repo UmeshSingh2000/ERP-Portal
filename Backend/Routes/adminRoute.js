@@ -19,7 +19,11 @@ const {
     updateAdmin,
     getStudentTeacherCount,
     studentPerCourse,
-    verifyPassword
+    verifyPassword,
+    addCoordinator,
+    getCoordinators,
+    deleteCoordinator,
+    updateCoordinator
 } = require('../Controllers/adminControllers') //Controllers for Admin
 
 const {
@@ -166,6 +170,15 @@ router.get('/getCourses', authenticateToken, adminOnly, getCourses)
 router.delete('/deleteCourse/:id', authenticateToken, adminOnly, deleteCourse)
 router.put('/updateCourse/:id', authenticateToken, adminOnly, updateCourse)
 
+
+/**
+ * @description Coordinator Routes
+ * @acess Protected (only Admin)
+ */
+router.post('/addCoordinator', authenticateToken, adminOnly, addCoordinator)
+router.get('/getCoordinators', authenticateToken, adminOnly, getCoordinators)
+router.delete('/deleteCoordinator/:id', authenticateToken, adminOnly, deleteCoordinator)
+router.put('/updateCoordinator/:id', authenticateToken, adminOnly, updateCoordinator)
 
 
 module.exports = router

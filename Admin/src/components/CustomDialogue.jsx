@@ -15,10 +15,11 @@ import { useToast } from "@/hooks/use-toast"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import Loader from "./Loader/Loader"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export default function CustomDialogue({ title, desc}) {
+export default function CustomDialogue({ title, desc, courses = [], teachers = [] }) {
     const { toast } = useToast()
     const [loading, setLoading] = useState(false)
     const [dialogueState, setDialogueState] = useState(false) // This is the state that will control the dialogue
@@ -48,12 +49,13 @@ export default function CustomDialogue({ title, desc}) {
             setDialogueState(false)
         }
         catch (err) {
-            toastHelper(toast, err.response.data.message, Error)
+            toastHelper(toast, err.response.data.message, 'Error')
         }
         finally {
             setLoading(false)
         }
     }
+
 
     return (
         <Dialog open={dialogueState} onOpenChange={setDialogueState}>
@@ -72,23 +74,63 @@ export default function CustomDialogue({ title, desc}) {
                         <Label htmlFor="name" className="text-center">
                             {title} Name
                         </Label>
-                        <Input
-                            id="name"
-                            className="col-span-3"
-                            name="name"
-                            onChange={(e) => handleData(e)}
-                        />
+                        {title === 'Coordinator' ? (
+                            <Select
+                                onValueChange={(value) => {
+                                    setData((prev) => ({ ...prev, name: value }));
+                                }}
+                            >
+                                <SelectTrigger className="col-span-3">
+                                    <SelectValue placeholder="Select a teacher" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {teachers.map((teacher) => (
+                                        <SelectItem key={teacher._id} value={teacher.name}>
+                                            {teacher.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        ) : (
+                            <Input
+                                id="name"
+                                className="col-span-3"
+                                name="name"
+                                onChange={(e) => handleData(e)}
+                            />
+                        )}
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="username" className="text-center">
-                            {title} Code
+                            {title !== 'Coordinator' ? title : 'Course'} Code
                         </Label>
-                        <Input
-                            id="username"
-                            className="col-span-3"
-                            name="code"
-                            onChange={(e) => handleData(e)}
-                        />
+                        {title === 'Coordinator' ? (
+                            <Select
+                                onValueChange={(value) => {
+                                    setData((prev) => ({ ...prev, code: value }));
+                                }}
+                            >
+                                <SelectTrigger className="col-span-3">
+                                    <SelectValue placeholder="Select a course" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {courses.map((course) => (
+                                        <SelectItem key={course._id} value={course.courseCode}>
+                                            {course.courseCode}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        ) : (
+                            <Input
+                                id="username"
+                                className="col-span-3"
+                                name="code"
+                                onChange={(e) => handleData(e)}
+                            />
+                        )}
+
+
                     </div>
                 </div>
                 <DialogFooter>

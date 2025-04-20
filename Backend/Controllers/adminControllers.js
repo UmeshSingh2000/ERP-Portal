@@ -5,6 +5,7 @@ const admin = require('../Schema/adminSchema')
 
 const teacher = require('../Schema/teacherSchema')
 const student = require('../Schema/studentSchema')
+const Coordinator = require('../Schema/coordinatorSchema')
 
 
 //validate email module
@@ -291,11 +292,94 @@ const studentPerCourse = async (req, res) => {
 
 
 /**
- * @description send email to user that the account is created
- * @route post /api/admin/sendEmail
+ * @description add Coordinator
+ * @route POST /api/admin/addCoordinator
  * @access Private
- * @throws {Error} - If there is an internal server error.
  */
+const addCoordinator = async (req, res) => {
+    try {
+        const { name, code } = req.body;
+
+        if (!name || !code) {
+            return res.status(400).json({ message: "Please provide all required fields" });
+        }
+
+        // Check if the course already has a coordinator
+        const isCourseAssigned = await Coordinator.findOne({ courseName: code });
+
+        if (isCourseAssigned) {
+            return res.status(400).json({ message: "A coordinator is already assigned to this course" });
+        }
+
+        const newCoordinator = new Coordinator({
+            name,
+            courseName: code
+        });
+
+        await newCoordinator.save();
+
+        res.status(201).json({
+            message: "Coordinator created"
+        });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: 'Error creating Coordinator', error: e.message });
+    }
+};
+
+const getCoordinators = async (req, res) => {
+    try {
+        const coordinators = await Coordinator.find();
+        res.status(200).json({ coordinators });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: 'Error fetching coordinators', error: e.message });
+    }
+}
+const deleteCoordinator = async (req, res) => {
+    try {
+        const { id } = req.params
+        if (!id) return res.status(400).json({ message: "Please provide an ID" })
+        const findCoordinator = await Coordinator.findByIdAndDelete(id)
+        if (!findCoordinator) return res.status(404).json({ message: "Coordinator not found" })
+        res.status(200).json({ message: "Coordinator deleted successfully" })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+const updateCoordinator = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) return res.status(400).json({ message: "Please provide an ID" });
+
+        let updateData = req.body;
+        if (!updateData || Object.keys(updateData).length === 0) {
+            return res.status(400).json({ message: "Please provide data to update" });
+        }
+
+        const restrictedUpdates = ['_id', 'id', "createdAt", "updatedAt"];
+        updateData = Object.keys(updateData).filter(key => !restrictedUpdates.includes(key)).reduce((obj, keys) => {
+            obj[keys] = updateData[keys];
+            return obj;
+        }, {});
+
+        if (Object.keys(updateData).length === 0) return res.status(400).json({ message: "No valid data to update" });
+
+        const findCoordinator = await Coordinator.findByIdAndUpdate(id,
+            { $set: updateData },
+            { new: true, runValidators: true }
+        );
+        if (!findCoordinator) return res.status(404).json({ message: "Coordinator not found" });
+
+        res.status(200).json({ message: "Coordinator updated successfully", findCoordinator });
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({ message: 'Error updating Coordinator', error: e.message });
+    }
+};
 
 
 
@@ -312,5 +396,9 @@ module.exports = {
     updateAdmin,
     getStudentTeacherCount,
     studentPerCourse,
-    verifyPassword
+    verifyPassword,
+    addCoordinator,
+    getCoordinators,
+    deleteCoordinator,
+    updateCoordinator
 }
