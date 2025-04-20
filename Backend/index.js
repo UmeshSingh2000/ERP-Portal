@@ -19,6 +19,9 @@ const studentRoute = require('./Routes/studentRoute')
 const dbConnect = require('./Config/config')
 dbConnect();
 
+const seedAdminData = require('./SeedData/adminSeedData')
+seedAdminData();
+
 // Middlewares
 app.use(cors({
     origin:process.env.CORS_ORIGIN
