@@ -25,7 +25,8 @@ seedAdminData();
 
 const allowedOrigins = [
     process.env.CORS_ORIGIN?.trim(),
-    process.env.CORS_ORIGIN_USER?.trim()
+    process.env.CORS_ORIGIN_USER?.trim(),
+    process.env.CORS_ORIGIN_MOBILE?.trim(),
 ];
 
 // Custom CORS options
