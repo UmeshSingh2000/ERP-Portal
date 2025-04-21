@@ -23,26 +23,28 @@ const seedAdminData = require('./SeedData/adminSeedData')
 seedAdminData();
 
 
-const allowedOrigins = [
-    process.env.CORS_ORIGIN?.trim(),
-    process.env.CORS_ORIGIN_USER?.trim(),
-    process.env.CORS_ORIGIN_MOBILE?.trim(),
-];
+// const allowedOrigins = [
+//     process.env.CORS_ORIGIN?.trim(),
+//     process.env.CORS_ORIGIN_USER?.trim(),
+//     process.env.CORS_ORIGIN_MOBILE?.trim(),
+// ];
 
-// Custom CORS options
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    }
-};
+// // Custom CORS options
+// const corsOptions = {
+//     origin: function (origin, callback) {
+//         if (!origin) return callback(null, true);
+//         if (allowedOrigins.includes(origin)) {
+//             callback(null, true);
+//         } else {
+//             callback(new Error('Not allowed by CORS'));
+//         }
+//     }
+// };
 
-// Apply middleware
-app.use(cors(corsOptions));
+// // Apply middleware
+// app.use(cors(corsOptions));
+
+app.use(cors())
 app.use(express.json());
 
 // Health check route
