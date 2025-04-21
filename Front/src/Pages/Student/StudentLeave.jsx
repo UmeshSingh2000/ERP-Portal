@@ -12,10 +12,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
 import axios from 'axios'
 
 const apiUrl = import.meta.env.VITE_API_URL
@@ -93,7 +89,7 @@ const StudentLeave = () => {
 
                         <div className="px-4 py-2 flex flex-col gap-4">
                             {/* Date Picker */}
-                            <div className="flex-1">
+                            {/* <div className="flex-1">
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <Button
@@ -113,7 +109,7 @@ const StudentLeave = () => {
                                         />
                                     </PopoverContent>
                                 </Popover>
-                            </div>
+                            </div> */}
 
                             {/* Leave Type */}
                             <div>

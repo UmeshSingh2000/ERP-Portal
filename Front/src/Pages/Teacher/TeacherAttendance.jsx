@@ -5,12 +5,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import { CalendarIcon } from 'lucide-react'
+
 import { setData } from '@/Redux/features/students(teachers)/teacherStudentsSlice';
-import { format } from 'date-fns'
+
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useToast } from '@/hooks/use-toast'
@@ -160,7 +158,7 @@ const TeacherAttendance = () => {
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:gap-6">
 
           {/* Button to open calendar */}
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -180,7 +178,7 @@ const TeacherAttendance = () => {
                 />
               </PopoverContent>
             </Popover>
-          </div>
+          </div> */}
 
           {/* Course Select */}
           <div className="flex-1">
