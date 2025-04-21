@@ -23,28 +23,25 @@ const seedAdminData = require('./SeedData/adminSeedData')
 seedAdminData();
 
 
-// const allowedOrigins = [
-//     process.env.CORS_ORIGIN,
-//     process.env.CORS_ORIGIN_USER
-// ]
-// const corsOptions = {
-//     origin: function (origin, callback) {
-//       // allow requests with no origin (like mobile apps or curl)
-//       if (!origin) return callback(null, true);
-  
-//       if (allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error('Not allowed by CORS'));
-//       }
-//     },
-//     credentials: true, // if you want to allow cookies/auth headers
-//   };
+const allowedOrigins = [
+    process.env.CORS_ORIGIN?.trim(),
+    process.env.CORS_ORIGIN_USER?.trim()
+];
 
-// Middlewares
-app.use(cors({
-    origin:'*'
-}));
+// Custom CORS options
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    }
+};
+
+// Apply middleware
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Health check route
@@ -62,22 +59,22 @@ app.get('/', (req, res) => {
  * @route /api/admin
  * @description Admin-related routes
  */
-app.use('/api/admin',adminRoute);
+app.use('/api/admin', adminRoute);
 
 /**
  * @route /api/teacher
  * @description Teacher-related routes
  */
-app.use('/api/teacher',teacherRoute);
+app.use('/api/teacher', teacherRoute);
 
 /**
  * @route /api/student
  * @description Student-related routes
  */
-app.use('/api/student',studentRoute);
+app.use('/api/student', studentRoute);
 
 
-app.use('/api',require('./Routes/verifyToken'))
+app.use('/api', require('./Routes/verifyToken'))
 
 // Start the server
 app.listen(port, () => {
