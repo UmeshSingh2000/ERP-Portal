@@ -10,6 +10,8 @@ const student = require('../Schema/studentSchema')
 
 const Leave = require('../Schema/LeaveSchema')
 
+const Course = require('../Schema/courseSchema')
+
 //helper function
 const { hashPassword, comparePass, capitalize, seperateString, sendMail } = require('../Utils/helperFunction')
 
@@ -372,10 +374,21 @@ const applyLeave = async (req, res) => {
             return res.status(400).json({ message: "All fields are required." });
         }
 
+        const courseId = await Course.findOne({ courseCode: course });
+        if (!courseId) {
+            return res.status(400).json({ message: "Invalid course ID." });
+        }
+
+        // Check if leave already exists for the given date
+        const existingLeave = await Leave.findOne({ studentId, leaveDate });
+        if (existingLeave) {
+            return res.status(400).json({ message: "Leave already exists for this date." });
+        }
+
         // Create new leave entry
         const newLeave = new Leave({
             studentId,
-            course,
+            course: courseId._id,
             leaveType,
             leaveDate,
             reason
@@ -391,33 +404,32 @@ const applyLeave = async (req, res) => {
 };
 
 
-// Controller to delete a leave by ID
-const deleteLeave = async (req, res) => {
+
+// Controller to get a leave by ID
+const getLeavesByStudent = async (req, res) => {
     try {
         const { id } = req.params;
-
         if (!id) {
-            return res.status(400).json({ message: "Leave ID is required." });
+            return res.status(400).json({ message: "Student ID is required." });
         }
 
-        const deletedLeave = await Leave.findByIdAndDelete(id);
+        // Find all leaves for the given student
+        const leaves = await Leave.find({
+            studentId: id
+        })
+            .populate('course', 'courseCode courseName') // Optional: Populate course info
+            .sort({ leaveDate: -1 }); // Sort by most recent leave
 
-        if (!deletedLeave) {
-            return res.status(404).json({ message: "Leave not found." });
+        if (leaves.length === 0) {
+            return res.status(404).json({ message: "No leave applications found for this student." });
         }
 
-        res.status(200).json({ message: "Leave deleted successfully.", deletedLeave });
+        res.status(200).json({ message: "Leaves fetched successfully.", leaves });
     } catch (error) {
-        console.error("Error deleting leave:", error.message);
-        res.status(500).json({ message: "Server error. Could not delete leave.", error: error.message });
+        console.error("Error fetching leaves:", error.message);
+        res.status(500).json({ message: "Server error. Could not fetch leaves.", error: error.message });
     }
 };
-
-
-
-
-
-
 
 
 
@@ -455,5 +467,5 @@ module.exports = {
     setStudentPicture,
     getStudentProfile,
     applyLeave,
-    deleteLeave
+    getLeavesByStudent
 }

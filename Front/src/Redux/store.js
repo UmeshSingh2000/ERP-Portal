@@ -6,6 +6,7 @@ import teachersCourseWiseStudentsReducer from './features/students(teachers)/cou
 import teachersSubjectWiseStudentsReducer from './features/students(teachers)/subjectWiseStudentsSlice'
 import studentAttendanceReducer from './features/StudentsData/StudentAttendanceSlice'
 import themeReducer from './features/Theme/themeSlices'
+import leavesReducer from './features/Leaves/leavesSlice'
 export const store = configureStore({
   reducer: {
     teachersStudents: teacherStudentReducer,
@@ -14,6 +15,7 @@ export const store = configureStore({
     teacherSubject: teacherSubjectReducer,
     teachersCourseWiseStudentNumber: teachersCourseWiseStudentsReducer,
     teacherSubjectWiseStudentNumber: teachersSubjectWiseStudentsReducer,
-    studentAttendance: studentAttendanceReducer
+    studentAttendance: studentAttendanceReducer,
+    leaves : leavesReducer
   },
 })

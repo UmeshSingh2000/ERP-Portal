@@ -15,6 +15,7 @@ import StudentAttendance from '@/Pages/Student/StudentAttendance';
 import StudentSettings from '@/Pages/Student/StudentSettings';
 import MobileApp from '@/Pages/Student/MobileApp';
 import StudentLeave from '@/Pages/Student/StudentLeave';
+import TeacherLeave from '@/Pages/Teacher/TeacherLeave';
 const apiUrl = import.meta.env.VITE_API_URL
 
 const Dashboard = ({ title }) => {
@@ -49,7 +50,7 @@ const Dashboard = ({ title }) => {
             case PAGES.SETTINGS:
                 return title === 'Teacher' ? <TeacherSettings /> : <StudentSettings />
             case PAGES.LEAVE:
-                return <StudentLeave />
+                return title === 'Teacher' ? <TeacherLeave /> : <StudentLeave />
             case PAGES.MOBILEAPP:
                 return <MobileApp />
             default:

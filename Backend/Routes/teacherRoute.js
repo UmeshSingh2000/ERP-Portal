@@ -15,7 +15,9 @@ const {
     verifyPassword,
     updateTeacher,
     getTeacherStudents,
-    getCourseWiseStudents
+    getCourseWiseStudents,
+    getStudentLeave,
+    leaveAction
 } = require('../Controllers/teacherControllers')
 
 //controller for attendance
@@ -73,7 +75,8 @@ router.put('/updateTeacher/:teacherId', authenticateToken, teacherOnly, updateTe
 
 router.post('/getCourseWiseStudent', authenticateToken, teacherOnly, getCourseWiseStudents)
 
-
+router.get('/getCoordinatorLeaves', authenticateToken, teacherOnly, getStudentLeave)
+router.post('/leaveAction', authenticateToken, teacherOnly, leaveAction)
 
 
 module.exports = router;

@@ -6,6 +6,13 @@ const path = require('path')
 
 const student = require('../Schema/studentSchema')
 
+
+const Leave = require('../Schema/LeaveSchema')
+
+const Course = require('../Schema/courseSchema')
+
+const Coordinator = require('../Schema/coordinatorSchema')
+
 //validate email module
 const { isValidEmail } = require('../Utils/validationUtils')
 
@@ -503,6 +510,71 @@ const getCourseWiseStudents = async (req, res) => {
     }
 };
 
+/**
+ * @description Get all leaves of a student based on the course
+ */
+
+const getStudentLeave = async (req, res) => {
+    try {
+        const { id } = req.user;
+
+        // Find teacher
+        const findTeacher = await teacher.findById(id);
+        if (!findTeacher) {
+            return res.status(404).json({ message: "Teacher not found" });
+        }
+
+        // Match teacher name with coordinator
+        const courseCoordinator = await Coordinator.findOne({ name: findTeacher.name });
+        if (!courseCoordinator) {
+            return res.status(404).json({ message: "Course Coordinator not found" });
+        }
+
+        // Find course using courseCode stored in coordinator
+        const course = await Course.findOne({ courseCode: courseCoordinator.courseName });
+        if (!course) {
+            return res.status(404).json({ message: "Course not found for the coordinator" });
+        }
+
+        // Fetch leaves based on course ID
+        const leaves = await Leave.find({ course: course._id }).populate('studentId');
+        if (!leaves || leaves.length === 0) {
+            return res.status(404).json({ message: "No leaves found" });
+        }
+
+        res.status(200).json({ leaves });
+
+    } catch (err) {
+        console.error("Error in getStudentLeave:", err);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+const leaveAction = async (req, res) => {
+    try {
+        const { leaveId,status } = req.body
+        if (!leaveId) return res.status(400).json({ message: "Please provide leave ID" })
+        if (!status) return res.status(400).json({ message: "Please provide status" })
+        
+        if(status !== "approved" && status !== "rejected") {
+            return res.status(400).json({ message: "Invalid status. Use 'approved' or 'rejected'." });
+        }
+        // Find the leave by ID
+        const leave = await Leave.findById(leaveId);
+        if (!leave) return res.status(404).json({ message: "Leave not found" })
+        
+        // Update the leave status
+        leave.status = status;
+        await leave.save();
+        res.status(200).json({ message: "Leave status updated successfully", leave })
+    }
+    catch (err) {
+        console.error(err)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+
 
 
 module.exports = {
@@ -518,5 +590,7 @@ module.exports = {
     getTeacherProfile,
     verifyPassword,
     getTeacherStudents,
-    getCourseWiseStudents
+    getCourseWiseStudents,
+    getStudentLeave,
+    leaveAction
 }

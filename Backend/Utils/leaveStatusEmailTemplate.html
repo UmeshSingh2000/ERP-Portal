@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Leave Status Update</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      text-align: center;
+      padding-bottom: 20px;
+      color: #4f46e5;
+    }
+
+    .status-box {
+      background-color: #f1f1f1;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      line-height: 1.6;
+    }
+
+    .status-approved {
+      color: green;
+      font-weight: bold;
+    }
+
+    .status-rejected {
+      color: red;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #888;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2 class="header">📢 Leave Request Update</h2>
+    <p>Hello <strong>{{name}}</strong>,</p>
+    <p>
+      Your leave request submitted on <strong>{{leaveDate}}</strong> has been reviewed. Please find the status below:
+    </p>
+
+    <div class="status-box">
+      <p><strong>Leave ID:</strong> {{leaveId}}</p>
+      <p><strong>Status:</strong>
+        <span class="status-{{status}}">
+          {{status}}
+        </span>
+      </p>
+    </div>
+
+    <p style="margin-top: 20px;">
+      If you have any questions or need further clarification, feel free to contact HR.
+    </p>
+
+    <div class="footer">
+      Thank you for using our leave management system.
+      <br />
+      &copy; 2025 ERP System. All rights reserved.
+    </div>
+  </div>
+</body>
+
+</html>

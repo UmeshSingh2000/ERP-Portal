@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router();
 
 //controller for student
-const { login, studentDashboard, updateStudent, verifyPassword, setStudentPicture, getStudentProfile, applyLeave, deleteLeave } = require('../Controllers/studentControllers');
+const { login, studentDashboard, updateStudent, verifyPassword, setStudentPicture, getStudentProfile, applyLeave, deleteLeave, getLeavesByStudent } = require('../Controllers/studentControllers');
 const studentOnly = require('../Middelwares/studentOnlyMiddleware');
 const { authenticateToken } = require('../Middelwares/jwtMiddleware');
 const multer = require('multer');
@@ -42,7 +42,7 @@ router.post('/myAttendance', authenticateToken, studentOnly, getAttendance)
 
 
 router.post('/applyLeave',authenticateToken, studentOnly,applyLeave)
-router.delete('/deleteLeave/:id', authenticateToken, studentOnly, deleteLeave)
+router.get('/getMyLeave/:id',authenticateToken, studentOnly, getLeavesByStudent)
 
 
 module.exports = router;
