@@ -103,6 +103,7 @@ const StudentLeave = () => {
         }
     }, [])
 
+
     return (
         <main>
             <header className="flex flex-col gap-4 p-4 md:p-6 lg:p-10">
@@ -113,7 +114,8 @@ const StudentLeave = () => {
             </header>
 
             {/* Centered Drawer Button */}
-            <div className="flex justify-center items-center mt-4">
+            <div className="flex justify-center gap-1 items-center mt-4">
+            <Button className="cursor-pointer bg-red-500" onClick={getMyLeaves}>Refresh</Button>
                 <Drawer>
                     <DrawerTrigger asChild>
                         <Button className="cursor-pointer">Create Leave Request</Button>
@@ -178,7 +180,6 @@ const StudentLeave = () => {
                             <TableHead>Reason</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Applied On</TableHead>
-                            <TableHead>Approved By</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -188,13 +189,12 @@ const StudentLeave = () => {
                                 <TableHead>{new Date(leave.leaveDate).toLocaleDateString()}</TableHead>
                                 <TableHead>{leave.reason}</TableHead>
                                 <TableHead className={
-                                    leave.status === 'Approved' ? 'text-green-600' :
-                                        leave.status === 'Rejected' ? 'text-red-500' : 'text-yellow-500'
+                                    leave.status === 'approved' ? 'text-green-600' :
+                                        leave.status === 'rejected' ? 'text-red-500' : 'text-yellow-500'
                                 }>
                                     {leave.status}
                                 </TableHead>
                                 <TableHead>{new Date(leave.createdAt).toLocaleDateString()}</TableHead>
-                                <TableHead>{leave?.approvedBy?.name || 'Pending'}</TableHead>
                             </TableRow>
                         )) : (
                             <TableRow>
