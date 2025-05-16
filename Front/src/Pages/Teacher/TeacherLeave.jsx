@@ -99,21 +99,21 @@ const TeacherLeave = () => {
                                 <TableRow key={index}>
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell>{leave?.studentId?.name || "N/A"}</TableCell>
-                                    <TableCell>{leave.studentId.course}</TableCell>
-                                    <TableCell>{new Date(leave.leaveDate).toLocaleDateString()}</TableCell>
-                                    <TableCell>{leave.leaveType}</TableCell>
-                                    <TableCell>{leave.reason}</TableCell>
+                                    <TableCell>{leave?.studentId?.course}</TableCell>
+                                    <TableCell>{new Date(leave?.leaveDate).toLocaleDateString()}</TableCell>
+                                    <TableCell>{leave?.leaveType}</TableCell>
+                                    <TableCell>{leave?.reason}</TableCell>
                                     <TableCell className={
-                                        leave.status === "approved"
+                                        leave?.status === "approved"
                                             ? "text-green-600"
                                             : leave.status === "rejected"
                                                 ? "text-red-500"
                                                 : "text-yellow-500"
                                     }>
-                                        {leave.status}
+                                        {leave?.status}
                                     </TableCell>
-                                    <TableCell>{new Date(leave.createdAt).toLocaleDateString()}</TableCell>
-                                    <TableCell className='flex gap-2'><BookCheck onClick={() => handleLeaveAction(leave._id, "approved")} className='text-green-500 cursor-pointer' /><CircleX onClick={() => handleLeaveAction(leave._id, "rejected")} className='text-red-600 cursor-pointer' /></TableCell>
+                                    <TableCell>{new Date(leave?.createdAt).toLocaleDateString()}</TableCell>
+                                    <TableCell className='flex gap-2'><BookCheck onClick={() => handleLeaveAction(leave?._id, "approved")} className='text-green-500 cursor-pointer' /><CircleX onClick={() => handleLeaveAction(leave._id, "rejected")} className='text-red-600 cursor-pointer' /></TableCell>
                                 </TableRow>
                             ))
                         ) : (
