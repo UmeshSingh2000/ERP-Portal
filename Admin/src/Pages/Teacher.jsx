@@ -28,6 +28,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const Teacher = () => {
+    const validEmails = ["@gmail.com", "@yahoo.com", "@outlook.com", "@hotmail.com", "@icloud.com"];
     const { toast } = useToast()
     const dispatch = useDispatch();
     const [currentPage, setCurrentPage] = useState(1);
@@ -159,6 +160,11 @@ const Teacher = () => {
         e.preventDefault()
         try {
             setLoading(true)
+            // Validate email
+            if (!addTeacherData.email || !validEmails.some(email => addTeacherData.email.endsWith(email))) {
+                toastHelper(toast, "Please enter a valid email address", 'Error', 1000, "destructive")
+                return;
+            }
             const response = await axios.post(`${apiUrl}/admin/addTeacher`, { ...addTeacherData, role: 'teacher' },
                 {
                     headers: {
@@ -347,8 +353,8 @@ const Teacher = () => {
                                     </div>
                                 </div>
                                 <DrawerFooter>
-                                {loading ? <div className='m-auto'><Loader /></div>
-                                    :<Button className="w-xs m-auto cursor-pointer" type="submit" onClick={handlFormSubmit}>Add</Button>}
+                                    {loading ? <div className='m-auto'><Loader /></div>
+                                        : <Button className="w-xs m-auto cursor-pointer" type="submit" onClick={handlFormSubmit}>Add</Button>}
                                     <DrawerClose>
                                         Cancel
                                     </DrawerClose>
